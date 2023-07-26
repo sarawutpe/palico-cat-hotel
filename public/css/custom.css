@@ -1,0 +1,63 @@
+@font-face {
+    font-family: "DB Heavent";
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    src: local("DB Heavent"), url(../fonts/DBHeavent.woff2) format("woff2"),
+        url(../fonts/DBHeavent.woff) format("woff"),
+        url(../fonts/DBHeavent.ttf) format("truetype");
+}
+@font-face {
+    font-family: "DB Heavent";
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: local("DB Heavent"), url(../fonts/DBHeavent-Med.woff2) format("woff2"),
+        url(../fonts/DBHeavent-Med.woff) format("woff"),
+        url(../fonts/DBHeavent-Med.ttf) format("truetype");
+}
+@font-face {
+    font-family: "DB Heavent";
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+    src: local("DB Heavent"), url(../fonts/DBHeavent-Bold.woff2) format("woff2"),
+        url(../fonts/DBHeavent-Bold.woff) format("woff"),
+        url(../fonts/DBHeavent-Bold.ttf) format("truetype");
+}
+body {
+    color: #232729;
+    overflow-x: hidden;
+    font-family: "DB Heavent", sans-serif;
+    font-weight: normal;
+    line-height: normal;
+}
+
+a,
+button {
+    font-weight: 500;
+}
+
+.font-normal {
+    font-weight: 400;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+input[type=file],
+input[type=file]::-webkit-file-upload-button { 
+    cursor: pointer; 
+}
+
+.col-form-label.required:after {
+    content:"*";
+    color:red;
+    font-size: 1.75rem;
+    margin: 0 2px;
+  }

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Support\Facades\Session;
 
 class Authenticate extends Middleware
 {
@@ -14,8 +15,26 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
+        if (!$request->expectsJson()) {
             return route('login');
         }
+    }
+
+    protected function oauth()
+    {
+        // $is_logged_in = Session::get('is_logged_in');
+        $type = Session::get('type');
+
+        // if (!$is_logged_in) {
+        //     return route('login');
+        // }
+
+        if ($type === 'MEMBER') {
+            return route('member');
+        } else if ($type === 'EMPLOYEE' || $type === 'ADMIN') {
+            return route('dashboard');
+        }
+
+        return route('login');
     }
 }
