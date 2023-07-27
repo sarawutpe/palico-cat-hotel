@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Carbon;
+use PhpParser\Node\Stmt\TryCatch;
 
 class AuthenController extends Controller
 {
@@ -128,7 +129,7 @@ class AuthenController extends Controller
         return redirect()->route('login');
     }
 
-    public function forgotPassword(Request $request)
+    public function recovery(Request $request)
     {
         $user = $request->input('user');
 
@@ -151,6 +152,7 @@ class AuthenController extends Controller
             ->where('admin_user', $user)
             ->first();
 
+        $id = $member->member_id ?? $employee->emp_id ?? $admin->admin_id;
         $user = $member->member_user ?? $employee->emp_user ?? $admin->admin_user;
         $type = Key::$member;
 
@@ -165,38 +167,50 @@ class AuthenController extends Controller
         }
 
         $secert = env('APP_SECRET', '6C4A9D33A78E12A2');
-        $payload = json_encode(['user' => $user, 'type' => $type, 'timestamp' => now()->timestamp]);
-        $encrpy_token = base64_encode(Crypt::encryptString($payload, $secert));
+        $payload = json_encode(['id' => $id, 'user' => $user, 'type' => $type, 'timestamp' => now()->timestamp]);
 
-        return redirect()->back()->with('success', 'ตรวจสอบอีเมลเพื่อดำเนินการรีเซ็ตรหัสผ่าน' . $encrpy_token);
+        $encrpy_token = base64_encode(Crypt::encryptString($payload, $secert));
+        return redirect()->back()->with('success', 'ตรวจสอบอีเมลเพื่อดำเนินการรีเซ็ตรหัสผ่าน ' . $encrpy_token);;
     }
 
-    public function resetPassword($token)
+    public function recoveryReset(Request $request, $token)
     {
+        try {
+            $secert = env('APP_SECRET', '6C4A9D33A78E12A2');
+            $token = base64_decode($token);
+            $decrypt_token = Crypt::decryptString($token, $secert);
+            $user_text = json_decode($decrypt_token, true);
 
-        // ZXlKcGRpSTZJbEJsV1ZwbFdUQlNla2xSVTA1VUx6WXlOMk5PY25jOVBTSXNJblpoYkhWbElqb2lWbE0xUlhKclExa3lhSE5NY2tOcUswa3JjVkJITjFaYVNtODROMnhyUkhkeVoyUlJjbTFhVGtjMGFEQkxOVWRFU21KelluSnlkVGNyTDFweGVVWnBNVVJhUTNaTE1WbHJURVo0YnpSUE1rbFFhblk0UkhjOVBTSXNJbTFoWXlJNkltSTBPR1ZpTkdGaVltUTNNekEyWVdObE56VTNNVEZtTmpBNU5HUmlZamRqTWpKbU9HSm1NREV3WkRjeU1HTmhORGt5T1RkbU5qSmtaREJsTXpNMFptVWlMQ0owWVdjaU9pSWlmUT09
-        // dd($token);
-        // ZXlKcGRpSTZJbU1yV0U1UFpERkhORmcxVkhaT01TdG1MemxPZG1jOVBTSXNJblpoYkhWbElqb2lXVU53TlRGQkwxWnhNVVpwVUdaa1MzTnhLMEprYjAxWVMyNXNkV3RyVTJsTVpIRmxPVU5zSzFRd2RqVXlNMnhJT0dWelFtNVdWbmM0Ym5Od2JqQXpSbEEwUzFSalpIVnVOa2RYWTB0a1FYbG5iVXBDUW5CclpuTlhSbFozV0RKb1YxUmxibXd6YUhneFkzcFBWbFpSVTJKMWNFdGFlRmhZTkc5c1RtZHpha05XWm0xdEwwbE1SbTFRWVUxTFoweGlhek5yZDFscmNuSnRiVnBDVkRjd2RGSnZkMGxuVXpCbU9IUTNSbEY2V2pjNU1TOWhVVFI1Y2pGd2NpODNabEU0YXpSQ2RYcERRV3RLVEN0WWRHSTNPRGxCVWt0c2VVcHlkMXB2VFRKSGNUUk1TRnBEWlZVMFEyRm1abnBZWVZrck5VUnpjMm8xYTFGRlJsQkZWMHB0ZURSWFVIZ3hVelZHYkRSblNrYzFNVTF6VUN0RFMzbGhiVmt5ZW1KQ1NrOVhibXhIWTFWMU5HMDFZMHBaYjJkNmFGVlRNRGN5Yms1VE1qQnNhRE54VVN0Q09IWXdNRWw1YVhBNVJrdHllRXhQVUhsR1UxZDRTWE5YU0hwMk15dGxhbVJLU1VONlFtMDVTbFl4TDB0RFFWTmxkMHBYYVhreFNEQmFaazUxV1ZBNVFXdDBVV3QxUkdOcGR5OVBhSGRTZDBscFVqSXhaREJLYVVOVk1UbGxSRFkyTURoa2FsaFlXV1ZJWmxOV1NIVmtNR1V4Y21sQ2ExSkZNbVZSWm1Sak1GVnNOVTlQTmtOTVkyWlVkamhLWW5NM1dsVnRVVk5sWlVSWGRVdzNTR0l5Um1VMWRFeHBhR2RwVHpBOUlpd2liV0ZqSWpvaVlXSmpZVFV3Wm1Ka1pXVm1OelpoWXpNNVpqVmtNV0V3TURNNU1tVmpOekF6TkRNMU16WTBaV0ZtT1RNd1lXWTVORFF3WVRjek4yVmtNakUyTW1SaU1DSXNJblJoWnlJNklpSjk
-        $secert = env('APP_SECRET', '6C4A9D33A78E12A2');
-        $token = base64_decode($token);
-        $decode_token = Crypt::decryptString($token, $secert);
-        $user_text = json_decode($decode_token, true);
+            $id = $user_text['id'];
+            $user = $user_text['user'];
+            $type = $user_text['type'];
+            $password = $request->input('password');
 
-        // $user = $user_text['user'] ?? "";
-        // $type = $user_text['type'] ?? "";
+            if (empty($user) || empty($type)) {
+                return redirect()->back()->with('error', 'เกิดข้อผิดพลาด');
+            }
 
-        // dd([$user,$type]);
-        // return redirect()->route('reset-password');
+            if ($type === Key::$member) {
+                $member = Member::find($id);
+                $member->member_pass = md5($password);
+                $member->save();
+            }
 
+            if ($type === Key::$employee) {
+                $employee = Employee::find($id);
+                $employee->emp_pass = md5($password);
+                $employee->save();
+            }
 
-        // Via a request instance...
-        // $request->session()->put('e', 'value');
+            if ($type === Key::$admin) {
+                $admin = Admin::find($id);
+                $admin->admin_pass = md5($password);
+                $admin->save();
+            }
 
-
-        return view('reset-password')->with('error', 'โทรเค่นไม่ถูกต้อง...');
-
-        // if (!$token) {
-        // return redirect()->back()->with('error', 'เกิดข้อผิดพลาด');
-        // }
+            return redirect()->route('login')->with('success', 'เปลี่ยนรหัสผ่านสำเร็จ');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

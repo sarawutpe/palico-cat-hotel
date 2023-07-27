@@ -40,15 +40,13 @@
                         <div class="mb-3 row">
                             <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
                             <div class="col-sm-9">
-                                <a href="forgot">
-                                    <input type="password" name="member_pass" class="form-control">
-                                </a>
+                                <input type="password" name="member_pass" class="form-control">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label></label>
                             <div class="col-sm-9">
-                                <a href="forgot-password">
+                                <a href="recovery">
                                     <button type="button" class="btn btn-outline-dark">ลืมรหัสผ่าน</button>
                                 </a>
                             </div>
