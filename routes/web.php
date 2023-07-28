@@ -4,17 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\AuthenController;
 use App\Http\Middleware\OAuth;
-use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
 // View Routes
@@ -22,8 +16,9 @@ Route::view('/', 'index')->name('home');
 Route::view('/login', 'login')->name('login');
 Route::view('/register', 'register')->name('register');
 Route::view('/recovery', 'recovery')->name('recovery');
-Route::view('/recovery/reset/{token}', 'recovery-reset')->name('recovery-reset');
+Route::view('/recovery/reset/{token}', 'recovery-reset')->name('recovery.reset');
 
+// Protected Routes
 Route::middleware([OAuth::class])->group(function () {
   Route::view('/dashboard', 'dashboard.index')->name('dashboard');
   Route::get('/dashboard/logout', [MemberController::class, 'logout'])->name('dashboard.logout');

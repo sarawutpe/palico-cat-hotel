@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSessionsTable extends Migration
+class CreateTokensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateSessionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('session_id')->primary();
-            $table->string('id');
-            $table->string('type'); // MEMBER EMPLOYEE ADMIN
-            $table->boolean('token');
-            $table->string('is_expired');
+        Schema::create('tokens', function (Blueprint $table) {
+            $table->id('token_id')->primary();
+            $table->char('token', 40);
+            $table->boolean('is_expired')->default(false);
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateSessionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('tokens');
     }
 }

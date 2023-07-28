@@ -7,34 +7,11 @@
             <form action="{{ route('authen.recovery') }}" method="POST">
                 @csrf
 
-                @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
                 @if (session()->has('error'))
                     <div class="text-danger font-medium mb-2">
                         {{ session('error') }}
                     </div>
                 @endif
-
-                {{-- @if ($success->any())
-                    <div class="text-danger font-medium mb-2">
-                        <ul>
-                            @foreach ($success->all() as $success)
-                                <li>{{ $success }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif --}}
-
 
                 @if ($errors->any())
                     <div class="text-danger font-medium mb-2">
@@ -44,12 +21,6 @@
                             @endforeach
                         </ul>
                     </div>
-                @endif
-
-                @if (session()->has('success'))
-                    <a href="recovery" class="text-dark font-medium mb-2">
-                        ok success?
-                    </a>
                 @endif
 
                 @if (session()->has('success'))
