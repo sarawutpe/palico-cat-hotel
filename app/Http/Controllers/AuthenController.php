@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Carbon;
 use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Response;
+use App\Rules\UniqueUser;
 
 class AuthenController extends Controller
 {
@@ -36,7 +39,7 @@ class AuthenController extends Controller
             // Validate the input
             $request->validate([
                 'member_name' => 'required|string',
-                'member_user' => 'required|unique:members',
+                'member_user' => ['required', new UniqueUser],
                 'member_pass' => 'required|string',
                 'member_address' => 'required|string',
                 'member_phone' => 'required|string',
@@ -57,7 +60,7 @@ class AuthenController extends Controller
             ]);
 
             // Create a new Member instance and save it to the database
-            $member_model = new Member([
+            $member = new Member([
                 'member_name' => $member_name,
                 'member_user' => $member_user,
                 'member_pass' => md5($member_pass),
@@ -69,10 +72,10 @@ class AuthenController extends Controller
 
             // Upload and save the member_img if provided
             if ($request->hasFile('member_img')) {
-                $member_model->member_img = Helper::uploadFile($request, "member_img");
+                $member->member_img = Helper::uploadFile($request, "member_img");
             }
 
-            $member_model->save();
+            $member->save();
 
             return redirect()->route('register')->with('success', 'สมัครสมาชิกสำเร็จ');
         } catch (ValidationException $exception) {
@@ -101,17 +104,19 @@ class AuthenController extends Controller
                 ->where('member_pass', md5($password))
                 ->first();
 
-            $employee = Employee::where('emp_user', $user)
-                ->where('emp_pass', md5($password))
+            $employee = Employee::where('employee_user', $user)
+                ->where('employee_pass', md5($password))
                 ->first();
 
             $admin = Admin::where('admin_user', $user)
                 ->where('admin_pass', md5($password))
                 ->first();
 
-            $id = $member->member_id ?? $employee->emp_id ?? $admin->admin_id;
-            $type = "";
+            $id = $member->member_id ?? $employee->employee_id ?? $admin->admin_id ?? null;
+            $name = $member->member_name ?? $employee->employee_name ?? $admin->admin_name ?? null;
+            $img = $member->member_img ?? $employee->employee_img ?? $admin->admin_img ?? null;
 
+            $type = "";
             if ($member) {
                 $type = Key::$member;
             } else if ($employee) {
@@ -120,11 +125,13 @@ class AuthenController extends Controller
                 $type = Key::$admin;
             }
 
-            if ($id && $type) {
+            if ($id && $type && $name) {
                 // Authentication succeeded
                 Session::put('is_logged_in', true);
                 Session::put('id', $id);
                 Session::put('type', $type);
+                Session::put('name', $name);
+                Session::put('img', $img);
                 return redirect()->route('dashboard');
             } else {
                 // Authentication failed
@@ -140,9 +147,14 @@ class AuthenController extends Controller
     public function logout()
     {
         try {
-            Session::flash('is_logged_in');
-            Session::flash('id');
-            Session::flash('type');
+            // Clear specific session items
+            Session::forget('is_logged_in');
+            Session::forget('id');
+            Session::forget('type');
+            Session::forget('name');
+            Session::forget('img');
+            Session::flush();
+
             return redirect()->route('login');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
@@ -161,27 +173,27 @@ class AuthenController extends Controller
 
             $user = $request->input('user');
 
-            $member_model = Member::where('member_user', $user)
+            $member = Member::where('member_user', $user)
                 ->where('member_user', $user)
                 ->first();
 
-            $employee_model = Employee::where('emp_user', $user)
-                ->where('emp_user', $user)
+            $employee = Employee::where('employee_user', $user)
+                ->where('employee_user', $user)
                 ->first();
 
-            $admin_model = Admin::where('admin_user', $user)
+            $admin = Admin::where('admin_user', $user)
                 ->where('admin_user', $user)
                 ->first();
 
-            $id = $member_model->member_id ?? $employee_model->emp_id ?? $admin_model->admin_id ?? null;
-            $user = $member_model->member_user ?? $employee_model->emp_user ?? $admin_model->admin_user ?? null;
+            $id = $member->member_id ?? $employee->employee_id ?? $admin->admin_id ?? null;
+            $user = $member->member_user ?? $employee->employee_user ?? $admin->admin_user ?? null;
             $type = "";
 
-            if ($member_model) {
+            if ($member) {
                 $type = Key::$member;
-            } else if ($employee_model) {
+            } else if ($employee) {
                 $type = Key::$employee;
-            } else if ($admin_model) {
+            } else if ($admin) {
                 $type = Key::$admin;
             } else {
                 return redirect()->back()->with('error', 'ไม่พบผู้ใช้');
@@ -192,8 +204,8 @@ class AuthenController extends Controller
             $encrpy_token = Crypt::encryptString($payload, $secert);
 
             // Save token to db
-            $token_model = new Token(['token' => sha1($encrpy_token)]);
-            $token_model->save();
+            $token = new Token(['token' => sha1($encrpy_token)]);
+            $token->save();
 
             return redirect()->back()->with('success', 'ตรวจสอบอีเมลเพื่อดำเนินการรีเซ็ตรหัสผ่าน ' . $encrpy_token);
         } catch (ValidationException $exception) {
@@ -213,14 +225,14 @@ class AuthenController extends Controller
             ]);
 
             // Check if invalid token
-            $token_model = Token::where('token', sha1($token))->first();
-            if (empty($token_model) || $token_model->is_expired) {
+            $token = Token::where('token', sha1($token))->first();
+            if (empty($token) || $token->is_expired) {
                 return redirect()->back()->with('error', 'Token หมดอายุ');
             }
 
             // Set token is_expired to db
-            $token_model->is_expired = 1;
-            $token_model->save();
+            $token->is_expired = 1;
+            $token->save();
 
             $secert = env('APP_SECRET', '6C4A9D33A78E12A2');
             $decrypt_token = Crypt::decryptString($token, $secert);
@@ -236,17 +248,17 @@ class AuthenController extends Controller
             }
 
             if ($type === Key::$member) {
-                $member_model = Member::find($id);
-                $member_model->member_pass = md5($password);
-                $member_model->save();
+                $member = Member::find($id);
+                $member->member_pass = md5($password);
+                $member->save();
             } else if ($type === Key::$employee) {
-                $employee_model = Employee::find($id);
-                $employee_model->emp_pass = md5($password);
-                $employee_model->save();
+                $employee = Employee::find($id);
+                $employee->employee_pass = md5($password);
+                $employee->save();
             } else if ($type === Key::$admin) {
-                $admin_model = Admin::find($id);
-                $admin_model->admin_pass = md5($password);
-                $admin_model->save();
+                $admin = Admin::find($id);
+                $admin->admin_pass = md5($password);
+                $admin->save();
             }
 
             return redirect()->route('login')->with('success', 'เปลี่ยนรหัสผ่านสำเร็จ');

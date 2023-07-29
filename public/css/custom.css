@@ -50,14 +50,47 @@ button {
     font-weight: 700;
 }
 
-input[type=file],
-input[type=file]::-webkit-file-upload-button { 
-    cursor: pointer; 
+input[type="file"],
+input[type="file"]::-webkit-file-upload-button {
+    cursor: pointer;
 }
 
 .col-form-label.required:after {
-    content:"*";
-    color:red;
+    content: "*";
+    color: red;
     font-size: 1.75rem;
     margin: 0 2px;
-  }
+}
+
+fieldset {
+    border: 1px solid #d1cfcf;
+    padding: 12px;
+    min-width: inherit;
+    margin: inherit;
+    border-radius: 6px;
+}
+
+html:not([dir="rtl"]) legend {
+    float: inherit;
+}
+
+legend {
+    display: block;
+    padding-inline-start: 2px;
+    padding-inline-end: 2px;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    width: auto;
+}
+
+.btn,
+.btn:hover {
+    /* color: rgba(255, 255, 255, 0.8); */
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}

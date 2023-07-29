@@ -79,7 +79,7 @@
 				<div class="col">
 					<div class="mb-3">
 						<div class="d-flex flex-column gap-2" style="max-width: fit-content;">
-							<div class="border rounded" style="overflow: hidden; width: 250px; height: 250px">
+							<div class="border rounded bg-white" style="overflow: hidden; width: 250px; height: 250px">
 								<img id="file-preview" src="" style="object-fit: cover; opacity: 0;" width="100%" height="100%">
 							</div>
 							<div class="d-flex gap-2">

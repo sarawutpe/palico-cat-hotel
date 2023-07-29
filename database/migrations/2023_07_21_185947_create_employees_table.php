@@ -14,15 +14,15 @@ class CreateEmployeesTable extends Migration
     public function up()
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id('emp_id')->primary();
-            $table->string('emp_name');
-            $table->string('emp_user')->uniqid();
-            $table->string('emp_pass');
-            $table->string('emp_address')->nullable();
-            $table->string('emp_phone')->nullable();
-            $table->string('emp_facebook')->nullable();
-            $table->string('emp_lineid')->nullable();
-            $table->string('emp_img')->nullable();
+            $table->id('employee_id')->primary();
+            $table->string('employee_name');
+            $table->string('employee_user')->uniqid();
+            $table->string('employee_pass');
+            $table->string('employee_address')->nullable();
+            $table->string('employee_phone')->nullable();
+            $table->string('employee_facebook')->nullable();
+            $table->string('employee_lineid')->nullable();
+            $table->string('employee_img')->nullable();
             $table->timestamps();
         });
     }
