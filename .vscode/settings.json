@@ -4,7 +4,7 @@
     "gitlens.codeLens.recentChange.enabled": false,
     "gitlens.codeLens.authors.enabled": false,
     "gitlens.blame.line.enabled": false,
-    "prettier.printWidth": 100,
+    "prettier.printWidth": 150,
     "[blade]": {
         "editor.autoClosingBrackets": "always"
     }

@@ -43,10 +43,15 @@
     {{-- <link href="{{ asset('vendors/@coreui/chartjs/css/coreui-chartjs.css') }}" rel="stylesheet"> --}}
 
     {{-- <script src="{{ asset('vendors/sweetalert2/sweetalert2.css') }}"></script> --}}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 
     {{-- JS --}}
     <script src="{{ asset('vendors/jquery/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('vendors/sweetalert2/sweetalert2@11.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 </head>
 

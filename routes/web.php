@@ -26,15 +26,16 @@ Route::middleware([PublicRoute::class])->group(function () {
 
 // Protected Routes
 Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
-  Route::view('/dashboard', 'dashboard.index')->name('dashboard');
-
-  Route::get('/dashboard/employee', [EmployeeController::class, 'index'])->name('dashboard.employee');
-  
-  
   Route::get('/dashboard/logout', [AuthenController::class, 'logout'])->name('dashboard.logout');
+  Route::view('/dashboard', 'dashboard.index')->name('dashboard');
+  Route::view('/dashboard/employee', 'dashboard.employee')->name('dashboard.employee');
+});
 
-  // Route::post('/employee/getAllEmployee', [EmployeeController::class, 'getAllEmployee'])->name('employee.getAllEmployee');
-  Route::post('/employee/addEmployee', [EmployeeController::class, 'addEmployee'])->name('employee.addEmployee');
+Route::middleware([OAuth::class])->prefix('api')->group(function () {
+  Route::get('/employee/list', [EmployeeController::class, 'getAllEmployee']);
+  Route::post('/employee', [EmployeeController::class, 'addEmployee']);
+  Route::put('/employee/{id}', [EmployeeController::class, 'updateEmployee']);
+  Route::delete('/employee/{id}', [EmployeeController::class, 'deleteEmployee']);
 });
 
 // Service Routes

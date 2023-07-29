@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
 use App\Models\Employee;
 use App\Http\Helpers\Helper;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Rules\UniqueUser;
 
-
 // add get update delete
 class EmployeeController extends Controller
 {
-
-    public function index()
+    public function getAllEmployee()
     {
         try {
-            $employees = Employee::all();
-            return view('dashboard.employee', compact('employees'));
+            $employees = Employee::orderBy('updated_at', 'desc')->get();
+
+            // Response
+            return response()->json(['success' => true, 'data' => $employees]);
         } catch (ValidationException $exception) {
-            return redirect()->back()->withErrors($exception->errors())->withInput();
+            return response()->json(['error' => $exception->errors()], 422);
         } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
+            return response()->json(['error' => $th->getMessage()], 500);
         }
     }
 
@@ -60,7 +59,6 @@ class EmployeeController extends Controller
                 'employee_img.max' => 'ขนาดรูปภาพของสมาชิกต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
-            // Create a new Member instance and save it to the database
             $employee = new Employee([
                 'employee_name' => $employee_name,
                 'employee_user' => $employee_user,
@@ -78,11 +76,32 @@ class EmployeeController extends Controller
 
             $employee->save();
 
-            return redirect()->back()->with('success', 'สมัครสมาชิกสำเร็จ');
+            // Response
+            return response()->json(['success' => true, 'data' => $employee]);
         } catch (ValidationException $exception) {
-            return redirect()->back()->withErrors($exception->errors())->withInput();
+            $errors = $exception->validator->errors()->all();
+            return response()->json(['success' => false, 'errors' => $errors], 422);
         } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
+            return response()->json(['success' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function updateEmployee(Request $request, $id)
+    {
+    }
+
+    public function deleteEmployee($id)
+    {
+        try {
+            $employee = Employee::findOrFail($id);
+            $employee->delete();
+
+            // Response
+            return response()->json(['success' => true], 200);
+        } catch (ValidationException $exception) {
+            return response()->json(['success' => false, 'errors' => $exception->errors()], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()], 500);
         }
     }
 }

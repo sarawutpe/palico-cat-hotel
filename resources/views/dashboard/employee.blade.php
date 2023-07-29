@@ -18,36 +18,14 @@
         }
     </style>
     <section class="content">
-
         <div class="row">
             <div class="col">
-                <form class="h-100" action="{{ route('employee.addEmployee') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-
-                    @if (session()->has('success'))
-                        <div class="text-success font-medium mb-2">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    @if (session()->has('error'))
-                        <div class="text-danger font-medium mb-2">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
-                    @if ($errors->any())
-                        <div class="text-danger font-medium mb-2">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
                             <legend>จัดการข้อมูลพนักงาน</legend>
+
+                            <div id="alert-message"></div>
 
                             <div class="">
                                 <div class="row">
@@ -134,7 +112,7 @@
                         <div class="d-flex gap-4" style="padding: 12px">
                             <button type="button" class="btn btn-secondary">พิมพ์รายงาน</button>
                             <button type="button" class="btn btn-info">แก้ไข</button>
-                            <button type="reset" class="btn btn-danger">ลบ</button>
+                            <button type="reset" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
                         </div>
                     </div>
@@ -145,89 +123,18 @@
                 <div class="">
                     <fieldset class="scroll">
                         <legend>รายชื่อพนักงาน</legend>
-                        @if (count($employees) > 0)
-                            @foreach ($employees as $employee)
-                                <div class="box-card-list" onclick="handleClickEmployee('{{ json_encode($employee) }}')">
-                                    <div>
-                                        <p>รหัสพนักงาน {{ $employee->employee_id }}</p>
-                                        <p>ชื่อ-สกุล {{ $employee->employee_name }}</p>
-                                        <p>เบอร์โทรศัพท์ {{ $employee->employee_phone }}</p>
-                                    </div>
-                                    <div class="border rounded bg-white"
-                                        style="overflow: hidden; width: 100px; height: 100px">
-                                        <img id="file-preview" onerror="this.style.opacity = 0"
-                                            src="{{ asset('storage/' . $employee->employee_img) }}"
-                                            style="object-fit: cover;" width="100%" height="100%">
-                                    </div>
-                                </div>
-                            @endforeach
-                        @else
-                            <p>No employees found.</p>
-                        @endif
+                        <div id="employee-list"></div>
                     </fieldset>
-
                 </div>
             </div>
         </div>
-
     </section>
-
-
-    <script>
-        var STORAGE_PATH = "{{ asset('storage/') }}"
-
-
-        function handleClickEmployee(data = "") {
-            const employee = JSON.parse(data)
-            if (typeof employee === 'object') {
-                var activeItem = (employee.employee_id || 0) - 1
-                $('.box-card-list').removeClass('active').eq(activeItem).addClass('active');
-                // $('.box-card-list').eq(employee.employee_id - 1 || 0).addClass('active');
-
-
-
-                $('input[name="employee_id"]').val(employee.employee_id || "");
-                $('input[name="employee_name"]').val(employee.employee_name || "");
-                $('input[name="employee_user"]').val(employee.employee_user || "");
-                $('input[name="employee_pass"]').val("");
-                $('input[name="employee_address"]').val(employee.employee_address || "");
-                $('input[name="employee_phone"]').val(employee.employee_phone || "");
-                $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
-                $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
-
-                if (employee.employee_img) {
-                    $('#file-preview').css('opacity', 1).attr('src', `${STORAGE_PATH}/${(employee.employee_img || "")}`);
-                } else {
-                    $('#file-preview').css('opacity', 0).attr('src', '');
-                }
-
-                console.log(employee)
-            }
-        }
-
-        // Do you want to save the changes?
-        // คุณต้องการลบ
-
-        $(document).ready(function() {
-            Swal.fire({
-                title: '<strong>คุณต้องการลบข้อมูลหรือไม่?</strong>',
-                icon: 'info',
-                showCloseButton: true,
-                showCancelButton: true,
-                focusConfirm: false,
-                confirmButtonText: 'ยืนยัน',
-                cancelButtonText: 'ยกเลิก',
-            })
-        })
-    </script>
-
-
 
     <script>
         // File Change
-        let filePreviewElement = $('#file-preview')
-        let fileUploadElement = $('#file-upload')
-        let deleteFileElement = $('#file-delete')
+        const filePreviewElement = $('#file-preview')
+        const fileUploadElement = $('#file-upload')
+        const deleteFileElement = $('#file-delete')
 
         fileUploadElement.change(function(event) {
             const fileInput = event.target;
@@ -251,5 +158,146 @@
         });
     </script>
 
+    <script>
+        var headers = {
+            'X-CSRF-Token': "{{ csrf_token() }}"
+        }
+        var storagePath = "{{ asset('storage/') }}"
+
+        function showAlert(type, message) {
+            const target = $('#alert-message')
+            const color = message === 'success' ? 'text-success' : 'text-danger'
+            let html = '';
+
+            if (Array.isArray(message)) {
+                message.forEach((item) => html += `<li>${item}</li>`)
+            } else {
+                html = message || ''
+            }
+
+            target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault()
+            handleAddEmployee()
+        }
+
+        function handleGetAllEmployee() {
+            const url = `${window.location.origin}/api/employee/list`
+            $.ajax({
+                url: url,
+                type: "GET",
+                headers: headers,
+                success: function(response, textStatus, jqXHR) {
+                    if (!Array.isArray(response.data)) return
+
+                    let html = ''
+                    response.data.forEach(function(employee) {
+                        html += `
+                        <div class="box-card-list" onclick="handleUpdateEmployee('${JSON.stringify(employee)}')">
+                            <div>
+                                <p>รหัสพนักงาน ${employee.employee_id}</p>
+                                <p>ชื่อ-สกุล ${employee.employee_name}</p>
+                                <p>เบอร์โทรศัพท์ ${employee.employee_phone}</p>
+                            </div>
+                            <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
+                                <img id="file-preview" onerror="this.style.opacity = 0"
+                                src="{{ asset('storage/') }}/${employee.employee_img}"
+                                style="object-fit: cover;" width="100%" height="100%">
+                            </div>
+                        </div>`;
+                    });
+                    $('#employee-list').empty().append(html);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    toastr.error('Failed to fetch employee data.');
+                }
+            });
+        }
+
+        function handleAddEmployee() {
+            const url = `${window.location.origin}/api/employee`
+
+            const formData = new FormData();
+            formData.append('employee_name', $('input[name="employee_name"]').val());
+            formData.append('employee_user', $('input[name="employee_user"]').val());
+            formData.append('employee_pass', $('input[name="employee_pass"]').val());
+            formData.append('employee_address', $('input[name="employee_address"]').val());
+            formData.append('employee_phone', $('input[name="employee_phone"]').val());
+            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
+            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+
+            const file = $('#file-upload').prop('files')[0]
+            if (file) {
+                formData.append("employee_img", file);
+            }
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                headers: headers,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response, textStatus, jqXHR) {
+                    toastr.success('Successfully');
+                    $('#form')[0].reset();
+                    handleGetAllEmployee()
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    const response = jqXHR.responseJSON
+                    showAlert('error', response.errors)
+                },
+            });
+        }
+
+        function handleUpdateEmployee(data = "") {
+            const employee = JSON.parse(data)
+            if (typeof employee === 'object') {
+                var activeItem = (employee.employee_id || 0) - 1
+                $('.box-card-list').removeClass('active').eq(activeItem).addClass('active');
+
+                $('input[name="employee_id"]').val(employee.employee_id || "");
+                $('input[name="employee_name"]').val(employee.employee_name || "");
+                $('input[name="employee_user"]').val(employee.employee_user || "");
+                $('input[name="employee_pass"]').val("");
+                $('input[name="employee_address"]').val(employee.employee_address || "");
+                $('input[name="employee_phone"]').val(employee.employee_phone || "");
+                $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
+                $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
+
+                if (employee.employee_img) {
+                    $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
+                } else {
+                    $('#file-preview').css('opacity', 0).attr('src', '');
+                }
+            }
+        }
+
+        async function handleDeleteEmployee() {
+            const confirm = await utils.confirmAlert();
+            if (confirm) {
+                const url = `${window.location.origin}/api/employee10`
+                $.ajax({
+                    url: url,
+                    type: "DELETE",
+                    headers: headers,
+                    success: function(data, textStatus, jqXHR) {
+                        toastr.success('', '')
+                        handleGetAllEmployee()
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        toastr.success('', '')
+                    },
+                })
+            }
+        }
+
+        // Initialize
+        $(document).ready(function() {
+            handleGetAllEmployee()
+        })
+    </script>
 
 @endsection

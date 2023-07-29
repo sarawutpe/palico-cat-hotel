@@ -13,6 +13,7 @@ MariaDB
 ## Laravel Commands
 $ run
 php artisan serve
+
 # palico-cat-hotel
 
 # model
@@ -24,8 +25,10 @@ php artisan make:model Member -m
 
 php artisan make:controller MemberController
 
-
 php artisan migrate
+
+R all cache
+php artisan cache:clear
 
 # Route cache cleared!
 php artisan route:clear
