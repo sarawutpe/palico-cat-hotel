@@ -42,10 +42,22 @@
     <link href="{{ asset('css/examples.css') }}" rel="stylesheet">
     {{-- <link href="{{ asset('vendors/@coreui/chartjs/css/coreui-chartjs.css') }}" rel="stylesheet"> --}}
 
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    {{-- <script src="{{ asset('vendors/sweetalert2/sweetalert2.css') }}"></script> --}}
+
+    {{-- JS --}}
+    <script src="{{ asset('vendors/jquery/jquery-3.7.0.min.js') }}"></script>
+    <script src="{{ asset('vendors/sweetalert2/sweetalert2@11.js') }}"></script>
+
 </head>
 
 <body>
+    <style>
+        /* .swal2-confirm.swal2-styled {
+            background-color: aqua;
+        } */
+
+    </style>
+
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
         <div class="sidebar-brand d-none d-md-flex">
             <svg class="sidebar-brand-full" width="118" height="46" alt="CoreUI Logo">
@@ -259,7 +271,7 @@
     </div>
 
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
-        <header class="header header-sticky mb-4">
+        <header class="header header-sticky">
             <div class="container-fluid">
                 <button class="header-toggler px-md-0 me-md-3" type="button"
                     onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
@@ -358,9 +370,8 @@
         </header>
 
         <div class="body flex-grow-1 px-3">
-            @yield('content', 'sad')
-
-
+            <br>
+            @yield('content', '')
 
         </div>
         <footer class="footer">
