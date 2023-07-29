@@ -215,8 +215,8 @@
                 showCloseButton: true,
                 showCancelButton: true,
                 focusConfirm: false,
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
             })
         })
     </script>

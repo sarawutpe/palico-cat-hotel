@@ -52,10 +52,27 @@
 
 <body>
     <style>
-        /* .swal2-confirm.swal2-styled {
-            background-color: aqua;
-        } */
+        .swal2-confirm.swal2-styled,
+        .swal2-cancel.swal2-styled {
+            background: transparent;
+            border: 1px solid #ddd;
+            font-weight: 600;
+            font-size: 1.4rem;
+            padding: 4px 16px;
+        }
 
+        .swal2-confirm.swal2-styled:focus,
+        .swal2-cancel.swal2-styled:focus {
+            box-shadow: 0 0 0 2px rgba(0, 0, 21, 0.125);
+        }
+
+        .swal2-confirm.swal2-styled {
+            color: #2472cb;
+        }
+
+        .swal2-cancel.swal2-styled {
+            color: #d4574a;
+        }
     </style>
 
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
