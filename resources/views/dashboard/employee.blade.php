@@ -131,14 +131,12 @@
                                 </div>
                             </div>
                         </fieldset>
-
-                    </div>
-                    <div class="d-flex gap-4" style="padding: 12px">
-                        <button type="button" class="btn btn-secondary">พิมพ์รายงาน</button>
-                        <button type="button" class="btn btn-info">แก้ไข</button>
-                        <button type="reset" class="btn btn-danger">ลบ</button>
-                        <button type="submit" class="btn btn-primary">บันทึก</button>
-
+                        <div class="d-flex gap-4" style="padding: 12px">
+                            <button type="button" class="btn btn-secondary">พิมพ์รายงาน</button>
+                            <button type="button" class="btn btn-info">แก้ไข</button>
+                            <button type="reset" class="btn btn-danger">ลบ</button>
+                            <button type="submit" class="btn btn-primary">บันทึก</button>
+                        </div>
                     </div>
                 </form>
             </div>

@@ -371,8 +371,7 @@
 
         <div class="body flex-grow-1 px-3">
             <br>
-            @yield('content', '')
-
+            @yield('content')
         </div>
         <footer class="footer">
             <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io">Bootstrap Admin
