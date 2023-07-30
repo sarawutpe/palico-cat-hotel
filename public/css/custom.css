@@ -1,5 +1,5 @@
 :root {
-    --primary: ''
+    --primary: "";
 }
 
 @font-face {
@@ -144,4 +144,65 @@ fieldset.scroll::-webkit-scrollbar-thumb {
 fieldset.scroll::-webkit-scrollbar-thumb:hover {
     opacity: 1;
     background-color: #a8bbbf;
+}
+
+.linear-progress-content {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 4px;
+    background-color: #b3e5fc;
+    opacity: 0;
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+    bottom: 0;
+}
+
+.linear-progress-content.active {
+    opacity: 1;
+}
+
+.linear-progress {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.linear-progress:before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    background-color: #03a9f4;
+    animation: indeterminate_first 1.5s infinite ease-out;
+}
+
+.linear-progress:after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    background-color: #4fc3f7;
+    animation: indeterminate_second 1.5s infinite ease-in;
+}
+
+@keyframes indeterminate_first {
+    0% {
+        left: -100%;
+        width: 100%;
+    }
+    100% {
+        left: 100%;
+        width: 10%;
+    }
+}
+
+@keyframes indeterminate_second {
+    0% {
+        left: -150%;
+        width: 100%;
+    }
+    100% {
+        left: 100%;
+        width: 10%;
+    }
 }

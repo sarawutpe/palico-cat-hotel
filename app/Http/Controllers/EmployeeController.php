@@ -7,6 +7,7 @@ use App\Http\Helpers\Helper;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Rules\UniqueUser;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // add get update delete
 class EmployeeController extends Controller
@@ -36,6 +37,8 @@ class EmployeeController extends Controller
             $employee_facebook = $request->input('employee_facebook');
             $employee_lineid = $request->input('employee_lineid');
 
+            return $request;
+
             // Validate the input
             $request->validate([
                 'employee_name' => 'required|string',
@@ -47,16 +50,16 @@ class EmployeeController extends Controller
                 'employee_lineid' => 'nullable|string',
                 'employee_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
-                'employee_name.required' => 'กรุณากรอกชื่อสมาชิก',
-                'employee_user.required' => 'กรุณากรอกชื่อผู้ใช้งานสมาชิก',
-                'employee_user.unique' => 'ชื่อผู้ใช้งานสมาชิกนี้มีอยู่แล้ว',
-                'employee_pass.required' => 'กรุณากรอกรหัสผ่านสมาชิก',
-                'employee_address.required' => 'กรุณากรอกที่อยู่สมาชิก',
-                'employee_phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์สมาชิก',
-                'employee_facebook.required' => 'กรุณากรอก Facebook สมาชิก',
-                'employee_img.image' => 'รูปภาพของสมาชิกต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
-                'employee_img.mimes' => 'รูปภาพของสมาชิกต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
-                'employee_img.max' => 'ขนาดรูปภาพของสมาชิกต้องไม่เกิน 2048 กิโลไบต์',
+                'employee_name.required' => 'กรุณากรอกชื่อ',
+                'employee_user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
+                'employee_user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                'employee_pass.required' => 'กรุณากรอกรหัสผ่าน',
+                'employee_address.required' => 'กรุณากรอกที่อยู่',
+                'employee_phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์',
+                'employee_facebook.required' => 'กรุณากรอก Facebook ',
+                'employee_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
+                'employee_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
+                'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
             $employee = new Employee([
@@ -88,6 +91,61 @@ class EmployeeController extends Controller
 
     public function updateEmployee(Request $request, $id)
     {
+        try {
+            $employee = Employee::findOrFail($id);
+
+            $employee_name = $request->input('employee_name');
+            $employee_user = $request->input('employee_user');
+            $employee_pass = $request->input('employee_pass');
+            $employee_address = $request->input('employee_address');
+            $employee_phone = $request->input('employee_phone');
+            $employee_facebook = $request->input('employee_facebook');
+            $employee_lineid = $request->input('employee_lineid');
+
+            // Validate the input
+            $request->validate([
+                'employee_name' => 'required|string',
+                'employee_user' => ['required', new UniqueUser($employee->employee_user)],
+                'employee_pass' => 'nullable|string',
+                'employee_address' => 'required|string',
+                'employee_phone' => 'required|string',
+                'employee_facebook' => 'nullable|string',
+                'employee_lineid' => 'nullable|string',
+                'employee_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ], [
+                'employee_name.required' => 'กรุณากรอกชื่อ',
+                'employee_user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
+                'employee_user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                'employee_pass.required' => 'กรุณากรอกรหัสผ่าน',
+                'employee_address.required' => 'กรุณากรอกที่อยู่',
+                'employee_phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์',
+                'employee_facebook.required' => 'กรุณากรอก Facebook ',
+                'employee_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
+                'employee_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
+                'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
+            ]);
+
+            if ($employee_pass) {
+                $employee->employee_pass = md5($employee_pass);
+            }
+
+            // Upload and save the employee_img if provided
+            if ($request->hasFile('employee_img')) {
+                $employee->employee_img = Helper::uploadFile($request, "employee_img");
+                Helper::deleteFile($employee->employee_img);
+            }
+
+            // Save the updated employee record to the database
+            $employee->save();
+
+            // Response
+            return response()->json(['success' => true, 'data' => $employee]);
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->all();
+            return response()->json(['success' => false, 'errors' => $errors], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()], 500);
+        }
     }
 
     public function deleteEmployee($id)

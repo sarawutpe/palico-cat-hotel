@@ -17,7 +17,7 @@ class CreateEmployeesTable extends Migration
             $table->id('employee_id')->primary();
             $table->string('employee_name');
             $table->string('employee_user')->uniqid();
-            $table->string('employee_pass');
+            $table->string('employee_pass')->nullable();
             $table->string('employee_address')->nullable();
             $table->string('employee_phone')->nullable();
             $table->string('employee_facebook')->nullable();

@@ -17,6 +17,7 @@
             border-color: #eee;
         }
     </style>
+
     <section class="content">
         <div class="row">
             <div class="col">
@@ -110,9 +111,9 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            <button type="button" class="btn btn-secondary">พิมพ์รายงาน</button>
-                            <button type="button" class="btn btn-info">แก้ไข</button>
-                            <button type="reset" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
+                            <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button>
+                            <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
+                            <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
                         </div>
                     </div>
@@ -131,38 +132,23 @@
     </section>
 
     <script>
-        // File Change
-        const filePreviewElement = $('#file-preview')
-        const fileUploadElement = $('#file-upload')
-        const deleteFileElement = $('#file-delete')
-
-        fileUploadElement.change(function(event) {
-            const fileInput = event.target;
-
-            if (fileInput && fileInput.files) {
-                const file = fileInput.files[0];
-                const imageURL = URL.createObjectURL(file);
-
-                filePreviewElement.css("opacity", 1).attr("src", imageURL);
-                deleteFileElement.parent().show()
-            } else {
-                filePreviewElement.css("opacity", 0).attr("src", "");
-                deleteFileElement.parent().hide();
-            }
-        });
-
-        deleteFileElement.click(function(event) {
-            $(this).parent().hide();
-            filePreviewElement.css("opacity", 0).attr("src", "");
-            fileUploadElement.val('')
-        });
-    </script>
-
-    <script>
+        var selectedId = null
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
         var storagePath = "{{ asset('storage/') }}"
+        var formData = null
+
+        // Initialize
+        $(document).ready(function() {
+            handleGetAllEmployee()
+        })
+
+        function resetForm() {
+            $("#form")[0].reset();
+            selectedId = null
+            files.setFilePreview()
+        }
 
         function showAlert(type, message) {
             const target = $('#alert-message')
@@ -174,7 +160,6 @@
             } else {
                 html = message || ''
             }
-
             target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
         }
 
@@ -184,7 +169,9 @@
         }
 
         function handleGetAllEmployee() {
-            const url = `${window.location.origin}/api/employee/list`
+            utils.setLinearLoading()
+
+            const url = `${prefixUrl}/api/employee/list`
             $.ajax({
                 url: url,
                 type: "GET",
@@ -193,9 +180,9 @@
                     if (!Array.isArray(response.data)) return
 
                     let html = ''
-                    response.data.forEach(function(employee) {
+                    response.data.forEach(function(employee, index) {
                         html += `
-                        <div class="box-card-list" onclick="handleUpdateEmployee('${JSON.stringify(employee)}')">
+                        <div class="box-card-list" onclick="handleClickEmployee(${index} ,${utils.jsonString(employee)})">
                             <div>
                                 <p>รหัสพนักงาน ${employee.employee_id}</p>
                                 <p>ชื่อ-สกุล ${employee.employee_name}</p>
@@ -213,13 +200,14 @@
                 error: function(jqXHR, textStatus, errorThrown) {
                     toastr.error('Failed to fetch employee data.');
                 }
+            }).always(async function() {
+                await delay(1000)
+                utils.setLinearLoading()
             });
         }
 
         function handleAddEmployee() {
-            const url = `${window.location.origin}/api/employee`
-
-            const formData = new FormData();
+            formData = new FormData();
             formData.append('employee_name', $('input[name="employee_name"]').val());
             formData.append('employee_user', $('input[name="employee_user"]').val());
             formData.append('employee_pass', $('input[name="employee_pass"]').val());
@@ -233,6 +221,7 @@
                 formData.append("employee_img", file);
             }
 
+            const url = `${prefixUrl}/api/employee`
             $.ajax({
                 url: url,
                 type: "POST",
@@ -241,8 +230,8 @@
                 processData: false,
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
+                    resetForm()
                     toastr.success('Successfully');
-                    $('#form')[0].reset();
                     handleGetAllEmployee()
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -252,38 +241,78 @@
             });
         }
 
-        function handleUpdateEmployee(data = "") {
+        function handleClickEmployee(index, data) {
             const employee = JSON.parse(data)
-            if (typeof employee === 'object') {
-                var activeItem = (employee.employee_id || 0) - 1
-                $('.box-card-list').removeClass('active').eq(activeItem).addClass('active');
+            if (typeof employee !== 'object') return
 
-                $('input[name="employee_id"]').val(employee.employee_id || "");
-                $('input[name="employee_name"]').val(employee.employee_name || "");
-                $('input[name="employee_user"]').val(employee.employee_user || "");
-                $('input[name="employee_pass"]').val("");
-                $('input[name="employee_address"]').val(employee.employee_address || "");
-                $('input[name="employee_phone"]').val(employee.employee_phone || "");
-                $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
-                $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
+            selectedId = employee.employee_id
+            $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
-                if (employee.employee_img) {
-                    $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
-                } else {
-                    $('#file-preview').css('opacity', 0).attr('src', '');
-                }
+            $('input[name="employee_id"]').val(employee.employee_id || "");
+            $('input[name="employee_name"]').val(employee.employee_name || "");
+            $('input[name="employee_user"]').val(employee.employee_user || "");
+            $('input[name="employee_pass"]').val("");
+            $('input[name="employee_address"]').val(employee.employee_address || "");
+            $('input[name="employee_phone"]').val(employee.employee_phone || "");
+            $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
+            $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
+
+            if (employee.employee_img) {
+                $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
+            } else {
+                $('#file-preview').css('opacity', 0).attr('src', '');
             }
         }
 
+        function handleUpdateEmployee() {
+            if (!selectedId) return
+
+            const formData = new FormData();
+            formData.append('employee_name', $('input[name="employee_name"]').val());
+            formData.append('employee_user', $('input[name="employee_user"]').val());
+            formData.append('employee_pass', $('input[name="employee_pass"]').val());
+            formData.append('employee_address', $('input[name="employee_address"]').val());
+            formData.append('employee_phone', $('input[name="employee_phone"]').val());
+            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
+            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+
+            const file = files.getFileUpload()
+            if (file) {
+                formData.append("employee_img", file);
+            }
+
+            const url = `${prefixUrl}/api/employee/${selectedId}`
+            $.ajax({
+                url: url,
+                type: "PUT",
+                headers: headers,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response, textStatus, jqXHR) {
+                    resetForm()
+                    toastr.success('Successfully');
+                    handleGetAllEmployee()
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    const response = jqXHR.responseJSON
+                    showAlert('error', response.errors)
+                },
+            });
+        }
+
         async function handleDeleteEmployee() {
+            if (!selectedId) return
+
             const confirm = await utils.confirmAlert();
             if (confirm) {
-                const url = `${window.location.origin}/api/employee10`
+                const url = `${prefixUrl}/api/employee/${selectedId}`
                 $.ajax({
                     url: url,
                     type: "DELETE",
                     headers: headers,
                     success: function(data, textStatus, jqXHR) {
+                        resetForm()
                         toastr.success('', '')
                         handleGetAllEmployee()
                     },
@@ -293,11 +322,7 @@
                 })
             }
         }
-
-        // Initialize
-        $(document).ready(function() {
-            handleGetAllEmployee()
-        })
     </script>
+
 
 @endsection

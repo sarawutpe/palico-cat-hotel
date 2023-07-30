@@ -9,6 +9,8 @@ MariaDB
 - CSS: Bootstrap 4 
 - Theme: CoreUI https://coreui.io
 - Fonts: DB Heavent 
+- sweetalert2 https://sweetalert2.github.io/
+- toastr https://codeseven.github.io/toastr/demo.html
 
 ## Laravel Commands
 $ run

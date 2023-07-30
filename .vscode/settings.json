@@ -7,5 +7,6 @@
     "prettier.printWidth": 150,
     "[blade]": {
         "editor.autoClosingBrackets": "always"
-    }
+    },
+    "prettier.singleQuote": true
 }
