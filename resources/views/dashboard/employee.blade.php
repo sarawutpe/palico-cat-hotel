@@ -82,7 +82,7 @@
                                             <div class="d-flex flex-column gap-2" style="max-width: fit-content;">
                                                 <div class="border rounded bg-white"
                                                     style="overflow: hidden; width: 150px; height: 150px">
-                                                    <img id="file-preview" src=""
+                                                    <img id="file-preview" srcset="" src=""
                                                         style="object-fit: cover; opacity: 0;" width="100%"
                                                         height="100%">
                                                 </div>
@@ -133,6 +133,7 @@
 
     <script>
         var selectedId = null
+        var selectedIndex = null
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
@@ -171,7 +172,7 @@
         function handleGetAllEmployee() {
             utils.setLinearLoading()
 
-            const url = `${prefixUrl}/api/employee/list`
+            const url = new URL(`${window.location.origin}/api/employee/list`);
             $.ajax({
                 url: url,
                 type: "GET",
@@ -182,7 +183,7 @@
                     let html = ''
                     response.data.forEach(function(employee, index) {
                         html += `
-                        <div class="box-card-list" onclick="handleClickEmployee(${index} ,${utils.jsonString(employee)})">
+                        <div class="box-card-list" onclick="handleShowEmployee(${index} ,${utils.jsonString(employee)})">
                             <div>
                                 <p>รหัสพนักงาน ${employee.employee_id}</p>
                                 <p>ชื่อ-สกุล ${employee.employee_name}</p>
@@ -216,12 +217,12 @@
             formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
             formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
 
-            const file = $('#file-upload').prop('files')[0]
+            const file = getFileUpload()
             if (file) {
                 formData.append("employee_img", file);
             }
 
-            const url = `${prefixUrl}/api/employee`
+            const url = new URL(`${window.location.origin}/api/employee`);
             $.ajax({
                 url: url,
                 type: "POST",
@@ -241,11 +242,12 @@
             });
         }
 
-        function handleClickEmployee(index, data) {
+        function handleShowEmployee(index, data) {
             const employee = JSON.parse(data)
             if (typeof employee !== 'object') return
 
             selectedId = employee.employee_id
+            selectedIndex = index
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
             $('input[name="employee_id"]').val(employee.employee_id || "");
@@ -267,7 +269,10 @@
         function handleUpdateEmployee() {
             if (!selectedId) return
 
-            const formData = new FormData();
+            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
+
+            formData = new FormData();
+            formData.append('_method', 'PUT');
             formData.append('employee_name', $('input[name="employee_name"]').val());
             formData.append('employee_user', $('input[name="employee_user"]').val());
             formData.append('employee_pass', $('input[name="employee_pass"]').val());
@@ -279,12 +284,13 @@
             const file = files.getFileUpload()
             if (file) {
                 formData.append("employee_img", file);
+            } else if (!file && isRemovedFile) {
+                url.searchParams.set('set', 'file_null')
             }
 
-            const url = `${prefixUrl}/api/employee/${selectedId}`
             $.ajax({
-                url: url,
-                type: "PUT",
+                url: url.toString(),
+                type: "POST",
                 headers: headers,
                 data: formData,
                 processData: false,
@@ -293,6 +299,7 @@
                     resetForm()
                     toastr.success('Successfully');
                     handleGetAllEmployee()
+                    handleShowEmployee(selectedIndex, JSON.stringify(response.data))
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
@@ -304,9 +311,10 @@
         async function handleDeleteEmployee() {
             if (!selectedId) return
 
+            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
+
             const confirm = await utils.confirmAlert();
             if (confirm) {
-                const url = `${prefixUrl}/api/employee/${selectedId}`
                 $.ajax({
                     url: url,
                     type: "DELETE",
@@ -323,6 +331,5 @@
             }
         }
     </script>
-
 
 @endsection

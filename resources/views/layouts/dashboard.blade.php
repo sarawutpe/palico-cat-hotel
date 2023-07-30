@@ -397,21 +397,12 @@
                 <div class="linear-progress"></div>
             </div>
         </div>
-
-
-
-
         <div class="body flex-grow-1 px-3">
             <br>
             @yield('content')
         </div>
         <footer class="footer">
-            <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io">Bootstrap Admin
-                    Template</a> ©
-                2023
-                creativeLabs.</div>
-            <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">CoreUI UI Components</a>
-            </div>
+            <div>© 2023 PALICO CAT HOTEL.</div>
         </footer>
     </div>
 

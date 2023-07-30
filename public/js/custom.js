@@ -1,9 +1,10 @@
-var prefixUrl = window.location.origin;
 var linearIndeterminate = null;
 
 var filePreviewElement = null;
 var fileUploadElement = null;
 var deleteFileElement = null;
+
+var isRemovedFile = false;
 
 $(document).ready(function () {
     linearIndeterminate = $("#linear-indeterminate");
@@ -16,6 +17,8 @@ $(document).ready(function () {
     deleteFileElement = $("#file-delete");
 
     filePreviewElement.on("load", function (event) {
+        isRemovedFile = false
+        
         $(this).css("opacity", 1);
         deleteFileElement.parent().show();
     });
@@ -27,6 +30,8 @@ $(document).ready(function () {
     });
 
     fileUploadElement.change(function (event) {
+        isRemovedFile = false
+
         const fileInput = event.target;
 
         if (fileInput && fileInput.files) {
@@ -40,6 +45,7 @@ $(document).ready(function () {
     });
 
     deleteFileElement.click(function (event) {
+        isRemovedFile = true
         $(this).parent().hide();
         filePreviewElement.attr("src", "");
         fileUploadElement.val("");
@@ -115,4 +121,28 @@ const utils = {
     setLinearLoading() {
         linearIndeterminate.toggleClass("active");
     },
+    reRenderForm(object) {
+
+        const targetForm = $(formId)
+
+        $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
+       
+
+        console.log(first)
+        // if (targetForm.length > 0) {
+        //     console.log(targetForm)
+        // }
+        // console.log(f)
+
+        // $(selector).val(value);
+
+        for (const key in object) {
+            let input = $(`input[name="${key}"]`)
+            let value = object[key]
+
+            if (input && value) {
+                input.val(value)
+            }
+        }
+    }
 };

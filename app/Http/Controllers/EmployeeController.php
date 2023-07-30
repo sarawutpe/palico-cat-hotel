@@ -7,7 +7,6 @@ use App\Http\Helpers\Helper;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Rules\UniqueUser;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // add get update delete
 class EmployeeController extends Controller
@@ -16,8 +15,6 @@ class EmployeeController extends Controller
     {
         try {
             $employees = Employee::orderBy('updated_at', 'desc')->get();
-
-            // Response
             return response()->json(['success' => true, 'data' => $employees]);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);
@@ -29,20 +26,10 @@ class EmployeeController extends Controller
     public function addEmployee(Request $request)
     {
         try {
-            $employee_name = $request->input('employee_name');
-            $employee_user = $request->input('employee_user');
-            $employee_pass = $request->input('employee_pass');
-            $employee_address = $request->input('employee_address');
-            $employee_phone = $request->input('employee_phone');
-            $employee_facebook = $request->input('employee_facebook');
-            $employee_lineid = $request->input('employee_lineid');
-
-            return $request;
-
             // Validate the input
             $request->validate([
                 'employee_name' => 'required|string',
-                'employee_user' => ['required', new UniqueUser],
+                'employee_user' => ['required', new UniqueUser()],
                 'employee_pass' => 'required|string',
                 'employee_address' => 'required|string',
                 'employee_phone' => 'required|string',
@@ -62,6 +49,14 @@ class EmployeeController extends Controller
                 'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
+            $employee_name = $request->input('employee_name');
+            $employee_user = $request->input('employee_user');
+            $employee_pass = $request->input('employee_pass');
+            $employee_address = $request->input('employee_address');
+            $employee_phone = $request->input('employee_phone');
+            $employee_facebook = $request->input('employee_facebook');
+            $employee_lineid = $request->input('employee_lineid');
+
             $employee = new Employee([
                 'employee_name' => $employee_name,
                 'employee_user' => $employee_user,
@@ -78,8 +73,6 @@ class EmployeeController extends Controller
             }
 
             $employee->save();
-
-            // Response
             return response()->json(['success' => true, 'data' => $employee]);
         } catch (ValidationException $exception) {
             $errors = $exception->validator->errors()->all();
@@ -93,15 +86,6 @@ class EmployeeController extends Controller
     {
         try {
             $employee = Employee::findOrFail($id);
-
-            $employee_name = $request->input('employee_name');
-            $employee_user = $request->input('employee_user');
-            $employee_pass = $request->input('employee_pass');
-            $employee_address = $request->input('employee_address');
-            $employee_phone = $request->input('employee_phone');
-            $employee_facebook = $request->input('employee_facebook');
-            $employee_lineid = $request->input('employee_lineid');
-
             // Validate the input
             $request->validate([
                 'employee_name' => 'required|string',
@@ -125,20 +109,31 @@ class EmployeeController extends Controller
                 'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
-            if ($employee_pass) {
-                $employee->employee_pass = md5($employee_pass);
+            $employee->employee_name = $request->input('employee_name');
+            $employee->employee_user = $request->input('employee_user');
+
+            if ($request->filled('employee_pass')) {
+                $employee->employee_pass = md5($request->input('employee_pass'));
             }
+
+            $employee->employee_address = $request->input('employee_address');
+            $employee->employee_phone = $request->input('employee_phone');
+            $employee->employee_facebook = $request->input('employee_facebook');
+            $employee->employee_lineid = $request->input('employee_lineid');
 
             // Upload and save the employee_img if provided
             if ($request->hasFile('employee_img')) {
-                $employee->employee_img = Helper::uploadFile($request, "employee_img");
                 Helper::deleteFile($employee->employee_img);
+                $employee->employee_img = Helper::uploadFile($request, "employee_img");
             }
 
-            // Save the updated employee record to the database
-            $employee->save();
+            // Remove file
+            if ($request->input('set') === 'file_null') {
+                Helper::deleteFile($employee->employee_img);
+                $employee->employee_img = "";
+            }
 
-            // Response
+            $employee->save();
             return response()->json(['success' => true, 'data' => $employee]);
         } catch (ValidationException $exception) {
             $errors = $exception->validator->errors()->all();
@@ -153,8 +148,6 @@ class EmployeeController extends Controller
         try {
             $employee = Employee::findOrFail($id);
             $employee->delete();
-
-            // Response
             return response()->json(['success' => true], 200);
         } catch (ValidationException $exception) {
             return response()->json(['success' => false, 'errors' => $exception->errors()], 422);

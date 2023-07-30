@@ -18,7 +18,7 @@ class UniqueUser implements Rule
 
     public function __construct($user = '')
     {
-        $this->user = $user; // create, update
+        $this->user = $user;
     }
 
     public function passes($attribute, $value)
