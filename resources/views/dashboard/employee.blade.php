@@ -219,7 +219,7 @@
             formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
             formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
 
-            const file = getFileUpload()
+            const file = files.getFileUpload()
             if (file) {
                 formData.append("employee_img", file);
             }
