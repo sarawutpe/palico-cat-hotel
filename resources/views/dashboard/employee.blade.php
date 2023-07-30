@@ -139,10 +139,12 @@
         }
         var storagePath = "{{ asset('storage/') }}"
         var formData = null
-
+        var search = null
+        
         // Initialize
         $(document).ready(function() {
             handleGetAllEmployee()
+            callSearchFunc = handleGetAllEmployee;
         })
 
         function resetForm() {
@@ -171,8 +173,8 @@
 
         function handleGetAllEmployee() {
             utils.setLinearLoading()
+            const url = new URL(`${window.location.origin}/api/employee/list${window.location.search}`);
 
-            const url = new URL(`${window.location.origin}/api/employee/list`);
             $.ajax({
                 url: url,
                 type: "GET",

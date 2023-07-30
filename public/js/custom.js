@@ -6,8 +6,20 @@ var deleteFileElement = null;
 
 var isRemovedFile = false;
 
+var callSearchFunc = null;
+
 $(document).ready(function () {
     linearIndeterminate = $("#linear-indeterminate");
+
+    // Debounced Search
+    $('input[name="search_input"]').on("input", function (e) {
+        debouncedSearch(e.target.value);
+    });
+
+    const debouncedSearch = debounce(function (searchTerm) {
+        setQueryParameter("q", searchTerm);
+        callSearchFunc();
+    }, 500);
 });
 
 // File Upload Change
@@ -17,8 +29,8 @@ $(document).ready(function () {
     deleteFileElement = $("#file-delete");
 
     filePreviewElement.on("load", function (event) {
-        isRemovedFile = false
-        
+        isRemovedFile = false;
+
         $(this).css("opacity", 1);
         deleteFileElement.parent().show();
     });
@@ -30,7 +42,7 @@ $(document).ready(function () {
     });
 
     fileUploadElement.change(function (event) {
-        isRemovedFile = false
+        isRemovedFile = false;
 
         const fileInput = event.target;
 
@@ -45,12 +57,23 @@ $(document).ready(function () {
     });
 
     deleteFileElement.click(function (event) {
-        isRemovedFile = true
+        isRemovedFile = true;
         $(this).parent().hide();
         filePreviewElement.attr("src", "");
         fileUploadElement.val("");
     });
 });
+
+function setQueryParameter(key, value) {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    urlSearchParams.set(key, value);
+    const newUrl =
+        window.location.origin +
+        window.location.pathname +
+        "?" +
+        urlSearchParams.toString();
+    window.history.pushState({ path: newUrl }, "", newUrl);
+}
 
 const files = {
     setFilePreview(src) {
@@ -122,13 +145,12 @@ const utils = {
         linearIndeterminate.toggleClass("active");
     },
     reRenderForm(object) {
+        const targetForm = $(formId);
 
-        const targetForm = $(formId)
+        $("#file-preview")
+            .css("opacity", 1)
+            .attr("src", `${storagePath}/${employee.employee_img || ""}`);
 
-        $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
-       
-
-        console.log(first)
         // if (targetForm.length > 0) {
         //     console.log(targetForm)
         // }
@@ -137,12 +159,12 @@ const utils = {
         // $(selector).val(value);
 
         for (const key in object) {
-            let input = $(`input[name="${key}"]`)
-            let value = object[key]
+            let input = $(`input[name="${key}"]`);
+            let value = object[key];
 
             if (input && value) {
-                input.val(value)
+                input.val(value);
             }
         }
-    }
+    },
 };

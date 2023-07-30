@@ -11,10 +11,14 @@ use App\Rules\UniqueUser;
 // add get update delete
 class EmployeeController extends Controller
 {
-    public function getAllEmployee()
+    public function getAllEmployee(Request $request)
     {
         try {
-            $employees = Employee::orderBy('updated_at', 'desc')->get();
+            $q = $request->input('q', '');
+            
+            $query = Employee::orderBy('updated_at', 'desc');
+            $query->where('employee_name', 'like', '%' . $q . '%');
+            $employees = $query->get();
             return response()->json(['success' => true, 'data' => $employees]);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);

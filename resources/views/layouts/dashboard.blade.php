@@ -50,8 +50,10 @@
     <script src="{{ asset('vendors/jquery/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('vendors/sweetalert2/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="{{ asset('js/lodash.min.js') }}"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/lodash.debounce@4.0.8/index.min.js"></script> --}}
 
 </head>
 
@@ -295,7 +297,7 @@
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
         <div style="position: relative; padding-bottom: 4px">
             <header class="header header-sticky">
-                <div class="container-fluid">
+                <div class="container-fluid" style="flex-wrap: nowrap">
                     <button class="header-toggler px-md-0 me-md-3" type="button"
                         onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
                         <svg class="icon icon-lg">
@@ -306,28 +308,15 @@
                             <use xlink:href="{{ asset('assets/brand/coreui.svg#full') }}"></use>
                         </svg></a>
 
-                    <ul class="header-nav d-none d-md-flex">
+                    <ul class="header-nav d-none d-md-flex justify-content-between w-100">
                         <h4>
                             @yield('title', '')
                         </h4>
-
-                        {{-- <input type="text" class="form-control" placeholder="Username" aria-label="Username"> --}}
+                        <div class="">
+                            <input type="text" name="search_input" class="form-control" placeholder="ค้นหา" style="border-radius: 50px;">
+                        </div>
                     </ul>
-
-                    <ul class="header-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="#">
-                                <svg class="icon icon-lg">
-                                    {{-- <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use> --}}
-                                </svg></a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">
-                                <svg class="icon icon-lg">
-                                    {{-- <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-list-rich"></use> --}}
-                                </svg></a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">
-                                <svg class="icon icon-lg">
-                                    {{-- <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use> --}}
-                                </svg></a></li>
-                    </ul>
+        
                     <ul class="header-nav ms-3">
                         <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown"
                                 href="#" role="button" aria-haspopup="true" aria-expanded="false">
