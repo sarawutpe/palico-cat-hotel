@@ -22,6 +22,7 @@ use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Response;
 use App\Rules\UniqueUser;
+use Illuminate\Support\Facades\DB;
 
 class AuthenController extends Controller
 {
@@ -47,16 +48,16 @@ class AuthenController extends Controller
                 'member_lineid' => 'nullable|string',
                 'member_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
-                'member_name.required' => 'กรุณากรอกชื่อสมาชิก',
-                'member_user.required' => 'กรุณากรอกชื่อผู้ใช้งานสมาชิก',
-                'member_user.unique' => 'ชื่อผู้ใช้งานสมาชิกนี้มีอยู่แล้ว',
-                'member_pass.required' => 'กรุณากรอกรหัสผ่านสมาชิก',
-                'member_address.required' => 'กรุณากรอกที่อยู่สมาชิก',
-                'member_phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์สมาชิก',
-                'member_facebook.required' => 'กรุณากรอก Facebook สมาชิก',
-                'member_img.image' => 'รูปภาพของสมาชิกต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
-                'member_img.mimes' => 'รูปภาพของสมาชิกต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
-                'member_img.max' => 'ขนาดรูปภาพของสมาชิกต้องไม่เกิน 2048 กิโลไบต์',
+                'member_name.required' => 'กรุณากรอกชื่อ',
+                'member_user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
+                'member_user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                'member_pass.required' => 'กรุณากรอกรหัสผ่าน',
+                'member_address.required' => 'กรุณากรอกที่อยู่',
+                'member_phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์',
+                'member_facebook.required' => 'กรุณากรอก Facebook',
+                'member_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
+                'member_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
+                'member_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
             // Create a new Member instance and save it to the database
@@ -266,6 +267,158 @@ class AuthenController extends Controller
             return redirect()->back()->withErrors($exception->errors())->withInput();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+
+    public function getProfile($type, $id)
+    {
+        try {
+            if ($type === Key::$member) {
+                $member = Member::findOrFail($id);
+                return response()->json(['success' => true, 'data' => $member]);
+            }
+
+            if ($type === Key::$employee) {
+                $employee = Employee::findOrFail($id);
+                return response()->json(['success' => true, 'data' => $employee]);
+            }
+
+            if ($type === Key::$admin) {
+                $admin = Member::findOrFail($id);
+                return response()->json(['success' => true, 'data' => $admin]);
+            }
+
+            return response()->json(['success' => false, 'message' => "ประเภทบัญชีไม่ถูกต้อง"], 404);
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->all();
+            return response()->json(['success' => false, 'errors' => $errors], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function updateProfile(Request $request, $type, $id)
+    {
+        try {
+            // Validate the input
+            $request->validate([
+                'name' => 'required|string',
+                'user' => ['required', new UniqueUser],
+                'pass' => 'required|string',
+                'address' => 'required|string',
+                'phone' => 'required|string',
+                'facebook' => 'nullable|string',
+                'lineid' => 'nullable|string',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ], [
+                'name.required' => 'กรุณากรอกชื่อ',
+                'user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
+                'user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                'pass.required' => 'กรุณากรอกรหัสผ่าน',
+                'address.required' => 'กรุณากรอกที่อยู่',
+                'phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์',
+                'facebook.required' => 'กรุณากรอก Facebook',
+                'img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
+                'img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
+                'img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
+            ]);
+
+            if ($type === Key::$member) {
+                $member = Member::findOrFail($id);
+                $member->member_name = $request->input('name');
+                $member->member_user = $request->input('user');
+
+                if ($request->filled('pass')) {
+                    $member->member_pass = md5($request->input('pass'));
+                }
+
+                $member->member_address = $request->input('address');
+                $member->member_phone = $request->input('phone');
+                $member->member_facebook = $request->input('facebook');
+                $member->member_lineid = $request->input('lineid');
+
+                // Upload file
+                if ($request->hasFile('img')) {
+                    Helper::deleteFile($member->member_img);
+                    $member->member_img = Helper::uploadFile($request, "member_img");
+                }
+
+                // Remove file
+                if ($request->input('set') === 'file_null') {
+                    Helper::deleteFile($member->employee_img);
+                    $member->employee_img = "";
+                }
+
+                $member->save();
+                return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
+            }
+
+            if ($type === Key::$employee) {
+                $employee = Employee::findOrFail($id);
+                $employee->employee_name = $request->input('name');
+                $employee->employee_user = $request->input('user');
+
+                if ($request->filled('pass')) {
+                    $employee->employee_pass = md5($request->input('pass'));
+                }
+
+                $employee->employee_address = $request->input('address');
+                $employee->employee_phone = $request->input('phone');
+                $employee->employee_facebook = $request->input('facebook');
+                $employee->employee_lineid = $request->input('lineid');
+
+                // Upload file
+                if ($request->hasFile('img')) {
+                    Helper::deleteFile($employee->employee_img);
+                    $employee->employeer_img = Helper::uploadFile($request, "employee_img");
+                }
+
+                // Remove file
+                if ($request->input('set') === 'file_null') {
+                    Helper::deleteFile($employee->employee_img);
+                    $employee->employee_img = "";
+                }
+
+                $employee->save();
+                return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
+            }
+
+            if ($type === Key::$admin) {
+                $admin = Member::findOrFail($id);
+                $admin->admin_name = $request->input('name');
+                $admin->admin_user = $request->input('user');
+
+                if ($request->filled('pass')) {
+                    $admin->admin_pass = md5($request->input('pass'));
+                }
+
+                $admin->admin_address = $request->input('address');
+                $admin->employee_phone = $request->input('phone');
+                $admin->admin_facebook = $request->input('facebook');
+                $admin->admin_lineid = $request->input('lineid');
+
+                // Upload file
+                if ($request->hasFile('img')) {
+                    Helper::deleteFile($admin->admin_img);
+                    $admin->admin_img = Helper::uploadFile($request, "admin_img");
+                }
+
+                // Remove file
+                if ($request->input('set') === 'file_null') {
+                    Helper::deleteFile($admin->admin_img);
+                    $admin->admin_img = "";
+                }
+
+                $admin->save();
+                return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
+            }
+
+            return response()->json(['success' => false, 'message' => "ประเภทบัญชีไม่ถูกต้อง"], 404);
+        } catch (ValidationException $exception) {
+            $errors = $exception->validator->errors()->all();
+            return response()->json(['success' => false, 'errors' => $errors], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()], 500);
         }
     }
 }

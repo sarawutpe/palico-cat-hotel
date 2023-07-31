@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'จัดการข้อมูลพนักงาน')
+@section('title', 'จัดการข้อมูลห้องพัก')
 @section('content')
     <style>
         .box-card-list {
@@ -24,7 +24,7 @@
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
-                            <legend>ข้อมูลพนักงาน</legend>
+                            <legend>จัดการข้อมูลพนักงาน</legend>
 
                             <div id="alert-message"></div>
 
@@ -201,7 +201,7 @@
                     $('#employee-list').empty().append(html);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    toastr.error('Failed');
+                    toastr.error('Failed to fetch employee data.');
                 }
             }).always(async function() {
                 await delay(1000)

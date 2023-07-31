@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTokensTable extends Migration
+class CreateRoomsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateTokensTable extends Migration
      */
     public function up()
     {
-        Schema::create('tokens', function (Blueprint $table) {
-            $table->id('token_id');
-            $table->char('token', 40);
-            $table->boolean('is_expired')->default(false);
+        Schema::create('rooms', function (Blueprint $table) {
+            $table->id();
+            $table->string('room_type');
+            $table->decimal('room_price', 8, 2);
+            $table->string('room_detail');
+            $table->string('room_img');
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreateTokensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tokens');
+        Schema::dropIfExists('rooms');
     }
 }

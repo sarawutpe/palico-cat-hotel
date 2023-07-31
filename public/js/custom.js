@@ -7,6 +7,8 @@ var deleteFileElement = null;
 var isRemovedFile = false;
 
 var callSearchFunc = null;
+var prefixApi = window.location.origin;
+
 
 $(document).ready(function () {
     linearIndeterminate = $("#linear-indeterminate");

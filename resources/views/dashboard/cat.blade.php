@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'จัดการข้อมูลพนักงาน')
+@section('title', 'จัดการข้อมูลแมว')
 @section('content')
     <style>
         .box-card-list {
@@ -24,7 +24,7 @@
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
-                            <legend>ข้อมูลพนักงาน</legend>
+                            <legend>ข้อมูลแมว</legend>
 
                             <div id="alert-message"></div>
 
@@ -34,47 +34,63 @@
                                     <input type="hidden" name="employee_id">
                                     <div class="col-8">
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
+                                            <label class="col-sm-3 col-form-label required">รหัสประจำตัวแมว</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="employee_user" class="form-control">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
+                                            <label class="col-sm-3 col-form-label required">ชื่อแมว</label>
                                             <div class="col-sm-9">
                                                 <input type="password" name="employee_pass" class="form-control">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ชื่อ-สกุล</label>
+                                            <label class="col-sm-3 col-form-label required">สีแมว</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="employee_name" class="form-control">
                                             </div>
                                         </div>
+
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ที่อยู่</label>
+                                            <label class="col-sm-3 col-form-label required">อายุแมว</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="employee_address" class="form-control">
                                             </div>
                                         </div>
+
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">เบอร์โทรศัพท์</label>
+                                            <label class="col-sm-3 col-form-label required">เพศแมว</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-select" aria-label="Default select example">
+                                                    <option selected>เลือกเพศแมว</option>
+                                                    <option value="MALE">ตัวผู้</option>
+                                                    <option value="FEMALE">ตัวเมีย</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">พันธุ์แมว</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="employee_phone" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label">Facebook</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_facebook" class="form-control">
-                                            </div>
+
+                                        <div class="mb-3">
+                                            <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
+                                            <textarea name="" class="form-control" rows="3"></textarea>
                                         </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label">Line ID</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_lineid" class="form-control">
-                                            </div>
+
+                                        <div class="mb-3">
+                                            <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
+                                            <textarea name="" class="form-control" rows="3"></textarea>
                                         </div>
+
+
                                     </div>
                                     <!-- Section 2 Upload -->
                                     <div class="col-4">
@@ -123,7 +139,7 @@
             <div class="col">
                 <div class="">
                     <fieldset class="scroll">
-                        <legend>รายชื่อพนักงาน</legend>
+                        <legend>รายชื่อแมว</legend>
                         <div id="employee-list"></div>
                     </fieldset>
                 </div>
@@ -140,7 +156,7 @@
         var storagePath = "{{ asset('storage/') }}"
         var formData = null
         var search = null
-        
+
         // Initialize
         $(document).ready(function() {
             handleGetAllEmployee()
@@ -201,7 +217,7 @@
                     $('#employee-list').empty().append(html);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    toastr.error('Failed');
+                    toastr.error('Failed to fetch employee data.');
                 }
             }).always(async function() {
                 await delay(1000)

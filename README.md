@@ -24,10 +24,11 @@ php artisan make:model Member -m
 ## Database
 - dbname palico_cat_hotel_db
 
-
 php artisan make:controller MemberController
 
+# migrate
 php artisan migrate
+php artisan make:migration [CREATE_TABLE_NAME]
 
 R all cache
 php artisan cache:clear

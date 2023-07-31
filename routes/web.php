@@ -24,11 +24,27 @@ Route::middleware([PublicRoute::class])->group(function () {
   Route::view('/recovery/reset/{token}', 'recovery-reset')->name('recovery.reset');
 });
 
+Route::get('/test', function () {
+  return "hello1";
+});
+
+Route::get('/test', function () {
+  return "hello1";
+});
+
+
 // Protected Routes
 Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
   Route::get('/dashboard/logout', [AuthenController::class, 'logout'])->name('dashboard.logout');
+
   Route::view('/dashboard', 'dashboard.index')->name('dashboard');
+
   Route::view('/dashboard/employee', 'dashboard.employee')->name('dashboard.employee');
+  Route::view('/dashboard/cat', 'dashboard.cat')->name('dashboard.cat');
+  Route::view('/dashboard/room', 'dashboard.room')->name('dashboard.room');
+
+  // Member views
+  Route::view('/dashboard/profile', 'dashboard.member.profile')->name('dashboard.member.profile');
 });
 
 Route::middleware([OAuth::class])->prefix('api')->group(function () {
@@ -36,6 +52,7 @@ Route::middleware([OAuth::class])->prefix('api')->group(function () {
   Route::post('/employee', [EmployeeController::class, 'addEmployee']);
   Route::put('/employee/{id}', [EmployeeController::class, 'updateEmployee']);
   Route::delete('/employee/{id}', [EmployeeController::class, 'deleteEmployee']);
+
 });
 
 // Service Routes
@@ -43,3 +60,6 @@ Route::post('/authen/register', [AuthenController::class, 'register'])->name('au
 Route::post('/authen/login', [AuthenController::class, 'login'])->name('authen.login');
 Route::post('/authen/recovery', [AuthenController::class, 'recovery'])->name('authen.recovery');
 Route::post('/authen/recovery/reset/{token}', [AuthenController::class, 'recoveryReset'])->name('authen.recovery.reset');
+
+Route::get('/api/authen/profile/{type}/{id}', [AuthenController::class, 'getProfile'])->name('authen.getProfile');
+Route::post('/api/authen/profile/{type}/{id}', [AuthenController::class, 'updateProfile'])->name('authen.updateProfile');

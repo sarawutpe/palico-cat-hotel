@@ -95,22 +95,59 @@
             </div>
         </div>
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
-            <!-- Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('dashboard') }}">
-                    <svg class="nav-icon">
-                        <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
-                    </svg>หน้าแรก
-                </a>
-            </li>
-            <!-- Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('dashboard.employee') }}">
-                    <svg class="nav-icon">
-                        <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
-                    </svg>พนักงาน
-                </a>
-            </li>
+
+            @if (session('type') === 'MEMBER')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard') }}">
+                        <svg class="nav-icon">
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
+                        </svg>หน้าแรก
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard.cat') }}">
+                        <svg class="nav-icon">
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                        </svg>แมว
+                    </a>
+                </li>
+            @endif
+
+            @if (session('type') === 'EMPLOYEE')
+            @endif
+
+            @if (session('type') === 'ADMIN')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard') }}">
+                        <svg class="nav-icon">
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
+                        </svg>หน้าแรก
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard.employee') }}">
+                        <svg class="nav-icon">
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                        </svg>พนักงาน
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard.cat') }}">
+                        <svg class="nav-icon">
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                        </svg>แมว
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard.room') }}">
+                        <svg class="nav-icon">
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                        </svg>ห้องพัก
+                    </a>
+                </li>
+            @endif
+
+
 
             <li class="nav-title">Theme</li>
             <li class="nav-item"><a class="nav-link" href="colors.html">
@@ -313,10 +350,11 @@
                             @yield('title', '')
                         </h4>
                         <div class="">
-                            <input type="text" name="search_input" class="form-control" placeholder="ค้นหา" style="border-radius: 50px;">
+                            <input type="text" name="search_input" class="form-control" placeholder="ค้นหา"
+                                style="border-radius: 50px;">
                         </div>
                     </ul>
-        
+
                     <ul class="header-nav ms-3">
                         <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown"
                                 href="#" role="button" aria-haspopup="true" aria-expanded="false">

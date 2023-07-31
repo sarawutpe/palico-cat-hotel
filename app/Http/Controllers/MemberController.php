@@ -13,9 +13,14 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use App\Rules\UniqueUser;
 
 class MemberController extends Controller
 {
+
+   
+
+
     public function show($id)
     {
         $member = Member::findOrFail($id);
