@@ -9,7 +9,6 @@ var isRemovedFile = false;
 var callSearchFunc = null;
 var prefixApi = window.location.origin;
 
-
 $(document).ready(function () {
     linearIndeterminate = $("#linear-indeterminate");
 
@@ -145,6 +144,22 @@ const utils = {
     },
     setLinearLoading() {
         linearIndeterminate.toggleClass("active");
+    },
+    showAlert(elementId, color, message) {
+        const target = $(elementId);
+        const colorClass = color === "success" ? "text-success" : "text-danger";
+        let html = "";
+
+        if (Array.isArray(message)) {
+            message.forEach((item) => (html += `<li>${item}</li>`));
+        } else {
+            html = message || "";
+        }
+        target
+            .empty()
+            .append(
+                `<div class="${colorClass} font-medium mb-2"><ul>${html}</ul></div>`
+            );
     },
     reRenderForm(object) {
         const targetForm = $(formId);

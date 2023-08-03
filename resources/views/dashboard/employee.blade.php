@@ -153,19 +153,6 @@
             files.setFilePreview()
         }
 
-        function showAlert(type, message) {
-            const target = $('#alert-message')
-            const color = message === 'success' ? 'text-success' : 'text-danger'
-            let html = '';
-
-            if (Array.isArray(message)) {
-                message.forEach((item) => html += `<li>${item}</li>`)
-            } else {
-                html = message || ''
-            }
-            target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
-        }
-
         function handleSubmit(event) {
             event.preventDefault()
             handleAddEmployee()
@@ -239,7 +226,7 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    utils.showAlert('#alert-message','error', response.errors)
                 },
             });
         }
@@ -305,7 +292,7 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    utils.showAlert('#alert-message', 'error', response.errors)
                 },
             });
         }

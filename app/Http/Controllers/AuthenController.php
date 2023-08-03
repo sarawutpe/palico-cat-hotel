@@ -303,8 +303,8 @@ class AuthenController extends Controller
             // Validate the input
             $request->validate([
                 'name' => 'required|string',
-                'user' => ['required', new UniqueUser],
-                'pass' => 'required|string',
+                'user' => 'nullable|string',
+                'pass' => 'nullable|string',
                 'address' => 'required|string',
                 'phone' => 'required|string',
                 'facebook' => 'nullable|string',
@@ -323,6 +323,8 @@ class AuthenController extends Controller
                 'img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
+            $file_formdata = "img";
+
             if ($type === Key::$member) {
                 $member = Member::findOrFail($id);
                 $member->member_name = $request->input('name');
@@ -340,7 +342,7 @@ class AuthenController extends Controller
                 // Upload file
                 if ($request->hasFile('img')) {
                     Helper::deleteFile($member->member_img);
-                    $member->member_img = Helper::uploadFile($request, "member_img");
+                    $member->member_img = Helper::uploadFile($request, $file_formdata);
                 }
 
                 // Remove file
@@ -370,7 +372,7 @@ class AuthenController extends Controller
                 // Upload file
                 if ($request->hasFile('img')) {
                     Helper::deleteFile($employee->employee_img);
-                    $employee->employeer_img = Helper::uploadFile($request, "employee_img");
+                    $employee->employeer_img = Helper::uploadFile($request, $file_formdata);
                 }
 
                 // Remove file
@@ -400,7 +402,7 @@ class AuthenController extends Controller
                 // Upload file
                 if ($request->hasFile('img')) {
                     Helper::deleteFile($admin->admin_img);
-                    $admin->admin_img = Helper::uploadFile($request, "admin_img");
+                    $admin->admin_img = Helper::uploadFile($request, $file_formdata);
                 }
 
                 // Remove file
