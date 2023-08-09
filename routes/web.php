@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\CatController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
 use App\Http\Middleware\PublicRoute;
-use App\Models\Employee;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,16 +23,11 @@ Route::middleware([PublicRoute::class])->group(function () {
   Route::view('/register', 'register')->name('register');
   Route::view('/recovery', 'recovery')->name('recovery');
   Route::view('/recovery/reset/{token}', 'recovery-reset')->name('recovery.reset');
+  Route::view('/room', 'room')->name('room');
+  Route::view('/price', 'price')->name('price');
+  Route::view('/rule', 'rule')->name('rule');
+  Route::view('/contact', 'contact')->name('contact');
 });
-
-Route::get('/test', function () {
-  return "hello1";
-});
-
-Route::get('/test', function () {
-  return "hello1";
-});
-
 
 // Protected Routes
 Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
@@ -58,6 +53,11 @@ Route::middleware([OAuth::class])->prefix('api')->group(function () {
   Route::post('/room', [RoomController::class, 'addRoom']);
   Route::put('/room/{id}', [RoomController::class, 'updateRoom']);
   Route::delete('/room/{id}', [RoomController::class, 'deleteRoom']);
+
+  Route::get('/cat/list', [CatController::class, 'getAllCat']);
+  Route::post('/cat', [CatController::class, 'addCat']);
+  Route::put('/cat/{id}', [CatController::class, 'updateCat']);
+  Route::delete('/cat/{id}', [CatController::class, 'deleteCat']);
 });
 
 // Service Routes

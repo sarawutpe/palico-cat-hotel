@@ -37,9 +37,8 @@ class RoomController extends Controller
                 'room_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
                 'room_name.required' => 'กรุณากรอกชื่อ',
-                'room_type.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
-                'room_price.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
-                'room_detail.required' => 'กรุณากรอกรหัสผ่าน',
+                'room_type.required' => 'กรุณากรอกขนาดหัอง',
+                'room_price.required' => 'กรุณากรอกราคา',
                 'room_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
                 'room_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
                 'room_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
@@ -80,9 +79,8 @@ class RoomController extends Controller
                 'room_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
                 'room_name.required' => 'กรุณากรอกชื่อ',
-                'room_type.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
-                'room_price.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
-                'room_detail.required' => 'กรุณากรอกรหัสผ่าน',
+                'room_type.required' => 'กรุณากรอกขนาดหัอง',
+                'room_price.required' => 'กรุณากรอกราคา',
                 'room_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
                 'room_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
                 'room_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',

@@ -21,7 +21,7 @@
     <section class="content">
         <div class="row">
             <div class="col">
-                <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
+                <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleAddCat(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
                             <legend>ข้อมูลแมว</legend>
@@ -31,62 +31,45 @@
                             <div class="">
                                 <div class="row">
                                     <!-- Section 1 -->
-                                    <input type="hidden" name="employee_id">
                                     <div class="col-8">
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">รหัสประจำตัวแมว</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_user" class="form-control">
-                                            </div>
-                                        </div>
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">ชื่อแมว</label>
                                             <div class="col-sm-9">
-                                                <input type="password" name="employee_pass" class="form-control">
+                                                <input type="text" name="cat_name" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">สีแมว</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_name" class="form-control">
-                                            </div>
-                                        </div>
-
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">อายุแมว</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="employee_address" class="form-control">
+                                                <input type="text" name="cat_age" class="form-control">
                                             </div>
                                         </div>
-
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">เพศแมว</label>
                                             <div class="col-sm-9">
-                                                <select class="form-select" aria-label="Default select example">
-                                                    <option selected>เลือกเพศแมว</option>
+                                                <select class="form-select" name="cat_sex">
+                                                    <option selected value="">เลือกเพศแมว</option>
                                                     <option value="MALE">ตัวผู้</option>
                                                     <option value="FEMALE">ตัวเมีย</option>
                                                 </select>
                                             </div>
                                         </div>
-
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">สีแมว</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" name="cat_color" class="form-control">
+                                            </div>
+                                        </div>
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">พันธุ์แมว</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="employee_phone" class="form-control">
+                                                <input type="text" name="cat_gen" class="form-control">
                                             </div>
                                         </div>
-
                                         <div class="mb-3">
                                             <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
-                                            <textarea name="" class="form-control" rows="3"></textarea>
+                                            <textarea name="cat_ref" class="form-control" rows="3"></textarea>
                                         </div>
-
-                                        <div class="mb-3">
-                                            <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
-                                            <textarea name="" class="form-control" rows="3"></textarea>
-                                        </div>
-
                                     </div>
                                     <!-- Section 2 Upload -->
                                     <div class="col-4">
@@ -100,7 +83,7 @@
                                                 </div>
                                                 <div class="d-flex flex-column gap-2">
                                                     <div class="btn btn-secondary position-relative w-100">
-                                                        <input type="file" id="file-upload" name="employee_img"
+                                                        <input type="file" id="file-upload" name="cat_img"
                                                             accept="image/png, image/jpeg"
                                                             class="position-absolute opacity-0 w-100 h-100"
                                                             style="top: 0; left: 0; cursor: pointer;">
@@ -136,7 +119,7 @@
                 <div class="">
                     <fieldset class="scroll">
                         <legend>รายชื่อแมว</legend>
-                        <div id="employee-list"></div>
+                        <div id="cat-list"></div>
                     </fieldset>
                 </div>
             </div>
@@ -150,13 +133,14 @@
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
         var storagePath = "{{ asset('storage/') }}"
+        var id = "{{ session('id') }}"
         var formData = null
         var search = null
 
         // Initialize
         $(document).ready(function() {
-            handleGetAllEmployee()
-            callSearchFunc = handleGetAllEmployee;
+            handleGetAllCat()
+            callSearchFunc = handleGetAllCat;
         })
 
         function resetForm() {
@@ -178,42 +162,36 @@
             target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
         }
 
-        function handleSubmit(event) {
-            event.preventDefault()
-            handleAddEmployee()
-        }
-
-        function handleGetAllEmployee() {
+        function handleGetAllCat() {
             utils.setLinearLoading()
-            const url = new URL(`${window.location.origin}/api/employee/list${window.location.search}`);
 
             $.ajax({
-                url: url,
+                url: `${prefixApi}/api/cat/list${window.location.search}`,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
 
                     let html = ''
-                    response.data.forEach(function(employee, index) {
+                    response.data.forEach(function(cat, index) {
                         html += `
-                        <div class="box-card-list" onclick="handleShowEmployee(${index} ,${utils.jsonString(employee)})">
+                        <div class="box-card-list" onclick="handleShowCat(${index} ,${utils.jsonString(cat)})">
                             <div>
-                                <p>รหัสพนักงาน ${employee.employee_id}</p>
-                                <p>ชื่อ-สกุล ${employee.employee_name}</p>
-                                <p>เบอร์โทรศัพท์ ${employee.employee_phone}</p>
+                                <p>รหัสประจำตัวแมว ${cat.cat_id}</p>
+                                <p>ชื่อแมว ${cat.cat_name}</p>
+                                <p>ชื่อเจ้าของสัตว์ ${cat.member.member_name}</p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
-                                src="{{ asset('storage/') }}/${employee.employee_img}"
+                                src="{{ asset('storage/') }}/${cat.cat_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
                             </div>
                         </div>`;
                     });
-                    $('#employee-list').empty().append(html);
+                    $('#cat-list').empty().append(html);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    toastr.error('Failed to fetch employee data.');
+                    toastr.error();
                 }
             }).always(async function() {
                 await delay(1000)
@@ -221,24 +199,25 @@
             });
         }
 
-        function handleAddEmployee() {
+        function handleAddCat(event) {
+            event.preventDefault()
+
             formData = new FormData();
-            formData.append('employee_name', $('input[name="employee_name"]').val());
-            formData.append('employee_user', $('input[name="employee_user"]').val());
-            formData.append('employee_pass', $('input[name="employee_pass"]').val());
-            formData.append('employee_address', $('input[name="employee_address"]').val());
-            formData.append('employee_phone', $('input[name="employee_phone"]').val());
-            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
-            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('cat_name', $('input[name="cat_name"]').val());
+            formData.append('cat_age', $('input[name="cat_age"]').val());
+            formData.append('cat_sex', $('select[name="cat_sex"]').val());
+            formData.append('cat_color', $('input[name="cat_color"]').val());
+            formData.append('cat_gen', $('input[name="cat_gen"]').val());
+            formData.append('cat_ref', $('textarea[name="cat_ref"]').val());
+            formData.append('member_id', id);
 
             const file = files.getFileUpload()
             if (file) {
-                formData.append("employee_img", file);
+                formData.append("cat_img", file);
             }
 
-            const url = new URL(`${window.location.origin}/api/employee`);
             $.ajax({
-                url: url,
+                url: `${prefixApi}/api/cat`,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -246,8 +225,8 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
-                    toastr.success('Successfully');
-                    handleGetAllEmployee()
+                    toastr.success();
+                    handleGetAllCat()
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
@@ -256,54 +235,45 @@
             });
         }
 
-        function handleShowEmployee(index, data) {
-            const employee = JSON.parse(data)
-            if (typeof employee !== 'object') return
+        function handleShowCat(index, data) {
+            const cat = JSON.parse(data)
+            if (typeof cat !== 'object') return
 
-            selectedId = employee.employee_id
+            selectedId = cat.cat_id
             selectedIndex = index
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
-            $('input[name="employee_id"]').val(employee.employee_id || "");
-            $('input[name="employee_name"]').val(employee.employee_name || "");
-            $('input[name="employee_user"]').val(employee.employee_user || "");
-            $('input[name="employee_pass"]').val("");
-            $('input[name="employee_address"]').val(employee.employee_address || "");
-            $('input[name="employee_phone"]').val(employee.employee_phone || "");
-            $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
-            $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
+            $('input[name="cat_name"]').val(cat.cat_name || "");
+            $('input[name="cat_age"]').val(cat.cat_age || "");
+            $('select[name="cat_sex"]').val(cat.cat_sex || "");
+            $('input[name="cat_color"]').val(cat.cat_color);
+            $('input[name="cat_gen"]').val(cat.cat_gen || "");
+            $('textarea[name="cat_ref"]').val(cat.cat_ref || "");
 
-            if (employee.employee_img) {
-                $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
-            } else {
-                $('#file-preview').css('opacity', 0).attr('src', '');
-            }
+            files.setFilePreview(`${storagePath}/${(cat.cat_img || "")}`)
         }
 
         function handleUpdateEmployee() {
             if (!selectedId) return
 
-            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
-
             formData = new FormData();
             formData.append('_method', 'PUT');
-            formData.append('employee_name', $('input[name="employee_name"]').val());
-            formData.append('employee_user', $('input[name="employee_user"]').val());
-            formData.append('employee_pass', $('input[name="employee_pass"]').val());
-            formData.append('employee_address', $('input[name="employee_address"]').val());
-            formData.append('employee_phone', $('input[name="employee_phone"]').val());
-            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
-            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('cat_name', $('input[name="cat_name"]').val());
+            formData.append('cat_age', $('input[name="cat_age"]').val());
+            formData.append('cat_sex', $('select[name="cat_sex"]').val());
+            formData.append('cat_color', $('input[name="cat_color"]').val());
+            formData.append('cat_gen', $('input[name="cat_gen"]').val());
+            formData.append('cat_ref', $('textarea[name="cat_ref"]').val());
 
             const file = files.getFileUpload()
             if (file) {
-                formData.append("employee_img", file);
+                formData.append("cat_img", file);
             } else if (!file && isRemovedFile) {
                 url.searchParams.set('set', 'file_null')
             }
 
             $.ajax({
-                url: url.toString(),
+                url: `${prefixApi}/api/cat/${selectedId}`,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -311,9 +281,9 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
-                    toastr.success('Successfully');
-                    handleGetAllEmployee()
-                    handleShowEmployee(selectedIndex, JSON.stringify(response.data))
+                    toastr.success();
+                    handleGetAllCat()
+                    handleShowCat(selectedIndex, JSON.stringify(response.data))
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
@@ -325,21 +295,19 @@
         async function handleDeleteEmployee() {
             if (!selectedId) return
 
-            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
-
             const confirm = await utils.confirmAlert();
             if (confirm) {
                 $.ajax({
-                    url: url,
+                    url: `${prefixApi}/api/cat/${selectedId}`,
                     type: "DELETE",
                     headers: headers,
                     success: function(data, textStatus, jqXHR) {
                         resetForm()
-                        toastr.success('', '')
-                        handleGetAllEmployee()
+                        toastr.success()
+                        handleGetAllCat()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        toastr.success('', '')
+                        toastr.success()
                     },
                 })
             }

@@ -257,7 +257,6 @@
                 processData: false,
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
-                    resetForm()
                     toastr.success();
                     handleGetAllRoom()
                     handleShowEmployee(selectedIndex, JSON.stringify(response.data))
@@ -272,12 +271,10 @@
         async function handleDeleteEmployee() {
             if (!selectedId) return
 
-            const url = new URL(`${window.location.origin}/api/room/${selectedId}`);
-
             const confirm = await utils.confirmAlert();
             if (confirm) {
                 $.ajax({
-                    url: url,
+                    url: `${window.location.origin}/api/room/${selectedId}`,
                     type: "DELETE",
                     headers: headers,
                     success: function(data, textStatus, jqXHR) {
@@ -286,10 +283,6 @@
                         handleGetAllRoom()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-
-                        console.log(jqXHR)
-                        console.log(textStatus)
-                        
                         toastr.error()
                     },
                 })

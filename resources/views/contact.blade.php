@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-lg">
-	<h2>หน้าแรก</h2>
+	<h2>ติดต่อเรา</h2>
 
 
 </div>

@@ -31,7 +31,6 @@
                             <div class="">
                                 <div class="row">
                                     <!-- Section 1 -->
-                                    <input type="hidden" name="employee_id">
                                     <div class="col-8">
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
