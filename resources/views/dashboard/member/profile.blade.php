@@ -111,6 +111,8 @@
         var id = "{{ session('id') }}"
         var type = "{{ session('type') }}"
 
+        console.log(type)
+
         // Initialize
         $(document).ready(function() {
             getProfile()
@@ -137,8 +139,11 @@
                     $('input[name="lineid"]').val(value.member_lineid || value.employee_lineid || value
                         .admin_lineid);
 
-                    files.setFilePreview(`${storagePath}/${value.member_img}`)
+                    const img = value.member_img || value.employee_img || value.admin_img
+                    const imgSrc = `${storagePath}/${img}`
 
+                    files.setFilePreview(imgSrc)
+                    $('.avatar-img').attr('src', imgSrc);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     toastr.error('Failed');

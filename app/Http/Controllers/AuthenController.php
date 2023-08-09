@@ -131,7 +131,6 @@ class AuthenController extends Controller
                 Session::put('is_logged_in', true);
                 Session::put('id', $id);
                 Session::put('type', $type);
-                Session::put('name', $name);
                 Session::put('img', $img);
                 return redirect()->route('dashboard');
             } else {
@@ -152,7 +151,6 @@ class AuthenController extends Controller
             Session::forget('is_logged_in');
             Session::forget('id');
             Session::forget('type');
-            Session::forget('name');
             Session::forget('img');
             Session::flush();
 
@@ -284,7 +282,7 @@ class AuthenController extends Controller
             }
 
             if ($type === Key::$admin) {
-                $admin = Member::findOrFail($id);
+                $admin = Admin::findOrFail($id);
                 return response()->json(['success' => true, 'data' => $admin]);
             }
 
@@ -351,6 +349,8 @@ class AuthenController extends Controller
                     $member->employee_img = "";
                 }
 
+                Session::put('img', $member->member_img);
+
                 $member->save();
                 return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
             }
@@ -381,6 +381,8 @@ class AuthenController extends Controller
                     $employee->employee_img = "";
                 }
 
+                Session::put('img', $employee->member_img);
+
                 $employee->save();
                 return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
             }
@@ -410,6 +412,8 @@ class AuthenController extends Controller
                     Helper::deleteFile($admin->admin_img);
                     $admin->admin_img = "";
                 }
+
+                Session::put('img', $admin->member_img);
 
                 $admin->save();
                 return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);

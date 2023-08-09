@@ -94,7 +94,7 @@
                 <span style="font-size: 18px">{{ session('type') }}</span> <br>
             </div>
         </div>
-        <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+        <ul class="sidebar-nav" data-coreui="navigationaa" data-simplebar="">
 
             @if (session('type') === 'MEMBER')
                 <li class="nav-item">
@@ -337,7 +337,7 @@
                     <button class="header-toggler px-md-0 me-md-3" type="button"
                         onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
                         <svg class="icon icon-lg">
-                            {{-- <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-menu"></use> --}}
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-menu') }}"></use>
                         </svg>
                     </button><a class="header-brand d-md-none" href="#">
                         <svg width="118" height="46" alt="CoreUI Logo">
@@ -358,7 +358,7 @@
                         <li class="nav-item dropdown">
                             <div class="nav-link py-0" data-coreui-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 <div class="avatar avatar-md">
-                                    <img class="avatar-img" src="{{ asset('storage')}}/{{session('img')}}" >
+                                    <img class="avatar-img" src="{{ asset('storage')}}/{{session('img')}}" width="40px" height="40px">
                                 </div>
                             </div>
                             <div class="dropdown-menu dropdown-menu-end pt-0">

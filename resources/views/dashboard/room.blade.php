@@ -21,59 +21,38 @@
     <section class="content">
         <div class="row">
             <div class="col">
-                <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
+                <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleAddEmployee(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
-                            <legend>จัดการข้อมูลพนักงาน</legend>
+                            <legend>จัดการข้อมูลห้องพัก</legend>
 
                             <div id="alert-message"></div>
 
                             <div class="">
                                 <div class="row">
                                     <!-- Section 1 -->
-                                    <input type="hidden" name="employee_id">
                                     <div class="col-8">
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
+                                            <label class="col-sm-3 col-form-label required">ชื่อห้อง</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="employee_user" class="form-control">
+                                                <input type="text" name="room_name" class="form-control">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
+                                            <label class="col-sm-3 col-form-label required">ขนาดห้อง</label>
                                             <div class="col-sm-9">
-                                                <input type="password" name="employee_pass" class="form-control">
+                                                <input type="text" name="room_type" class="form-control">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ชื่อ-สกุล</label>
+                                            <label class="col-sm-3 col-form-label required">ราคาห้อง</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="employee_name" class="form-control">
+                                                <input type="number" name="room_price" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ที่อยู่</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_address" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">เบอร์โทรศัพท์</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_phone" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label">Facebook</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_facebook" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label">Line ID</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_lineid" class="form-control">
-                                            </div>
+                                        <div class="mb-3">
+                                            <label class="col-sm-3 col-form-label"></label>
+                                            <textarea name="room_detail" class="form-control" rows="3"></textarea>
                                         </div>
                                     </div>
                                     <!-- Section 2 Upload -->
@@ -88,7 +67,7 @@
                                                 </div>
                                                 <div class="d-flex flex-column gap-2">
                                                     <div class="btn btn-secondary position-relative w-100">
-                                                        <input type="file" id="file-upload" name="employee_img"
+                                                        <input type="file" id="file-upload" name="room_img"
                                                             accept="image/png, image/jpeg"
                                                             class="position-absolute opacity-0 w-100 h-100"
                                                             style="top: 0; left: 0; cursor: pointer;">
@@ -123,8 +102,8 @@
             <div class="col">
                 <div class="">
                     <fieldset class="scroll">
-                        <legend>รายชื่อพนักงาน</legend>
-                        <div id="employee-list"></div>
+                        <legend>รายชื่อห้อง</legend>
+                        <div id="room-list"></div>
                     </fieldset>
                 </div>
             </div>
@@ -140,11 +119,11 @@
         var storagePath = "{{ asset('storage/') }}"
         var formData = null
         var search = null
-        
+
         // Initialize
         $(document).ready(function() {
-            handleGetAllEmployee()
-            callSearchFunc = handleGetAllEmployee;
+            handleGetAllRoom()
+            callSearchFunc = handleGetAllRoom;
         })
 
         function resetForm() {
@@ -166,42 +145,37 @@
             target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
         }
 
-        function handleSubmit(event) {
-            event.preventDefault()
-            handleAddEmployee()
-        }
-
-        function handleGetAllEmployee() {
+        function handleGetAllRoom() {
             utils.setLinearLoading()
-            const url = new URL(`${window.location.origin}/api/employee/list${window.location.search}`);
 
             $.ajax({
-                url: url,
+                url: `${window.location.origin}/api/room/list${window.location.search}`,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
 
                     let html = ''
-                    response.data.forEach(function(employee, index) {
+                    response.data.forEach(function(room, index) {
                         html += `
-                        <div class="box-card-list" onclick="handleShowEmployee(${index} ,${utils.jsonString(employee)})">
+                        <div class="box-card-list" onclick="handleShowRoom(${index} ,${utils.jsonString(room)})">
                             <div>
-                                <p>รหัสพนักงาน ${employee.employee_id}</p>
-                                <p>ชื่อ-สกุล ${employee.employee_name}</p>
-                                <p>เบอร์โทรศัพท์ ${employee.employee_phone}</p>
+                                <p>ชื่อห้อง ${room.room_name}</p>
+                                <p>ขนาดห้อง ${room.room_type}</p>
+                                <p>ราคาห้อง ${room.room_price}</p>
+                                <p>ข้อมูลเพิ่มเติม ${room.room_detail}</p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
-                                src="{{ asset('storage/') }}/${employee.employee_img}"
+                                src="{{ asset('storage/') }}/${room.room_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
                             </div>
                         </div>`;
                     });
-                    $('#employee-list').empty().append(html);
+                    $('#room-list').empty().append(html);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    toastr.error('Failed to fetch employee data.');
+                    toastr.error();
                 }
             }).always(async function() {
                 await delay(1000)
@@ -209,24 +183,22 @@
             });
         }
 
-        function handleAddEmployee() {
+        function handleAddEmployee(event) {
+            event.preventDefault()
+
             formData = new FormData();
-            formData.append('employee_name', $('input[name="employee_name"]').val());
-            formData.append('employee_user', $('input[name="employee_user"]').val());
-            formData.append('employee_pass', $('input[name="employee_pass"]').val());
-            formData.append('employee_address', $('input[name="employee_address"]').val());
-            formData.append('employee_phone', $('input[name="employee_phone"]').val());
-            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
-            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('room_name', $('input[name="room_name"]').val());
+            formData.append('room_type', $('input[name="room_type"]').val());
+            formData.append('room_price', $('input[name="room_price"]').val());
+            formData.append('room_detail', $('input[name="room_detail"]').val());
 
             const file = files.getFileUpload()
             if (file) {
-                formData.append("employee_img", file);
+                formData.append("room_img", file);
             }
 
-            const url = new URL(`${window.location.origin}/api/employee`);
             $.ajax({
-                url: url,
+                url: `${prefixApi}/api/room`,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -234,8 +206,8 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
-                    toastr.success('Successfully');
-                    handleGetAllEmployee()
+                    toastr.success();
+                    handleGetAllRoom()
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
@@ -244,54 +216,41 @@
             });
         }
 
-        function handleShowEmployee(index, data) {
-            const employee = JSON.parse(data)
-            if (typeof employee !== 'object') return
+        function handleShowRoom(index, data) {
+            const room = JSON.parse(data)
+            if (typeof room !== 'object') return
 
-            selectedId = employee.employee_id
+            selectedId = room.room_id
             selectedIndex = index
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
-            $('input[name="employee_id"]').val(employee.employee_id || "");
-            $('input[name="employee_name"]').val(employee.employee_name || "");
-            $('input[name="employee_user"]').val(employee.employee_user || "");
-            $('input[name="employee_pass"]').val("");
-            $('input[name="employee_address"]').val(employee.employee_address || "");
-            $('input[name="employee_phone"]').val(employee.employee_phone || "");
-            $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
-            $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
+            $('input[name="room_name"]').val(room.room_name || "");
+            $('input[name="room_type"]').val(room.room_type || "");
+            $('input[name="room_price"]').val(room.room_price || "");
+            $('textarea[name="room_detail"]').val(room.room_detail || "");
 
-            if (employee.employee_img) {
-                $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
-            } else {
-                $('#file-preview').css('opacity', 0).attr('src', '');
-            }
+            files.setFilePreview(`${storagePath}/${(room.room_img || "")}`)
         }
 
         function handleUpdateEmployee() {
             if (!selectedId) return
 
-            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
-
             formData = new FormData();
             formData.append('_method', 'PUT');
-            formData.append('employee_name', $('input[name="employee_name"]').val());
-            formData.append('employee_user', $('input[name="employee_user"]').val());
-            formData.append('employee_pass', $('input[name="employee_pass"]').val());
-            formData.append('employee_address', $('input[name="employee_address"]').val());
-            formData.append('employee_phone', $('input[name="employee_phone"]').val());
-            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
-            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('room_name', $('input[name="room_name"]').val());
+            formData.append('room_type', $('input[name="room_type"]').val());
+            formData.append('room_price', $('input[name="room_price"]').val());
+            formData.append('room_detail', $('textarea[name="room_detail"]').val());
 
             const file = files.getFileUpload()
             if (file) {
-                formData.append("employee_img", file);
+                formData.append("room_img", file);
             } else if (!file && isRemovedFile) {
                 url.searchParams.set('set', 'file_null')
             }
 
             $.ajax({
-                url: url.toString(),
+                url: `${window.location.origin}/api/room/${selectedId}`,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -299,8 +258,8 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
-                    toastr.success('Successfully');
-                    handleGetAllEmployee()
+                    toastr.success();
+                    handleGetAllRoom()
                     handleShowEmployee(selectedIndex, JSON.stringify(response.data))
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -313,7 +272,7 @@
         async function handleDeleteEmployee() {
             if (!selectedId) return
 
-            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
+            const url = new URL(`${window.location.origin}/api/room/${selectedId}`);
 
             const confirm = await utils.confirmAlert();
             if (confirm) {
@@ -323,11 +282,15 @@
                     headers: headers,
                     success: function(data, textStatus, jqXHR) {
                         resetForm()
-                        toastr.success('', '')
-                        handleGetAllEmployee()
+                        toastr.success()
+                        handleGetAllRoom()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        toastr.success('', '')
+
+                        console.log(jqXHR)
+                        console.log(textStatus)
+                        
+                        toastr.error()
                     },
                 })
             }

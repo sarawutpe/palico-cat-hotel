@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\RoomController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
@@ -53,6 +54,10 @@ Route::middleware([OAuth::class])->prefix('api')->group(function () {
   Route::put('/employee/{id}', [EmployeeController::class, 'updateEmployee']);
   Route::delete('/employee/{id}', [EmployeeController::class, 'deleteEmployee']);
 
+  Route::get('/room/list', [RoomController::class, 'getAllRoom']);
+  Route::post('/room', [RoomController::class, 'addRoom']);
+  Route::put('/room/{id}', [RoomController::class, 'updateRoom']);
+  Route::delete('/room/{id}', [RoomController::class, 'deleteRoom']);
 });
 
 // Service Routes

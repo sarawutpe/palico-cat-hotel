@@ -70,9 +70,6 @@
                                             </div>
                                         </div>
 
-
-
-
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">พันธุ์แมว</label>
                                             <div class="col-sm-9">
@@ -89,7 +86,6 @@
                                             <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
                                             <textarea name="" class="form-control" rows="3"></textarea>
                                         </div>
-
 
                                     </div>
                                     <!-- Section 2 Upload -->

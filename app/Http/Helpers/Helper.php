@@ -14,6 +14,8 @@ class Helper
     return Str::random($length);
   }
 
+  // $request is request data
+  // $fileName is key name file
   public static function uploadFile($request, $fileName)
   {
     if (!$request->hasFile($fileName)) {
@@ -23,8 +25,6 @@ class Helper
     $uploadedFile = $request->file($fileName);
     $filename = self::random(10) . '.' . $uploadedFile->getClientOriginalExtension();
     $uploadedFile->storeAs('', $filename, 'public');
-
-    self::deleteFile($request->$fileName);
 
     return $filename;
   }
