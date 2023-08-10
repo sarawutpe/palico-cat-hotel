@@ -12,6 +12,8 @@ MariaDB
 - sweetalert2 https://sweetalert2.github.io/
 - toastr https://codeseven.github.io/toastr/demo.html
 
+- composer require mailjet/mailjet-apiv3-php
+
 ## Laravel Commands
 $ run
 php artisan serve

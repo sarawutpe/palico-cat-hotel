@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Response;
 use App\Rules\UniqueUser;
 use Illuminate\Support\Facades\DB;
+use App\Http\Helpers\Mail;
 
 class AuthenController extends Controller
 {
@@ -186,8 +187,9 @@ class AuthenController extends Controller
 
             $id = $member->member_id ?? $employee->employee_id ?? $admin->admin_id ?? null;
             $user = $member->member_user ?? $employee->employee_user ?? $admin->admin_user ?? null;
-            $type = "";
+            $email_to = $member->member_email ?? $employee->employee_email ?? $admin->admin_email ?? null;
 
+            $type = "";
             if ($member) {
                 $type = Key::$member;
             } else if ($employee) {
@@ -206,7 +208,13 @@ class AuthenController extends Controller
             $token = new Token(['token' => sha1($encrpy_token)]);
             $token->save();
 
-            return redirect()->back()->with('success', 'ตรวจสอบอีเมลเพื่อดำเนินการรีเซ็ตรหัสผ่าน ' . $encrpy_token);
+            // Send to mail
+            $url_to_recovery = url('/recovery/reset/' . $encrpy_token);
+            $res = Mail::sendMail('', $email_to, $url_to_recovery);
+
+            dd($res);
+
+            return redirect()->back()->with('success', 'ตรวจสอบอีเมลเพื่อดำเนินการรีเซ็ตรหัสผ่าน');
         } catch (ValidationException $exception) {
             return redirect()->back()->withErrors($exception->errors())->withInput();
         } catch (\Throwable $th) {
@@ -224,14 +232,14 @@ class AuthenController extends Controller
             ]);
 
             // Check if invalid token
-            $token = Token::where('token', sha1($token))->first();
-            if (empty($token) || $token->is_expired) {
+            $token_model = Token::where('token', sha1($token))->first();
+            if (!$token_model || $token_model->is_expired) {
                 return redirect()->back()->with('error', 'Token หมดอายุ');
             }
 
             // Set token is_expired to db
-            $token->is_expired = 1;
-            $token->save();
+            $token_model->is_expired = 1;
+            $token_model->save();
 
             $secert = env('APP_SECRET', '6C4A9D33A78E12A2');
             $decrypt_token = Crypt::decryptString($token, $secert);

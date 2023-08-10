@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ViewController;
 use App\Http\Controllers\AuthenController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoomController;
@@ -18,15 +19,15 @@ use App\Http\Middleware\PublicRoute;
 
 // View Routes
 Route::middleware([PublicRoute::class])->group(function () {
-  Route::view('/', 'index')->name('home');
-  Route::view('/login', 'login')->name('login');
-  Route::view('/register', 'register')->name('register');
-  Route::view('/recovery', 'recovery')->name('recovery');
-  Route::view('/recovery/reset/{token}', 'recovery-reset')->name('recovery.reset');
-  Route::view('/room', 'room')->name('room');
-  Route::view('/price', 'price')->name('price');
-  Route::view('/rule', 'rule')->name('rule');
-  Route::view('/contact', 'contact')->name('contact');
+  Route::get('/', [ViewController::class, 'homePage'])->name('home');
+  Route::get('/login', [ViewController::class, 'loginPage'])->name('login');
+  Route::get('/register', [ViewController::class, 'registerPage'])->name('register');
+  Route::get('/recovery', [ViewController::class, 'recoveryPage'])->name('recovery');
+  Route::get('/recovery/reset/{token}', [ViewController::class, 'recoveryResetPage'])->name('recovery.reset');
+  Route::get('/room', [ViewController::class, 'roomPage'])->name('room');
+  Route::get('/price', [ViewController::class, 'pricePage'])->name('price');
+  Route::get('/rule', [ViewController::class, 'rulePage'])->name('rule');
+  Route::get('/contact', [ViewController::class, 'contactPage'])->name('contact');
 });
 
 // Protected Routes
