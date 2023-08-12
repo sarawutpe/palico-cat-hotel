@@ -1,10 +1,4 @@
 @php
-    Session::forget('is_logged_in');
-    Session::forget('id');
-    Session::forget('type');
-    Session::forget('name');
-    Session::forget('img');
-    
     header('Cache-Control: no-store, private, max-age=0, no-cache, must-revalidate, post-check=0, pre-check=0');
     header('Pragma: no-cache');
 @endphp

@@ -53,6 +53,7 @@
     <script src="{{ asset('js/lodash.min.js') }}"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/lodash.debounce@4.0.8/index.min.js"></script> --}}
 
 </head>
@@ -111,6 +112,13 @@
                         </svg>แมว
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard.book') }}">
+                        <svg class="nav-icon">
+                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                        </svg>จอง
+                    </a>
+                </li>
             @endif
 
             @if (session('type') === 'EMPLOYEE')
@@ -141,7 +149,7 @@
             @endif
 
 
-        <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
+            <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
     </div>
 
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
@@ -170,9 +178,11 @@
 
                     <ul class="header-nav ms-3">
                         <li class="nav-item dropdown">
-                            <div class="nav-link py-0" data-coreui-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <div class="nav-link py-0" data-coreui-toggle="dropdown" role="button"
+                                aria-haspopup="true" aria-expanded="false">
                                 <div class="avatar avatar-md">
-                                    <img class="avatar-img" src="{{ asset('storage')}}/{{session('img')}}" width="40px" height="40px">
+                                    <img class="avatar-img" src="{{ asset('storage') }}/{{ session('img') }}"
+                                        width="40px" height="40px">
                                 </div>
                             </div>
                             <div class="dropdown-menu dropdown-menu-end pt-0">
@@ -181,13 +191,16 @@
                                 </div>
                                 <a class="dropdown-item" href="/dashboard/profile">
                                     <svg class="icon me-2">
-                                        <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-user') }}"></use>
+                                        <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-user') }}">
+                                        </use>
                                     </svg>
                                     Profile
                                 </a>
                                 <a class="dropdown-item" href="/dashboard/logout">
                                     <svg class="icon me-2">
-                                        <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}"></use>
+                                        <use
+                                            xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-account-logout') }}">
+                                        </use>
                                     </svg>
                                     Logout
                                 </a>

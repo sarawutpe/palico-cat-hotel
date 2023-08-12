@@ -206,3 +206,17 @@ fieldset.scroll::-webkit-scrollbar-thumb:hover {
         width: 10%;
     }
 }
+
+/* .btn:disabled,
+.btn.disabled,
+fieldset:disabled .btn {
+    pointer-events: initial;
+} */
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}

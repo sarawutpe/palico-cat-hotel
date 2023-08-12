@@ -35,10 +35,13 @@ Route::middleware([PublicRoute::class])->group(function () {
 // Protected Routes
 Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
   Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
-  Route::get('/dashboard/employee', [ViewController::class, 'dashboard.employee'])->name('dashboard.employee');
-  Route::get('/dashboard/cat', [ViewController::class, 'dashboard.cat'])->name('dashboard.cat');
-  Route::get('/dashboard/room', [ViewController::class, 'dashboard.room'])->name('dashboard.room');
-  Route::get('/dashboard/profile', [ViewController::class, 'dashboard.profile'])->name('dashboard.profile');
+  Route::get('/dashboard/employee', [ViewController::class, 'dashboardEmployee'])->name('dashboard.employee');
+  Route::get('/dashboard/cat', [ViewController::class, 'dashboardCat'])->name('dashboard.cat');
+  Route::get('/dashboard/room', [ViewController::class, 'dashboardRoom'])->name('dashboard.room');
+  
+  Route::get('/dashboard/book', [ViewController::class, 'dashboardBook'])->name('dashboard.book');
+  
+  Route::get('/dashboard/profile', [ViewController::class, 'dashboardProfile'])->name('dashboard.profile');
   Route::get('/dashboard/logout', [AuthenController::class, 'logout'])->name('dashboard.logout');
 });
 

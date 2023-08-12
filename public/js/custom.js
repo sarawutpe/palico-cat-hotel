@@ -24,7 +24,7 @@ $(document).ready(function () {
 });
 
 // File Upload Change
-$(document).ready(function () {
+function fileToolkit() {
     filePreviewElement = $("#file-preview");
     fileUploadElement = $("#file-upload");
     deleteFileElement = $("#file-delete");
@@ -63,6 +63,10 @@ $(document).ready(function () {
         filePreviewElement.attr("src", "");
         fileUploadElement.val("");
     });
+}
+
+$(document).ready(function () {
+    fileToolkit();
 });
 
 function setQueryParameter(key, value) {
@@ -81,6 +85,8 @@ const files = {
         filePreviewElement.attr("src", src || "");
     },
     getFileUpload() {
+        if (!fileUploadElement.prop("files")) return;
+
         return fileUploadElement.prop("files")[0];
     },
 };
@@ -89,6 +95,18 @@ function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Debug: form data
+function logFormData(data) {
+    if (data instanceof FormData) {
+        const formDataArray = [];
+
+        for (const pair of data.entries()) {
+            formDataArray.push({ Field: pair[0], Value: pair[1] });
+        }
+
+        console.table(formDataArray);
+    }
+}
 const utils = {
     jsonString(jsonData) {
         return typeof jsonData === "object"
