@@ -4,7 +4,7 @@
     <div class="container-lg">
         <h2>ห้องพักและการจอง</h2>
 
-        <h3 class="text-red[500]">asdasd</h3>
+        <p class="">จำนวน {{ count($rooms) }}</p>
 
         <div class="d-flex flex-wrap">
             @foreach ($rooms as $room)

@@ -7,8 +7,8 @@ use App\Http\Helpers\Helper;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Rules\UniqueUser;
+use App\Rules\UniqueEmail;
 
-// add get update delete
 class EmployeeController extends Controller
 {
     public function getAllEmployee(Request $request)
@@ -35,6 +35,7 @@ class EmployeeController extends Controller
                 'employee_name' => 'required|string',
                 'employee_user' => ['required', new UniqueUser()],
                 'employee_pass' => 'required|string',
+                'employee_email' => ['required', new UniqueEmail()],
                 'employee_address' => 'required|string',
                 'employee_phone' => 'required|string',
                 'employee_facebook' => 'nullable|string',
@@ -44,6 +45,8 @@ class EmployeeController extends Controller
                 'employee_name.required' => 'กรุณากรอกชื่อ',
                 'employee_user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
                 'employee_user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                'employee_email.required' => 'กรุณากรอกอีเมล',
+                'employee_email.unique' => 'อีเมลผู้ใช้งานนี้มีอยู่แล้ว',
                 'employee_pass.required' => 'กรุณากรอกรหัสผ่าน',
                 'employee_address.required' => 'กรุณากรอกที่อยู่',
                 'employee_phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์',
@@ -53,22 +56,15 @@ class EmployeeController extends Controller
                 'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
-            $employee_name = $request->input('employee_name');
-            $employee_user = $request->input('employee_user');
-            $employee_pass = $request->input('employee_pass');
-            $employee_address = $request->input('employee_address');
-            $employee_phone = $request->input('employee_phone');
-            $employee_facebook = $request->input('employee_facebook');
-            $employee_lineid = $request->input('employee_lineid');
-
             $employee = new Employee([
-                'employee_name' => $employee_name,
-                'employee_user' => $employee_user,
-                'employee_pass' => md5($employee_pass),
-                'employee_address' => $employee_address,
-                'employee_phone' => $employee_phone,
-                'employee_facebook' => $employee_facebook,
-                'employee_lineid' => $employee_lineid,
+                'employee_name' => $request->input('employee_name'),
+                'employee_user' => $request->input('employee_user'),
+                'employee_pass' => md5($request->input('employee_pass')),
+                'employee_email' => $request->input('employee_email'),
+                'employee_address' => $request->input('employee_address'),
+                'employee_phone' => $request->input('employee_phone'),
+                'employee_facebook' => $request->input('employee_facebook'),
+                'employee_lineid' => $request->input('employee_lineid'),
             ]);
 
             // Upload and save the employee_img if provided
@@ -115,6 +111,7 @@ class EmployeeController extends Controller
 
             $employee->employee_name = $request->input('employee_name');
             $employee->employee_user = $request->input('employee_user');
+            $employee->employee_email = $request->input('employee_email');
 
             if ($request->filled('employee_pass')) {
                 $employee->employee_pass = md5($request->input('employee_pass'));

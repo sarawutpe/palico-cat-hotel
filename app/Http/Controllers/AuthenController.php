@@ -7,22 +7,15 @@ use App\Models\Employee;
 use App\Models\Admin;
 use App\Models\Token;
 
-use Illuminate\Support\Facades\Storage;
 use App\Http\Helpers\Helper;
 use App\Http\Helpers\Key;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Carbon;
-use PhpParser\Node\Stmt\TryCatch;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Response;
+
 use App\Rules\UniqueUser;
-use Illuminate\Support\Facades\DB;
+use App\Rules\UniqueEmail;
 use App\Http\Helpers\Mail;
 
 class AuthenController extends Controller
@@ -30,19 +23,12 @@ class AuthenController extends Controller
     public function register(Request $request)
     {
         try {
-            $member_name = $request->input('member_name');
-            $member_user = $request->input('member_user');
-            $member_pass = $request->input('member_pass');
-            $member_address = $request->input('member_address');
-            $member_phone = $request->input('member_phone');
-            $member_facebook = $request->input('member_facebook');
-            $member_lineid = $request->input('member_lineid');
-
             // Validate the input
             $request->validate([
                 'member_name' => 'required|string',
                 'member_user' => ['required', new UniqueUser],
                 'member_pass' => 'required|string',
+                'member_email' => ['required', new UniqueEmail],
                 'member_address' => 'required|string',
                 'member_phone' => 'required|string',
                 'member_facebook' => 'nullable|string',
@@ -53,6 +39,9 @@ class AuthenController extends Controller
                 'member_user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
                 'member_user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
                 'member_pass.required' => 'กรุณากรอกรหัสผ่าน',
+                'member_user.required' => 'กรุณากรอกอีเมล',
+                'member_email.required' => 'กรุณากรอกอีเมล',
+                'member_email.unique' => 'อีเมลผู้ใช้งานนี้มีอยู่แล้ว',
                 'member_address.required' => 'กรุณากรอกที่อยู่',
                 'member_phone.required' => 'กรุณากรอกหมายเลขโทรศัพท์',
                 'member_facebook.required' => 'กรุณากรอก Facebook',
@@ -63,13 +52,14 @@ class AuthenController extends Controller
 
             // Create a new Member instance and save it to the database
             $member = new Member([
-                'member_name' => $member_name,
-                'member_user' => $member_user,
-                'member_pass' => md5($member_pass),
-                'member_address' => $member_address,
-                'member_phone' => $member_phone,
-                'member_facebook' => $member_facebook,
-                'member_lineid' => $member_lineid,
+                'member_name' => $request->input('member_name'),
+                'member_user' => $request->input('member_user'),
+                'member_pass' => md5($request->input('member_pass')),
+                'member_email' => $request->input('member_email'),
+                'member_address' => $request->input('member_address'),
+                'member_phone' => $request->input('member_phone'),
+                'member_facebook' => $request->input('member_facebook'),
+                'member_lineid' => $request->input('member_lineid'),
             ]);
 
             // Upload and save the member_img if provided
@@ -188,6 +178,10 @@ class AuthenController extends Controller
             $id = $member->member_id ?? $employee->employee_id ?? $admin->admin_id ?? null;
             $user = $member->member_user ?? $employee->employee_user ?? $admin->admin_user ?? null;
             $email_to = $member->member_email ?? $employee->employee_email ?? $admin->admin_email ?? null;
+
+            if (!$email_to) {
+                return redirect()->back()->with('error', 'ไม่พบอีเมลผู้ใช้');
+            }
 
             $type = "";
             if ($member) {
@@ -335,6 +329,7 @@ class AuthenController extends Controller
                 $member = Member::findOrFail($id);
                 $member->member_name = $request->input('name');
                 $member->member_user = $request->input('user');
+                $member->member_email = $request->input('email');
 
                 if ($request->filled('pass')) {
                     $member->member_pass = md5($request->input('pass'));
@@ -367,6 +362,7 @@ class AuthenController extends Controller
                 $employee = Employee::findOrFail($id);
                 $employee->employee_name = $request->input('name');
                 $employee->employee_user = $request->input('user');
+                $employee->employee_email = $request->input('email');
 
                 if ($request->filled('pass')) {
                     $employee->employee_pass = md5($request->input('pass'));
@@ -389,23 +385,24 @@ class AuthenController extends Controller
                     $employee->employee_img = "";
                 }
 
-                Session::put('img', $employee->member_img);
+                Session::put('img', $employee->employee_img);
 
                 $employee->save();
                 return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
             }
 
             if ($type === Key::$admin) {
-                $admin = Member::findOrFail($id);
+                $admin = Admin::findOrFail($id);
                 $admin->admin_name = $request->input('name');
                 $admin->admin_user = $request->input('user');
+                $admin->admin_email = $request->input('email');
 
                 if ($request->filled('pass')) {
                     $admin->admin_pass = md5($request->input('pass'));
                 }
 
                 $admin->admin_address = $request->input('address');
-                $admin->employee_phone = $request->input('phone');
+                $admin->admin_phone = $request->input('phone');
                 $admin->admin_facebook = $request->input('facebook');
                 $admin->admin_lineid = $request->input('lineid');
 
@@ -421,7 +418,7 @@ class AuthenController extends Controller
                     $admin->admin_img = "";
                 }
 
-                Session::put('img', $admin->member_img);
+                Session::put('img', $admin->admin_img);
 
                 $admin->save();
                 return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);

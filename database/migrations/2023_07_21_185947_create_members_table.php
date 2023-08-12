@@ -18,6 +18,7 @@ class CreateMembersTable extends Migration
             $table->string('member_name');
             $table->string('member_user')->uniqid();
             $table->string('member_pass')->nullable();
+            $table->string('member_email')->uniqid();
             $table->string('member_address')->nullable();
             $table->string('member_phone')->nullable();
             $table->string('member_facebook')->nullable();

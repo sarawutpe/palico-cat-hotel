@@ -16,6 +16,7 @@ class Admin extends Model
         'admin_name',
         'admin_user',
         'admin_pass',
+        'admin_email',
         'admin_address',
         'admin_phone',
         'admin_facebook',

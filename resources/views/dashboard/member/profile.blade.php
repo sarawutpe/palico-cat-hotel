@@ -19,6 +19,12 @@
                                 </div>
                             </div>
                             <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label required">อีเมล</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="email" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
                                 <div class="col-sm-9">
                                     <input type="password" name="pass" class="form-control">
@@ -129,6 +135,8 @@
 
                     $('input[name="name"]').val(value.member_name || value.employee_name || value.admin_name);
                     $('input[name="user"]').val(value.member_user || value.employee_user || value.admin_user);
+                    $('input[name="email"]').val(value.member_email || value.employee_email || value.admin_email);
+
                     $('input[name="pass"]').val("");
                     $('input[name="address"]').val(value.member_address || value.employee_address || value
                         .admin_address);
@@ -160,6 +168,7 @@
             formData = new FormData();
             formData.append('name', $('input[name="name"]').val());
             formData.append('user', $('input[name="user"]').val());
+            formData.append('email', $('input[name="email"]').val());
             formData.append('pass', $('input[name="pass"]').val());
             formData.append('address', $('input[name="address"]').val());
             formData.append('phone', $('input[name="phone"]').val());

@@ -5,7 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
-class UniqueUser implements Rule
+class UniqueEmail implements Rule
 {
     /**
      * Determine if the validation rule passes.
@@ -14,19 +14,19 @@ class UniqueUser implements Rule
      * @param  mixed  $value
      * @return bool
      */
-    protected $user;
+    protected $email;
 
-    public function __construct($user = '')
+    public function __construct($email = '')
     {
-        $this->user = $user;
+        $this->email = $email;
     }
 
     public function passes($attribute, $value)
     {
         // Check if the 'value' value exists in any of the three tables
-        $member_count = DB::table('members')->where('member_user', $value)->where('member_user', '!=', $this->user)->count();
-        $employee_count = DB::table('employees')->where('employee_user', $value)->where('employee_user', '!=', $this->user)->count();
-        $admin_count = DB::table('admins')->where('admin_user', $value)->where('admin_user', '!=', $this->user)->count();
+        $member_count = DB::table('members')->where('member_email', $value)->where('member_email', '!=', $this->email)->count();
+        $employee_count = DB::table('employees')->where('employee_email', $value)->where('employee_email', '!=', $this->email)->count();
+        $admin_count = DB::table('admins')->where('admin_email', $value)->where('admin_email', '!=', $this->email)->count();
 
         return $member_count === 0 && $employee_count === 0 && $admin_count === 0;
     }
@@ -38,6 +38,6 @@ class UniqueUser implements Rule
      */
     public function message()
     {
-        return 'ผู้ใช้นี้มีอยู่แล้ว';
+        return 'อีเมลผู้ใช้งานนี้มีอยู่แล้ว';
     }
 }

@@ -18,6 +18,7 @@ class CreateAdminsTable extends Migration
             $table->string('admin_name');
             $table->string('admin_user')->uniqid();
             $table->string('admin_pass')->nullable();
+            $table->string('admin_email')->uniqid();
             $table->string('admin_address')->nullable();
             $table->string('admin_phone')->nullable();
             $table->string('admin_facebook')->nullable();

@@ -16,6 +16,7 @@ class Employee extends Model
         'employee_name',
         'employee_user',
         'employee_pass',
+        'employee_email',
         'employee_address',
         'employee_phone',
         'employee_facebook',

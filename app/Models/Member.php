@@ -16,6 +16,7 @@ class Member extends Model
         'member_name',
         'member_user',
         'member_pass',
+        'member_email',
         'member_address',
         'member_phone',
         'member_facebook',

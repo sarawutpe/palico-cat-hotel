@@ -19,15 +19,16 @@ use App\Http\Middleware\PublicRoute;
 
 // View Routes
 Route::middleware([PublicRoute::class])->group(function () {
-  Route::get('/', [ViewController::class, 'homePage'])->name('home');
-  Route::get('/login', [ViewController::class, 'loginPage'])->name('login');
-  Route::get('/register', [ViewController::class, 'registerPage'])->name('register');
-  Route::get('/recovery', [ViewController::class, 'recoveryPage'])->name('recovery');
-  Route::get('/recovery/reset/{token}', [ViewController::class, 'recoveryResetPage'])->name('recovery.reset');
-  Route::get('/room', [ViewController::class, 'roomPage'])->name('room');
-  Route::get('/price', [ViewController::class, 'pricePage'])->name('price');
-  Route::get('/rule', [ViewController::class, 'rulePage'])->name('rule');
-  Route::get('/contact', [ViewController::class, 'contactPage'])->name('contact');
+  Route::get('/', [ViewController::class, 'home'])->name('home');
+  Route::get('/login', [ViewController::class, 'login'])->name('login');
+  Route::get('/register', [ViewController::class, 'register'])->name('register');
+  Route::get('/recovery', [ViewController::class, 'recovery'])->name('recovery');
+  Route::get('/recovery/reset/{token}', [ViewController::class, 'recoveryReset'])->name('recovery.reset');
+  Route::get('/room', [ViewController::class, 'room'])->name('room');
+  Route::get('/price', [ViewController::class, 'price'])->name('price');
+  Route::get('/service', [ViewController::class, 'service'])->name('service');
+  Route::get('/rule', [ViewController::class, 'rule'])->name('rule');
+  Route::get('/contact', [ViewController::class, 'contact'])->name('contact');
 });
 
 // Protected Routes

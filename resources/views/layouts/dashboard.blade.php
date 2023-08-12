@@ -83,13 +83,13 @@
     </style>
 
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-        <div class="sidebar-brand d-none d-md-flex">
-            <svg class="sidebar-brand-full" width="118" height="46" alt="CoreUI Logo">
-                <use xlink:href="{{ asset('assets/brand/coreui.svg#full') }}"></use>
-            </svg>
-            <svg class="sidebar-brand-narrow" width="46" height="46" alt="CoreUI Logo">
-                <use xlink:href="{{ asset('assets/brand/coreui.svg#signet') }}"></use>
-            </svg>
+        <div class="sidebar-brand d-none d-md-flex gap-2">
+            <div class="sidebar-brand-full">
+                <img src="{{ asset('assets/img/logo.jpg') }}" width="40" height="40" alt="Logo">
+            </div>
+            <div class="sidebar-brand-narrow">
+                <img src="{{ asset('assets/img/logo.jpg') }}" width="40" height="40" alt="Logo">
+            </div>
             <div>
                 <span style="font-size: 18px">{{ session('type') }}</span> <br>
             </div>

@@ -45,6 +45,12 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">อีเมล</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" name="employee_email" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">ชื่อ-สกุล</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="employee_name" class="form-control">
@@ -139,7 +145,7 @@
         var storagePath = "{{ asset('storage/') }}"
         var formData = null
         var search = null
-        
+
         // Initialize
         $(document).ready(function() {
             handleGetAllEmployee()
@@ -200,6 +206,7 @@
             formData.append('employee_name', $('input[name="employee_name"]').val());
             formData.append('employee_user', $('input[name="employee_user"]').val());
             formData.append('employee_pass', $('input[name="employee_pass"]').val());
+            formData.append('employee_email', $('input[name="employee_email"]').val());
             formData.append('employee_address', $('input[name="employee_address"]').val());
             formData.append('employee_phone', $('input[name="employee_phone"]').val());
             formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
@@ -225,7 +232,7 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    utils.showAlert('#alert-message','error', response.errors)
+                    utils.showAlert('#alert-message', 'error', response.errors)
                 },
             });
         }
@@ -242,6 +249,7 @@
             $('input[name="employee_name"]').val(employee.employee_name || "");
             $('input[name="employee_user"]').val(employee.employee_user || "");
             $('input[name="employee_pass"]').val("");
+            $('input[name="employee_email"]').val(employee.employee_email || "");
             $('input[name="employee_address"]').val(employee.employee_address || "");
             $('input[name="employee_phone"]').val(employee.employee_phone || "");
             $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
@@ -264,6 +272,7 @@
             formData.append('employee_name', $('input[name="employee_name"]').val());
             formData.append('employee_user', $('input[name="employee_user"]').val());
             formData.append('employee_pass', $('input[name="employee_pass"]').val());
+            formData.append('employee_email', $('input[name="employee_email"]').val());
             formData.append('employee_address', $('input[name="employee_address"]').val());
             formData.append('employee_phone', $('input[name="employee_phone"]').val());
             formData.append('employee_facebook', $('input[name="employee_facebook"]').val());

@@ -7,50 +7,57 @@ use App\Models\Room;
 
 class ViewController extends Controller
 {
-    public function homePage()
+    // Home Group
+    public function home()
     {
         return view('index');
     }
 
-    public function loginPage()
-    {
-        return view('login');
-    }
-
-    public function registerPage()
-    {
-        return view('register');
-    }
-
-    public function recoveryPage()
-    {
-
-        return view('recovery');
-    }
-
-    public function recoveryResetPage()
-    {
-        return view('recovery-reset');
-    }
-
-    public function roomPage()
+    public function room()
     {
         $rooms = Room::orderBy('updated_at', 'desc')->get();
         return view('room', ['rooms' => $rooms]);
     }
 
-    public function pricePage()
+    public function service()
+    {
+        return view('service');
+    }
+
+    public function price()
     {
         return view('price');
     }
 
-    public function rulePage()
+    public function rule()
     {
         return view('rule');
     }
 
-    public function contactPage()
+    public function contact()
     {
         return view('contact');
+    }
+
+    // Authen Group
+    public function login()
+    {
+        return view('login');
+    }
+
+    public function register()
+    {
+        return view('register');
+    }
+
+    public function recovery()
+    {
+
+        return view('recovery');
+    }
+
+    public function recoveryReset()
+    {
+        return view('recovery-reset');
     }
 }

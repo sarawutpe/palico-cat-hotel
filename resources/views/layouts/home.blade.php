@@ -63,10 +63,8 @@
         <div class="container-lg">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">
-                        <img src="https://coreui.io/docs/assets/brand/coreui-signet.svg" alt="" width="22"
-                            height="24" class="d-inline-block align-top">
-                        CoreUI
+                    <a class="navbar-brand" href="/">
+                        <img src="{{ asset('assets/img/logo.jpg') }}" alt="" width="50px" height="50px" class="d-inline-block align-top">
                     </a>
                     <button class="navbar-toggler" type="button" data-coreui-toggle="collapse"
                         data-coreui-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
@@ -76,44 +74,36 @@
                     <div class="collapse navbar-collapse" id="navbarNavDropdown">
                         <ul class="navbar-nav d-flex justify-content-between w-100">
                             <div class="d-flex">
-                                <!-- Item -->
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="/">หน้าแรก</a>
+                                    <a class="nav-link active" href="/">หน้าแรก</a>
                                 </li>
-                                <!-- Item -->
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page"
-                                        href="room">ห้องพักและการจอง</a>
+                                    <a class="nav-link active" href="room">ห้องพักและการจอง</a>
                                 </li>
-                                <!-- Item -->
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="price">อัตราค่าบริการ</a>
+                                    <a class="nav-link active" href="service">บริการ</a>
                                 </li>
-                                <!-- Item -->
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="rule">กติกา</a>
+                                    <a class="nav-link active" href="price">อัตราค่าบริการ</a>
                                 </li>
-                                <!-- Item -->
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="contact">ติดต่อเรา</a>
+                                    <a class="nav-link active" href="rule">กติกา</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="contact">ติดต่อเรา</a>
                                 </li>
                             </div>
                             <div class="d-flex">
-                                @if (session('is_logged_in') === TRUE)
-                                    <!-- Item -->
+                                @if (session('is_logged_in') === true)
                                     <li class="nav-item">
-                                        <a class="nav-link active" aria-current="page"
-                                            href="dashboard">ระบบจัดการ</a>
+                                        <a class="nav-link active" href="dashboard">ระบบจัดการ</a>
                                     </li>
                                 @else
-                                    <!-- Item -->
                                     <li class="nav-item">
-                                        <a class="nav-link active" aria-current="page"
-                                            href="register">สมัครสมาชิก</a>
+                                        <a class="nav-link active" href="register">สมัครสมาชิก</a>
                                     </li>
-                                    <!-- Item -->
                                     <li class="nav-item">
-                                        <a class="nav-link active" aria-current="page" href="login">เข้าสู่ระบบ</a>
+                                        <a class="nav-link active" href="login">เข้าสู่ระบบ</a>
                                     </li>
                                 @endif
                             </div>
