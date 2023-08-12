@@ -75,22 +75,22 @@
                         <ul class="navbar-nav d-flex justify-content-between w-100">
                             <div class="d-flex">
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="/">หน้าแรก</a>
+                                    <a class="nav-link active" href="{{ route('home') }}">หน้าแรก</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="room">ห้องพักและการจอง</a>
+                                    <a class="nav-link active" href="{{ route('room') }}">ห้องพักและการจอง</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="service">บริการ</a>
+                                    <a class="nav-link active" href="{{ route('service') }}">บริการ</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="price">อัตราค่าบริการ</a>
+                                    <a class="nav-link active" href="{{ route('price') }}">อัตราค่าบริการ</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="rule">กติกา</a>
+                                    <a class="nav-link active" href="{{ route('rule') }}">กติกา</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="contact">ติดต่อเรา</a>
+                                    <a class="nav-link active" href="{{ route('contact') }}">ติดต่อเรา</a>
                                 </li>
                             </div>
                             <div class="d-flex">
@@ -100,10 +100,10 @@
                                     </li>
                                 @else
                                     <li class="nav-item">
-                                        <a class="nav-link active" href="register">สมัครสมาชิก</a>
+                                        <a class="nav-link active" href="{{ route('register') }}">สมัครสมาชิก</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link active" href="login">เข้าสู่ระบบ</a>
+                                        <a class="nav-link active" href="{{ route('login') }}">เข้าสู่ระบบ</a>
                                     </li>
                                 @endif
                             </div>
