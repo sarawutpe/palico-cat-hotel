@@ -127,7 +127,7 @@
         function getProfile() {
             utils.setLinearLoading()
             $.ajax({
-                url: `${prefixApi}/api/authen/profile/${type}/${id}`,
+                url: `${prefixApi}/api/user/profile/${type}/${id}`,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
@@ -181,7 +181,7 @@
             }
 
             $.ajax({
-                url: `${prefixApi}/api/authen/profile/${type}/${id}`,
+                url: `${prefixApi}/api/user/profile/${type}/${id}`,
                 type: "POST",
                 headers: headers,
                 data: formData,

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\AuthenController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\CatController;
@@ -47,8 +48,8 @@ Route::post('/authen/login', [AuthenController::class, 'login'])->name('authen.l
 Route::post('/authen/recovery', [AuthenController::class, 'recovery'])->name('authen.recovery');
 Route::post('/authen/recovery/reset/{token}', [AuthenController::class, 'recoveryReset'])->name('authen.recovery.reset');
 
-Route::get('/api/authen/profile/{type}/{id}', [AuthenController::class, 'getProfile']);
-Route::post('/api/authen/profile/{type}/{id}', [AuthenController::class, 'updateProfile']);
+Route::get('/api/user/profile/{type}/{id}', [UserController::class, 'getProfile']);
+Route::post('/api/user/profile/{type}/{id}', [UserController::class, 'updateProfile']);
 
 Route::get('/api/employee/list', [EmployeeController::class, 'getAllEmployee']);
 Route::post('/api/employee', [EmployeeController::class, 'addEmployee']);
