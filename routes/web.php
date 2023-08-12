@@ -33,33 +33,12 @@ Route::middleware([PublicRoute::class])->group(function () {
 
 // Protected Routes
 Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
+  Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
+  Route::get('/dashboard/employee', [ViewController::class, 'dashboard.employee'])->name('dashboard.employee');
+  Route::get('/dashboard/cat', [ViewController::class, 'dashboard.cat'])->name('dashboard.cat');
+  Route::get('/dashboard/room', [ViewController::class, 'dashboard.room'])->name('dashboard.room');
+  Route::get('/dashboard/profile', [ViewController::class, 'dashboard.profile'])->name('dashboard.profile');
   Route::get('/dashboard/logout', [AuthenController::class, 'logout'])->name('dashboard.logout');
-
-  Route::view('/dashboard', 'dashboard.index')->name('dashboard');
-
-  Route::view('/dashboard/employee', 'dashboard.employee')->name('dashboard.employee');
-  Route::view('/dashboard/cat', 'dashboard.cat')->name('dashboard.cat');
-  Route::view('/dashboard/room', 'dashboard.room')->name('dashboard.room');
-
-  // Member views
-  Route::view('/dashboard/profile', 'dashboard.member.profile')->name('dashboard.member.profile');
-});
-
-Route::middleware([OAuth::class])->prefix('api')->group(function () {
-  Route::get('/employee/list', [EmployeeController::class, 'getAllEmployee']);
-  Route::post('/employee', [EmployeeController::class, 'addEmployee']);
-  Route::put('/employee/{id}', [EmployeeController::class, 'updateEmployee']);
-  Route::delete('/employee/{id}', [EmployeeController::class, 'deleteEmployee']);
-
-  Route::get('/room/list', [RoomController::class, 'getAllRoom']);
-  Route::post('/room', [RoomController::class, 'addRoom']);
-  Route::put('/room/{id}', [RoomController::class, 'updateRoom']);
-  Route::delete('/room/{id}', [RoomController::class, 'deleteRoom']);
-
-  Route::get('/cat/list', [CatController::class, 'getAllCat']);
-  Route::post('/cat', [CatController::class, 'addCat']);
-  Route::put('/cat/{id}', [CatController::class, 'updateCat']);
-  Route::delete('/cat/{id}', [CatController::class, 'deleteCat']);
 });
 
 // Service Routes
@@ -68,5 +47,20 @@ Route::post('/authen/login', [AuthenController::class, 'login'])->name('authen.l
 Route::post('/authen/recovery', [AuthenController::class, 'recovery'])->name('authen.recovery');
 Route::post('/authen/recovery/reset/{token}', [AuthenController::class, 'recoveryReset'])->name('authen.recovery.reset');
 
-Route::get('/api/authen/profile/{type}/{id}', [AuthenController::class, 'getProfile'])->name('authen.getProfile');
-Route::post('/api/authen/profile/{type}/{id}', [AuthenController::class, 'updateProfile'])->name('authen.updateProfile');
+Route::get('/api/authen/profile/{type}/{id}', [AuthenController::class, 'getProfile']);
+Route::post('/api/authen/profile/{type}/{id}', [AuthenController::class, 'updateProfile']);
+
+Route::get('/api/employee/list', [EmployeeController::class, 'getAllEmployee']);
+Route::post('/api/employee', [EmployeeController::class, 'addEmployee']);
+Route::put('/api/employee/{id}', [EmployeeController::class, 'updateEmployee']);
+Route::delete('/api/employee/{id}', [EmployeeController::class, 'deleteEmployee']);
+
+Route::get('/api/room/list', [RoomController::class, 'getAllRoom']);
+Route::post('/api/room', [RoomController::class, 'addRoom']);
+Route::put('/api/room/{id}', [RoomController::class, 'updateRoom']);
+Route::delete('/api/room/{id}', [RoomController::class, 'deleteRoom']);
+
+Route::get('/api/cat/list', [CatController::class, 'getAllCat']);
+Route::post('/api/cat', [CatController::class, 'addCat']);
+Route::put('/api/cat/{id}', [CatController::class, 'updateCat']);
+Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);

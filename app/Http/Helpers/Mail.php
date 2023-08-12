@@ -27,7 +27,7 @@ class Mail
           ],
           'Subject' => "PALICO CAT HOTEL | กู้รหัสผ่าน",
           'TextPart' => "Greetings from Mailjet!",
-          'HTMLPart' => "<h3>ยืนยันกู้รหัสผ่าน , <a href=".$message.">".$message."</a>!</h3>"
+          'HTMLPart' => "<h3>ยืนยันกู้รหัสผ่าน <a href=".$message.">".$message."</a></h3>"
         ]
       ]
     ];

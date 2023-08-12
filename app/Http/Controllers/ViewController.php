@@ -60,4 +60,30 @@ class ViewController extends Controller
     {
         return view('recovery-reset');
     }
+
+    // Dashboard
+    public function dashboard()
+    {
+        return view('dashboard.index');
+    }
+
+    public function dashboardEmployee()
+    {
+        return view('dashboard.employee');
+    }
+
+    public function dashboardCat()
+    {
+        return view('dashboard.cat');
+    }
+
+    public function dashboardRoom()
+    {
+        return view('dashboard.room');
+    }
+
+    public function dashboardProfile()
+    {
+        return view('dashboard.profile');
+    }
 }
