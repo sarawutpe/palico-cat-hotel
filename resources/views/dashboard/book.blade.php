@@ -1,29 +1,6 @@
 @extends('layouts.dashboard')
 @section('title', 'จัดการข้อมูลการจอง')
 @section('content')
-    <style>
-        .box-card-list {
-            border: 1px solid transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem
-        }
-
-        .box-card-list:hover,
-        .box-card-list.active {
-            background: rgba(255, 255, 255, 0.50);
-            border-color: #eee;
-        }
-
-        .room-block {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4;
-        }
-    </style>
-
     <section class="content">
         <div class="row">
             <div class="col">
@@ -195,7 +172,8 @@
                         })
 
                         newData.forEach(function(room, index) {
-                            const isBookedOut = rents.find((rent) => rent.room_id === room.room_id && rent.rent_status === 'RESERVED')
+                            const isBookedOut = rents.find((rent) => rent.room_id === room
+                                .room_id && rent.rent_status === 'RESERVED')
 
                             const buttonHtml = isBookedOut ?
                                 `<div class="cursor-not-allowed"><button class="btn btn-outline-danger w-100" disabled>เต็ม</button></div>` :

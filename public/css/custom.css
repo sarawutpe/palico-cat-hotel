@@ -220,3 +220,10 @@ fieldset:disabled .btn {
 .cursor-not-allowed {
     cursor: not-allowed !important;
 }
+
+.sidebar-fixed.sidebar-narrow-unfoldable,
+.sidebar-fixed.sidebar-narrow {
+    z-index: 1031;
+    width: var(--cui-sidebar-narrow-width) !important;
+}
+

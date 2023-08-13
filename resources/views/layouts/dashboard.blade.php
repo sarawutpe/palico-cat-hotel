@@ -35,7 +35,6 @@
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{ asset('vendors/font-awesome/all.min.css') }}">
-
     <!-- Vendors styles-->
     <link rel="stylesheet" href="{{ asset('vendors/simplebar/css/simplebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/vendors/simplebar.css') }}">
@@ -58,7 +57,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/lodash.debounce@4.0.8/index.min.js"></script> --}}
-
 </head>
 
 <body>
@@ -88,71 +86,13 @@
 
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
         <div class="sidebar-brand d-none d-md-flex gap-2">
-            <div class="sidebar-brand-full">
-                <img src="{{ asset('assets/img/logo.jpg') }}" width="40" height="40" alt="Logo">
-            </div>
-            <div class="sidebar-brand-narrow">
-                <img src="{{ asset('assets/img/logo.jpg') }}" width="40" height="40" alt="Logo">
-            </div>
-            <div>
+            <div class="text-center">
+                <img src="{{ asset('assets/img/logo.jpg') }}" class="p-2" width="40" height="40"
+                    alt="Logo">
                 <span style="font-size: 18px">{{ session('type') }}</span> <br>
             </div>
         </div>
-        <ul class="sidebar-nav" data-coreui="navigationaa" data-simplebar="">
-
-            @if (session('type') === 'MEMBER')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard') }}">
-                        <svg class="nav-icon">
-                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
-                        </svg>หน้าแรก
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard.cat') }}">
-                        <svg class="nav-icon">
-                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
-                        </svg>แมว
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard.book') }}">
-                        <svg class="nav-icon">
-                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
-                        </svg>จอง
-                    </a>
-                </li>
-            @endif
-
-            @if (session('type') === 'EMPLOYEE')
-            @endif
-
-            @if (session('type') === 'ADMIN')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard') }}">
-                        <svg class="nav-icon">
-                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
-                        </svg>หน้าแรก
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard.employee') }}">
-                        <svg class="nav-icon">
-                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
-                        </svg>พนักงาน
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard.room') }}">
-                        <svg class="nav-icon">
-                            <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
-                        </svg>ห้องพัก
-                    </a>
-                </li>
-            @endif
-
-
-            <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
+        @include('layouts.dashboard-menu')
     </div>
 
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
