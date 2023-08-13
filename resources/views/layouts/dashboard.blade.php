@@ -29,6 +29,10 @@
     <meta name="msapplication-TileImage" content="assets/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
+    <link rel="preload" href="{{ asset('fonts/DBHeavent.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('fonts/DBHeavent-Med.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('fonts/DBHeavent-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{ asset('vendors/font-awesome/all.min.css') }}">
 
@@ -44,7 +48,6 @@
 
     {{-- <script src="{{ asset('vendors/sweetalert2/sweetalert2.css') }}"></script> --}}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
 
     {{-- JS --}}
     <script src="{{ asset('vendors/jquery/jquery-3.7.0.min.js') }}"></script>

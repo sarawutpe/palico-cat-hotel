@@ -199,28 +199,5 @@ const utils = {
             .append(
                 `<div class="${colorClass} font-medium mb-2"><ul>${html}</ul></div>`
             );
-    },
-    reRenderForm(object) {
-        const targetForm = $(formId);
-
-        $("#file-preview")
-            .css("opacity", 1)
-            .attr("src", `${storagePath}/${employee.employee_img || ""}`);
-
-        // if (targetForm.length > 0) {
-        //     console.log(targetForm)
-        // }
-        // console.log(f)
-
-        // $(selector).val(value);
-
-        for (const key in object) {
-            let input = $(`input[name="${key}"]`);
-            let value = object[key];
-
-            if (input && value) {
-                input.val(value);
-            }
-        }
-    },
+    }
 };
