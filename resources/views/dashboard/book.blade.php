@@ -91,12 +91,6 @@
             await handleGetAllRoom()
         })
 
-        function resetForm() {
-            $("#form")[0].reset();
-            selectedId = null
-            files.setFilePreview()
-        }
-
         function showAlert(type, message) {
             const target = $('#alert-message')
             const color = message === 'success' ? 'text-success' : 'text-danger'
