@@ -70,7 +70,7 @@ Route::post('/api/cat', [CatController::class, 'addCat']);
 Route::put('/api/cat/{id}', [CatController::class, 'updateCat']);
 Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
 
-// Route::get('/api/cat/list', [CatController::class, 'getAllCat']);
+Route::get('/api/rent/list', [RentController::class, 'getAllRent']);
 Route::post('/api/rent', [RentController::class, 'addRent']);
-// Route::put('/api/cat/{id}', [CatController::class, 'updateCat']);
-// Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
+// Route::put('/api/cat/{id}', [RentController::class, 'updateCat']);
+// Route::delete('/api/cat/{id}', [RentController::class, 'deleteCat']);

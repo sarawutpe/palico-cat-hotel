@@ -118,6 +118,22 @@ const utils = {
             ? `'${JSON.stringify(jsonData).replace(/"/g, "&quot;")}'`
             : "invalid json";
     },
+    showDialog(message) {
+        return new Promise((resolve, reject) => {
+            Swal.fire({
+                title: `<strong>${message}</strong>`,
+                icon: "info",
+                showCloseButton: true,
+                showCancelButton: false,
+                showConfirmButton: false,
+                focusConfirm: false,
+                confirmButtonText: "ยืนยัน",
+                cancelButtonText: "ยกเลิก",
+            }).then((result) => {
+                resolve();
+            });
+        });
+    },
     confirmAlert() {
         return new Promise((resolve, reject) => {
             Swal.fire({

@@ -8,6 +8,7 @@ use App\Models\Admin;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Helpers\Helper;
 use App\Http\Helpers\Key;
+use App\Models\Room;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,22 @@ use DateTime;
 
 class RentController extends Controller
 {
+    public function getAllRent(Request $request)
+    {
+        try {
+            $q = $request->input('q', '');
+
+            $query = Rent::orderBy('updated_at', 'desc');
+            // $query->where('room_name', 'like', '%' . $q . '%');
+            $room = $query->get();
+            return response()->json(['success' => true, 'data' => $room]);
+        } catch (ValidationException $exception) {
+            return response()->json(['error' => $exception->errors()], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
     public function addRent(Request $request)
     {
         try {
@@ -50,6 +67,16 @@ class RentController extends Controller
                 'slip_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
                 'slip_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
+
+            // Check Rent
+            $rent = Rent::where('room_id', $request->input('room_id'))
+                ->where('rent_status', Key::$RESERVED)
+                ->first();
+            if ($rent) {
+                return response()->json(['success' => false, 'errors' => 'จองไม่สำเร็จเนื่องจากห้องพักไม่ว่าง'], 400);
+            }
+
+            return response()->json(['success' => false, 'errors' => 'จองไม่สำเร็จเนื่องจากห้องพักไม่ว่าง'], 400);
 
             $rent = new Rent();
             $rent->rent_datetime = Carbon::parse($request->input('rent_datetime'));

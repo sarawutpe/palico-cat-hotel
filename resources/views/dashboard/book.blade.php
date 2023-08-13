@@ -68,7 +68,7 @@
                                                     <h5 class="card-title"></h5>
                                                     <p class="card-text">{{ $room_type->name }}</p>
                                                 </div>
-                                                <button onclick="handleSelectedRoomType('{{ $room_type->name }}')"
+                                                <button onclick="handleStepRoomType('{{ $room_type->name }}')"
                                                     class="btn btn-outline-primary w-100">เลือก</button>
                                             </div>
                                         </div>
@@ -106,10 +106,12 @@
         var selectedRoomType = ''
         var selectedRoomId = ''
         var selectedRoom = ''
+        var rents = []
 
         // Initialize
-        $(document).ready(function() {
-            handleGetAllRoom()
+        $(document).ready(async function() {
+            await handleGetAllRent()
+            await handleGetAllRoom()
         })
 
         function resetForm() {
@@ -148,52 +150,58 @@
             $(`button[data-coreui-target="#tab${id}"]`).prop('disabled', false).css('opacity', 1).tab('show');
         }
 
-        function handleSelectedRoomType(name) {
-            if (!name) return
-            selectedRoomType = name;
-            goTab(2)
-            handleGetAllRoom()
-        }
-
-        function handleSelectedRoom(room) {
-            if (!room) return
-
-            const roomObj = JSON.parse(room)
-            if (typeof roomObj !== 'object') return
-
-            selectedRoom = roomObj
-            goTab(3)
-            handleShowStepDetail()
+        function handleGetAllRent() {
+            return new Promise((resolve, reject) => {
+                utils.setLinearLoading()
+                $.ajax({
+                    url: `${prefixApi}/api/rent/list`,
+                    type: "GET",
+                    headers: headers,
+                    success: function(response, textStatus, jqXHR) {
+                        if (!Array.isArray(response.data)) return
+                        rents = response.data
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        toastr.error();
+                    }
+                }).always(async function() {
+                    resolve()
+                    await delay(1000)
+                    utils.setLinearLoading()
+                });
+            });
         }
 
         function handleGetAllRoom() {
-            utils.setLinearLoading()
+            if (!Array.isArray(rents) || rents.length === 0) return
 
-            $.ajax({
-                url: `${prefixApi}/api/room/list${window.location.search}`,
-                type: "GET",
-                headers: headers,
-                success: function(response, textStatus, jqXHR) {
-                    if (!Array.isArray(response.data)) return
+            return new Promise((resolve, reject) => {
+                utils.setLinearLoading()
+                $.ajax({
+                    url: `${prefixApi}/api/room/list${window.location.search}`,
+                    type: "GET",
+                    headers: headers,
+                    success: function(response, textStatus, jqXHR) {
+                        if (!Array.isArray(response.data)) return
 
-                    let html = ''
-                    let newData = response.data
+                        let html = ''
+                        let newData = response.data
 
-                    newData = newData.filter(function(item) {
-                        if (selectedRoomType) {
-                            return item.room_type === selectedRoomType
-                        }
-                        return true
-                    })
+                        newData = newData.filter(function(item) {
+                            if (selectedRoomType) {
+                                return item.room_type === selectedRoomType
+                            }
+                            return true
+                        })
 
-                    newData.forEach(function(room, index) {
-                        const isBookedOut = false
+                        newData.forEach(function(room, index) {
+                            const isBookedOut = rents.find((rent) => rent.room_id === room.room_id && rent.rent_status === 'RESERVED')
 
-                        const buttonHtml = isBookedOut ?
-                            `<div class="cursor-not-allowed"><button class="btn btn-outline-danger w-100" disabled>เต็ม</button></div>` :
-                            `<button class="btn btn-outline-primary w-100" onclick="handleSelectedRoom(${utils.jsonString(room)})">จอง</button>`;
+                            const buttonHtml = isBookedOut ?
+                                `<div class="cursor-not-allowed"><button class="btn btn-outline-danger w-100" disabled>เต็ม</button></div>` :
+                                `<button class="btn btn-outline-primary w-100" onclick="handleStepRoom(${utils.jsonString(room)})">จอง</button>`;
 
-                        html += `
+                            html += `
                         <div class="d-flex flex-wrap gap-4">
                                   <div class="card" style="width: 18rem;">
                                       <div>
@@ -209,15 +217,17 @@
                                       </div>
                                   </div>
                           </div>`;
-                    });
-                    $('#step-select-room').empty().append(html);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    toastr.error();
-                }
-            }).always(async function() {
-                await delay(1000)
-                utils.setLinearLoading()
+                        });
+                        $('#step-select-room').empty().append(html);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        toastr.error();
+                    }
+                }).always(async function() {
+                    resolve()
+                    await delay(1000)
+                    utils.setLinearLoading()
+                });
             });
         }
 
@@ -236,7 +246,6 @@
                             <input type="text" name="member_id" value="${id}" class="form-control" disabled>
                         </div>
                     </div>
-
                     <div class="mb-3 row">
                         <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
                         <div class="col-sm-9">
@@ -244,7 +253,6 @@
                             <div class="invalid-feedback">กรุณากรอกวันที่เช็กอิน</div>
                         </div>
                     </div>
-
                     <div class="mb-3 row">
                         <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
                         <div class="col-sm-9">
@@ -252,7 +260,6 @@
                             <div class="invalid-feedback">กรุณากรอกวันที่เช็กเอ้าท์</div>
                         </div>
                     </div>
-
                     <div class="d-flex gap-4" style="padding: 12px">
                         <button type="button" class="btn btn-secondary" onclick="goTab(2)">ย้อนกลับ</button>
                         <button id="next-to-pay" type="submit" class="btn btn-primary" onclick="handleStepPay()">ถัดไป</button>
@@ -260,28 +267,6 @@
                 </div>
             </div>`;
             $('#step-detail').empty().append(html);
-        }
-
-        function handleStepPay() {
-            const inDatetime = $('input[name="in_datetime"]');
-            const outDatetime = $('input[name="out_datetime"]');
-
-            if (!inDatetime.val()) {
-                inDatetime.addClass('is-invalid');
-            } else {
-                inDatetime.removeClass('is-invalid');
-            }
-
-            if (!outDatetime.val()) {
-                outDatetime.addClass('is-invalid');
-            } else {
-                outDatetime.removeClass('is-invalid');
-            }
-
-            if (inDatetime.val() && outDatetime.val()) {
-                goTab(4)
-                handleShowStepPay()
-            }
         }
 
         function handleShowStepPay() {
@@ -347,6 +332,46 @@
             });
         }
 
+        function handleStepRoomType(name) {
+            if (!name) return
+            selectedRoomType = name;
+            goTab(2)
+            handleGetAllRoom()
+        }
+
+        function handleStepRoom(room) {
+            if (!room) return
+
+            const roomObj = JSON.parse(room)
+            if (typeof roomObj !== 'object') return
+
+            selectedRoom = roomObj
+            goTab(3)
+            handleShowStepDetail()
+        }
+
+        function handleStepPay() {
+            const inDatetime = $('input[name="in_datetime"]');
+            const outDatetime = $('input[name="out_datetime"]');
+
+            if (!inDatetime.val()) {
+                inDatetime.addClass('is-invalid');
+            } else {
+                inDatetime.removeClass('is-invalid');
+            }
+
+            if (!outDatetime.val()) {
+                outDatetime.addClass('is-invalid');
+            } else {
+                outDatetime.removeClass('is-invalid');
+            }
+
+            if (inDatetime.val() && outDatetime.val()) {
+                goTab(4)
+                handleShowStepPay()
+            }
+        }
+
         function handleAddRent() {
             utils.setLinearLoading()
 
@@ -388,9 +413,10 @@
                     toastr.success();
                     handleGetAllRoom()
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: async function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    await utils.showDialog(response.errors)
+                    location.reload()
                 },
             }).always(async function() {
                 await delay(1000)
