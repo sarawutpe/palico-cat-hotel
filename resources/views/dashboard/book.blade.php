@@ -91,11 +91,8 @@
                     </fieldset>
                 </div>
             </div>
-
         </div>
     </section>
-
-
 
     <script>
         var headers = {
@@ -137,7 +134,7 @@
         $('#nav-tab button').click(function() {
             event.preventDefault();
             const targetTab = $(this).attr('data-coreui-target');
-            
+
             // prevent
             if (targetTab === '#tab4') {
                 if (!$('input[name="in_datetime"]').val() || !$('input[name="out_datetime"]').val()) {
@@ -320,6 +317,7 @@
                                         <span class="mx-1">ลบ</span>
                                         <i class="fa-solid fa-trash fa-xs align-middle"></i>
                                     </div>
+                                    <div id="file-message" class="font-medium mb-2"></div>
                                 </div>
                             </div>
                         </div>
@@ -350,22 +348,26 @@
         }
 
         function handleAddRent() {
+            utils.setLinearLoading()
+
             const room = selectedRoom
 
             const inDatetime = $('input[name="in_datetime"]').val();
             const outDatetime = $('input[name="out_datetime"]').val();
             const roomId = room.room_id
+            const rentPrice = room.room_price
             const file = files.getFileUpload()
 
             if (!file) {
-                showAlert('error', "กรุณาอัพโหลดสลิป")
+                files.setMessage('error', 'กรุณาอัพโหลดสลิป')
             }
 
-            if (!inDatetime || !outDatetime || !roomId || !file) return
+            if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice) return
 
             formData = new FormData();
             formData.append('rent_datetime', dayjs().format());
             formData.append('rent_status', '');
+            formData.append('rent_price', rentPrice);
             formData.append('in_datetime', inDatetime);
             formData.append('out_datetime', outDatetime);
             formData.append('member_id', id);
@@ -383,7 +385,6 @@
                 processData: false,
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
-                    resetForm()
                     toastr.success();
                     handleGetAllRoom()
                 },
@@ -391,8 +392,10 @@
                     const response = jqXHR.responseJSON
                     showAlert('error', response.errors)
                 },
+            }).always(async function() {
+                await delay(1000)
+                utils.setLinearLoading()
             });
         }
     </script>
-
 @endsection

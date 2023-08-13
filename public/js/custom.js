@@ -3,6 +3,7 @@ var linearIndeterminate = null;
 var filePreviewElement = null;
 var fileUploadElement = null;
 var deleteFileElement = null;
+var fileMessageElement = null;
 
 var isRemovedFile = false;
 
@@ -28,6 +29,7 @@ function fileToolkit() {
     filePreviewElement = $("#file-preview");
     fileUploadElement = $("#file-upload");
     deleteFileElement = $("#file-delete");
+    fileMessageElement = $("#file-message");
 
     filePreviewElement.on("load", function (event) {
         isRemovedFile = false;
@@ -89,6 +91,9 @@ const files = {
 
         return fileUploadElement.prop("files")[0];
     },
+    setMessage(type, message) {
+        fileMessageElement.addClass('text-danger').text(message)
+    }
 };
 
 function delay(ms) {

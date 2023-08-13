@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\CatController;
+use App\Http\Controllers\RentController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
@@ -68,3 +69,8 @@ Route::get('/api/cat/list', [CatController::class, 'getAllCat']);
 Route::post('/api/cat', [CatController::class, 'addCat']);
 Route::put('/api/cat/{id}', [CatController::class, 'updateCat']);
 Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
+
+// Route::get('/api/cat/list', [CatController::class, 'getAllCat']);
+Route::post('/api/rent', [RentController::class, 'addRent']);
+// Route::put('/api/cat/{id}', [CatController::class, 'updateCat']);
+// Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
