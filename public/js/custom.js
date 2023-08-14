@@ -1,14 +1,11 @@
+var prefixApi = window.location.origin;
 var linearIndeterminate = null;
-
 var filePreviewElement = null;
 var fileUploadElement = null;
 var deleteFileElement = null;
 var fileMessageElement = null;
-
 var isRemovedFile = false;
-
 var callSearchFunc = null;
-var prefixApi = window.location.origin;
 
 $(document).ready(function () {
     linearIndeterminate = $("#linear-indeterminate");

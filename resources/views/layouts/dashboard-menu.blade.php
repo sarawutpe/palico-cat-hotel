@@ -32,7 +32,7 @@
 
     @if (session('type') === 'EMPLOYEE')
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('dashboard.cat') }}">
+            <a class="nav-link" href="{{ route('dashboard.member') }}">
                 <svg class="nav-icon">
                     <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
                 </svg>ลูกค้า

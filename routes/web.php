@@ -39,6 +39,7 @@ Route::middleware([PublicRoute::class])->group(function () {
 Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
   Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
   Route::get('/dashboard/employee', [ViewController::class, 'dashboardEmployee'])->name('dashboard.employee');
+  Route::get('/dashboard/member', [ViewController::class, 'dashboardMember'])->name('dashboard.member');
   Route::get('/dashboard/cat', [ViewController::class, 'dashboardCat'])->name('dashboard.cat');
   Route::get('/dashboard/room', [ViewController::class, 'dashboardRoom'])->name('dashboard.room');
   

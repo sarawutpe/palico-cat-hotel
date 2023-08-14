@@ -15,19 +15,19 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
                                 <div class="col-sm-9">
-                                    <input type="text" name="user" class="form-control" disabled>
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label required">อีเมล</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="email" class="form-control" disabled>
+                                    <input type="text" name="user" class="form-control">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
                                 <div class="col-sm-9">
                                     <input type="password" name="pass" class="form-control">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label required">อีเมล</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="email" class="form-control">
                                 </div>
                             </div>
                             <div class="mb-3 row">

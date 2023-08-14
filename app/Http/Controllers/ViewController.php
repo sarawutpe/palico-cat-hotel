@@ -71,6 +71,11 @@ class ViewController extends Controller
         return view('dashboard.employee');
     }
 
+    public function dashboardMember()
+    {
+        return view('dashboard.member');
+    }
+
     public function dashboardCat()
     {
         return view('dashboard.cat');
