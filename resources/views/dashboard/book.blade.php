@@ -120,7 +120,7 @@
             const inDatetime = $('input[name="in_datetime"]');
             const outDatetime = $('input[name="out_datetime"]');
             const currentDate = dayjs();
-            const diff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
+            const dateDiff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
 
             if (dayjs(inDatetime.val()).isBefore(currentDate, 'day')) {
                 inDatetime.val(currentDate.format('YYYY-MM-DDTHH:mm'))
@@ -154,9 +154,8 @@
                     error: function(jqXHR, textStatus, errorThrown) {
                         toastr.error();
                     }
-                }).always(async function() {
+                }).always(function() {
                     resolve()
-                    await delay(1000)
                     utils.setLinearLoading('close')
                 });
             });
@@ -216,7 +215,6 @@
                     }
                 }).always(async function() {
                     resolve()
-                    await delay(1000)
                     utils.setLinearLoading('close')
                 });
             });
@@ -271,7 +269,7 @@
             const inDatetime = $('input[name="in_datetime"]');
             const outDatetime = $('input[name="out_datetime"]');
             const currentDate = dayjs();
-            const diff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
+            const dateDiff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
 
             const html = `
             <div class="row">
@@ -383,7 +381,7 @@
 
             const inDatetime = $('input[name="in_datetime"]').val();
             const outDatetime = $('input[name="out_datetime"]').val();
-            const diff = dayjs(outDatetime).diff(inDatetime, 'day')
+            const dateDiff = dayjs(outDatetime).diff(inDatetime, 'day')
             const roomId = room.room_id
             const rentPrice = room.room_price * diff
             const file = files.getFileUpload()
@@ -426,7 +424,6 @@
                     location.reload()
                 },
             }).always(async function() {
-                await delay(1000)
                 utils.setLinearLoading('close')
             });
         }

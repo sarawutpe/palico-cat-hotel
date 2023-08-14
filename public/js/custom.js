@@ -109,6 +109,19 @@ function formatPayStatus(type = "") {
     }
 }
 
+function formatRoomType(type = "") {
+    switch (type) {
+        case "S":
+            return "ขนาดเล็ก";
+        case "M":
+            return "ขนาดกลาง";
+        case "L":
+            return "ขนาดใหญ่";
+        default:
+            return "ประเภทไม่ถูกต้อง";
+    }
+}
+
 function setQueryParameter(key, value) {
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set(key, value);

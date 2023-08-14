@@ -42,6 +42,7 @@ Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
   Route::get('/dashboard/member', [ViewController::class, 'dashboardMember'])->name('dashboard.member');
   Route::get('/dashboard/cat', [ViewController::class, 'dashboardCat'])->name('dashboard.cat');
   Route::get('/dashboard/room', [ViewController::class, 'dashboardRoom'])->name('dashboard.room');
+  Route::get('/dashboard/book/manage', [ViewController::class, 'dashboardBookManage'])->name('dashboard.book.manage');
   
   Route::get('/dashboard/book', [ViewController::class, 'dashboardBook'])->name('dashboard.book');
   Route::get('/dashboard/book/history', [ViewController::class, 'dashboardBookHistory'])->name('dashboard.book.history');
@@ -82,8 +83,10 @@ Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
 Route::get('/api/rent/list', [RentController::class, 'getAllRent']);
 Route::get('/api/rent/member/{id}', [RentController::class, 'getRentByMember']);
 Route::post('/api/rent', [RentController::class, 'addRent']);
+Route::put('/api/rent/{id}', [RentController::class, 'updateRent']);
+Route::delete('/api/rent/{id}', [RentController::class, 'deleteRent']);
+
 
 Route::get('/api/pay-receipt/{id}', [PayReceiptController::class, 'getPayReceiptByRent']);
 
 // Route::put('/api/cat/{id}', [RentController::class, 'updateCat']);
-// Route::delete('/api/cat/{id}', [RentController::class, 'deleteCat']);

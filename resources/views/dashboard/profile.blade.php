@@ -11,7 +11,7 @@
                 <form enctype="multipart/form-data" onsubmit="handleSubmit(event)">
                     <div class="row">
                         <!-- Section 1 -->
-                        <div class="col">
+                        <div class="col-6">
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
                                 <div class="col-sm-9">
@@ -62,7 +62,7 @@
                             </div>
                         </div>
                         <!-- Section 2 Upload -->
-                        <div class="col">
+                        <div class="col-6">
                             <div class="mb-3">
                                 <div class="upload-block">
                                     <div class="preview-img-block">
@@ -155,8 +155,7 @@
                 error: function(jqXHR, textStatus, errorThrown) {
                     toastr.error('Failed');
                 }
-            }).always(async function() {
-                await delay(1000)
+            }).always(function() {
                 utils.setLinearLoading('close')
             });
         }
@@ -196,7 +195,6 @@
                     utils.showAlert('#alert-message', 'error', response.errors)
                 },
             }).always(async function() {
-                await delay(1000)
                 utils.setLinearLoading('close')
             });
         }

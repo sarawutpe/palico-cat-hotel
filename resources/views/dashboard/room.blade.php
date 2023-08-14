@@ -20,7 +20,7 @@
 
     <section class="content">
         <div class="row">
-            <div class="col">
+            <div class="col-6">
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleAddEmployee(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
@@ -41,7 +41,12 @@
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">ขนาดห้อง</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="room_type" class="form-control">
+                                                <select class="form-select" name="room_type">
+                                                    <option selected value="">เลือกขนาดห้อง</option>
+                                                    <option value="S">ขนาดเล็ก</option>
+                                                    <option value="M">ขนาดเล็ก</option>
+                                                    <option value="L">ขนาดใหญ่</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -87,7 +92,7 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button>
+                            {{-- <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button> --}}
                             <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
                             <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
@@ -96,7 +101,7 @@
                 </form>
             </div>
 
-            <div class="col">
+            <div class="col-6">
                 <div class="">
                     <fieldset class="scroll">
                         <legend>รายชื่อห้อง</legend>
@@ -158,7 +163,7 @@
                         <div class="box-card-list" onclick="handleShowRoom(${index} ,${utils.jsonString(room)})">
                             <div>
                                 <p>ชื่อห้อง ${room.room_name}</p>
-                                <p>ขนาดห้อง ${room.room_type}</p>
+                                <p>ขนาดห้อง ${formatRoomType(room.room_type)}</p>
                                 <p>ราคาห้อง ${room.room_price}</p>
                                 <p>ข้อมูลเพิ่มเติม ${room.room_detail}</p>
                             </div>
@@ -175,7 +180,6 @@
                     toastr.error();
                 }
             }).always(async function() {
-                await delay(1000)
                 utils.setLinearLoading('close')
             });
         }
@@ -185,7 +189,7 @@
 
             formData = new FormData();
             formData.append('room_name', $('input[name="room_name"]').val());
-            formData.append('room_type', $('input[name="room_type"]').val());
+            formData.append('room_type', $('select[name="room_type"]').val());
             formData.append('room_price', $('input[name="room_price"]').val());
             formData.append('room_detail', $('input[name="room_detail"]').val());
 
@@ -222,7 +226,7 @@
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
             $('input[name="room_name"]').val(room.room_name || "");
-            $('input[name="room_type"]').val(room.room_type || "");
+            $('select[name="room_type"]').val(room.room_type || "");
             $('input[name="room_price"]').val(room.room_price || "");
             $('textarea[name="room_detail"]').val(room.room_detail || "");
 
@@ -235,7 +239,7 @@
             formData = new FormData();
             formData.append('_method', 'PUT');
             formData.append('room_name', $('input[name="room_name"]').val());
-            formData.append('room_type', $('input[name="room_type"]').val());
+            formData.append('room_type', $('select[name="room_type"]').val());
             formData.append('room_price', $('input[name="room_price"]').val());
             formData.append('room_detail', $('textarea[name="room_detail"]').val());
 

@@ -80,8 +80,7 @@
                         rents = response.data
                         let html = ''
                         response.data.forEach(function(rent, index) {
-                            const diff = dayjs(rent.outDatetime).diff(rent.inDatetime, 'day')
-                            const displayDiff = diff === 0 ? 1 : diff
+                            const dateDiff = dayjs(rent.outDatetime).diff(rent.inDatetime, 'day')
                             html += `
                             <tr>
                                 <th scope="row">${index + 1}</th>
@@ -90,7 +89,7 @@
                                 <td>${rent.room.room_name}</td>
                                 <td>${formatDate(rent.in_datetime)}</td>
                                 <td>${formatDate(rent.out_datetime)}</td>
-                                <td>${displayDiff} วัน</td>
+                                <td>${dateDiff} วัน</td>
                                 <td>${formatPayStatus(rent.pay_status)}</td>
                                 <td>${formatRentStatus(rent.rent_status)}</td>
                                 <td>
@@ -105,9 +104,8 @@
                     error: function(jqXHR, textStatus, errorThrown) {
                         toastr.error();
                     }
-                }).always(async function() {
+                }).always(function() {
                     resolve()
-                    await delay(1000)
                     utils.setLinearLoading('close')
                 });
             });
@@ -136,7 +134,6 @@
             } catch (error) {
                 toastr.error();
             } finally {
-                await delay(1000);
                 utils.setLinearLoading('close');
             }
         }

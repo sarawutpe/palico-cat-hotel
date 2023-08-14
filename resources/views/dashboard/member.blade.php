@@ -20,7 +20,7 @@
 
     <section class="content">
         <div class="row">
-            <div class="col">
+            <div class="col-6">
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
@@ -113,7 +113,7 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button>
+                            {{-- <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button> --}}
                             <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
                             <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
@@ -122,7 +122,7 @@
                 </form>
             </div>
 
-            <div class="col">
+            <div class="col-6">
                 <div class="">
                     <fieldset class="scroll">
                         <legend>รายชื่อลูกค้า</legend>
@@ -181,7 +181,7 @@
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
-                                src="{{ asset('storage/') }}/${employee.member_img}"
+                                src="${storagePath}/${employee.member_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
                             </div>
                         </div>`;
@@ -192,7 +192,6 @@
                     toastr.error('Failed');
                 }
             }).always(async function() {
-                await delay(1000)
                 utils.setLinearLoading('close')
             });
         }
