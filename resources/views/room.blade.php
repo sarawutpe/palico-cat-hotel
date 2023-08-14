@@ -15,6 +15,7 @@
                     <div class="card-body h-100 d-flex flex-column" style="flex: inherit;">
                         <div class="mb-2 d-flex flex-column flex-1" style="flex: 1">
                             <h5 class="card-title">{{ $room->room_name }}</h5>
+                            <h5 class="card-title">{{ $room->room_type }}</h5>
                             <p class="card-text">฿ {{ $room->room_price }}</p>
                             <p>{{ $room->room_detail }}</p>
                         </div>

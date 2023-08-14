@@ -117,13 +117,21 @@
         });
 
         function calcDateDiff() {
-            const inDatetime = $('input[name="in_datetime"]').val();
-            const outDatetime = $('input[name="out_datetime"]').val();
-            const diff = dayjs(outDatetime).diff(inDatetime, 'day')
-            const displayDiff = diff === 0 ? 1 : diff
+            const inDatetime = $('input[name="in_datetime"]');
+            const outDatetime = $('input[name="out_datetime"]');
+            const currentDate = dayjs();
+            const diff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
 
-            if (inDatetime && outDatetime) {
-                $('#date-diff').text(`จำนวน ${displayDiff} วัน`)
+            if (dayjs(inDatetime.val()).isBefore(currentDate, 'day')) {
+                inDatetime.val(currentDate.format('YYYY-MM-DDTHH:mm'))
+            }
+
+            if (diff <= 0) {
+                outDatetime.val(dayjs(inDatetime.val()).add(1, 'day').format('YYYY-MM-DDTHH:mm'))
+            }
+
+            if (dayjs(outDatetime.val()).diff(inDatetime.val(), 'day') > 0) {
+                $('#date-diff').text(`จำนวน ${dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')} วัน`)
             }
         }
 
@@ -216,7 +224,6 @@
 
         function handleShowStepDetail() {
             const room = selectedRoom
-
             const html = `
             <div class="row">
                 <div class="col">
@@ -232,15 +239,15 @@
                     <div class="mb-3 row">
                         <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
                         <div class="col-sm-9">
-                            <input type="datetime-local" name="in_datetime" class="form-control" onchange="calcDateDiff()">
-                            <div class="invalid-feedback">กรุณากรอกวันที่เช็กอิน</div>
+                            <input type="datetime-local" name="in_datetime" class="form-control" min="${dayjs().format('YYYY-MM-DDTHH:mm')}" max="" onchange="calcDateDiff()">
+                            <div id="error-in-datetime" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
                         <div class="col-sm-9">
-                            <input type="datetime-local" name="out_datetime" class="form-control" onchange="calcDateDiff()">
-                            <div class="invalid-feedback">กรุณากรอกวันที่เช็กเอ้าท์</div>
+                            <input type="datetime-local" name="out_datetime" class="form-control" min="${dayjs().format('YYYY-MM-DDTHH:mm')}" max="" onchange="calcDateDiff()">
+                            <div id="error-out-datetime" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="mb-3 row">
@@ -260,7 +267,6 @@
 
         function handleShowStepPay() {
             const room = selectedRoom
-
             const html = `
             <div class="row">
                 <!-- Upload -->
@@ -346,15 +352,19 @@
         function handleStepPay() {
             const inDatetime = $('input[name="in_datetime"]');
             const outDatetime = $('input[name="out_datetime"]');
+            const errorInDatetime = $('#error-in-datetime');
+            const errorOutDatetime = $('#error-out-datetime');
 
             if (!inDatetime.val()) {
+                errorInDatetime.text('กรุณากรอกวันที่เช็กอิน')
                 inDatetime.addClass('is-invalid');
             } else {
                 inDatetime.removeClass('is-invalid');
             }
 
             if (!outDatetime.val()) {
-                outDatetime.addClass('is-invalid');
+                errorOutDatetime.text('กรุณากรอกวันที่เช็คเอาท์')
+                outDatetime.text('กรุณากรอกวันที่เช็กอิน').addClass('is-invalid');
             } else {
                 outDatetime.removeClass('is-invalid');
             }
