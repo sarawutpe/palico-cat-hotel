@@ -15,7 +15,6 @@ class EmployeeController extends Controller
     {
         try {
             $q = $request->input('q', '');
-            
             $query = Employee::orderBy('updated_at', 'desc');
             $query->where('employee_name', 'like', '%' . $q . '%');
             $employees = $query->get();
@@ -56,16 +55,15 @@ class EmployeeController extends Controller
                 'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
-            $employee = new Employee([
-                'employee_name' => $request->input('employee_name'),
-                'employee_user' => $request->input('employee_user'),
-                'employee_pass' => md5($request->input('employee_pass')),
-                'employee_email' => $request->input('employee_email'),
-                'employee_address' => $request->input('employee_address'),
-                'employee_phone' => $request->input('employee_phone'),
-                'employee_facebook' => $request->input('employee_facebook'),
-                'employee_lineid' => $request->input('employee_lineid'),
-            ]);
+            $employee = new Employee();
+            $employee->employee_name = $request->input('employee_name');
+            $employee->employee_user = $request->input('employee_user');
+            $employee->employee_pass = md5($request->input('employee_pass'));
+            $employee->employee_email = $request->input('employee_email');
+            $employee->employee_address = $request->input('employee_address');
+            $employee->employee_phone = $request->input('employee_phone');
+            $employee->employee_facebook = $request->input('employee_facebook');
+            $employee->employee_lineid = $request->input('employee_lineid');
 
             // Upload and save the employee_img if provided
             if ($request->hasFile('employee_img')) {

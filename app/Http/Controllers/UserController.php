@@ -120,7 +120,7 @@ class UserController extends Controller
                 // Upload file
                 if ($request->hasFile('img')) {
                     Helper::deleteFile($employee->employee_img);
-                    $employee->employeer_img = Helper::uploadFile($request, $file_formdata);
+                    $employee->employee_img = Helper::uploadFile($request, $file_formdata);
                 }
 
                 // Remove file

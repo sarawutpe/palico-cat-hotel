@@ -5,6 +5,7 @@ use App\Http\Controllers\ViewController;
 use App\Http\Controllers\AuthenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\CatController;
 use App\Http\Controllers\RentController;
@@ -61,6 +62,11 @@ Route::get('/api/employee/list', [EmployeeController::class, 'getAllEmployee']);
 Route::post('/api/employee', [EmployeeController::class, 'addEmployee']);
 Route::put('/api/employee/{id}', [EmployeeController::class, 'updateEmployee']);
 Route::delete('/api/employee/{id}', [EmployeeController::class, 'deleteEmployee']);
+
+Route::get('/api/member/list', [MemberController::class, 'getAllMember']);
+Route::post('/api/member', [MemberController::class, 'addMember']);
+Route::put('/api/member/{id}', [MemberController::class, 'updateMember']);
+Route::delete('/api/member/{id}', [MemberController::class, 'deleteMember']);
 
 Route::get('/api/room/list', [RoomController::class, 'getAllRoom']);
 Route::post('/api/room', [RoomController::class, 'addRoom']);

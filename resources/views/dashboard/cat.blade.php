@@ -74,14 +74,11 @@
                                     <!-- Section 2 Upload -->
                                     <div class="col-4">
                                         <div class="mb-3">
-                                            <div class="d-flex flex-column gap-2" style="max-width: fit-content;">
-                                                <div class="border rounded bg-white"
-                                                    style="overflow: hidden; width: 150px; height: 150px">
-                                                    <img id="file-preview" srcset="" src=""
-                                                        style="object-fit: cover; opacity: 0;" width="100%"
-                                                        height="100%">
+                                            <div class="upload-block">
+                                                <div class="preview-img-block">
+                                                    <img id="file-preview" src="" style="opacity: 0;">
                                                 </div>
-                                                <div class="d-flex flex-column gap-2">
+                                                <div class="btn-img-block">
                                                     <div class="btn btn-secondary position-relative w-100">
                                                         <input type="file" id="file-upload" name="cat_img"
                                                             accept="image/png, image/jpeg"

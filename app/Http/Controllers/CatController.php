@@ -6,7 +6,6 @@ use App\Models\Cat;
 use App\Http\Helpers\Helper;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CatController extends Controller
 {

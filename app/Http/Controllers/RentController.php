@@ -4,17 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Rent;
 use App\Models\PayReceipt;
-use App\Models\Admin;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Helpers\Helper;
 use App\Http\Helpers\Key;
-use App\Models\Room;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use App\Rules\UniqueUser;
 use Carbon\Carbon;
 use DateTime;
 
@@ -80,11 +73,10 @@ class RentController extends Controller
             $rent = Rent::where('room_id', $request->input('room_id'))
                 ->where('rent_status', Key::$RESERVED)
                 ->first();
+
             if ($rent) {
                 return response()->json(['success' => false, 'errors' => 'จองไม่สำเร็จเนื่องจากห้องพักไม่ว่าง'], 400);
             }
-
-            return response()->json(['success' => false, 'errors' => 'จองไม่สำเร็จเนื่องจากห้องพักไม่ว่าง'], 400);
 
             $rent = new Rent();
             $rent->rent_datetime = Carbon::parse($request->input('rent_datetime'));

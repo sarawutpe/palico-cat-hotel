@@ -13,6 +13,7 @@ MariaDB
 -   Fonts: DB Heavent
 -   sweetalert2 https://sweetalert2.github.io/
 -   toastr https://codeseven.github.io/toastr/demo.html
+-   dayjs https://day.js.org/en/
 
 -   composer require mailjet/mailjet-apiv3-php
 

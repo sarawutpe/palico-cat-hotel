@@ -44,12 +44,11 @@ class RoomController extends Controller
                 'room_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
-            $room = new Room([
-                'room_name' => $request->input('room_name'),
-                'room_type' => $request->input('room_type'),
-                'room_price' => $request->input('room_price'),
-                'room_detail' => $request->input('room_detail'),
-            ]);
+            $room = new Room();
+            $room->room_name = $request->input('room_name');
+            $room->room_type = $request->input('room_type');
+            $room->room_price = $request->input('room_price');
+            $room->room_detail = $request->input('room_detail');
 
             // Upload and save the room_img if provided
             if ($request->hasFile('room_img')) {

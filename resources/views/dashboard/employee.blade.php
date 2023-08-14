@@ -84,14 +84,11 @@
                                     <!-- Section 2 Upload -->
                                     <div class="col-4">
                                         <div class="mb-3">
-                                            <div class="d-flex flex-column gap-2" style="max-width: fit-content;">
-                                                <div class="border rounded bg-white"
-                                                    style="overflow: hidden; width: 150px; height: 150px">
-                                                    <img id="file-preview" srcset="" src=""
-                                                        style="object-fit: cover; opacity: 0;" width="100%"
-                                                        height="100%">
+                                            <div class="upload-block">
+                                                <div class="preview-img-block">
+                                                    <img id="file-preview" src="" style="opacity: 0;">
                                                 </div>
-                                                <div class="d-flex flex-column gap-2">
+                                                <div class="btn-img-block">
                                                     <div class="btn btn-secondary position-relative w-100">
                                                         <input type="file" id="file-upload" name="employee_img"
                                                             accept="image/png, image/jpeg"
@@ -165,10 +162,9 @@
 
         function handleGetAllEmployee() {
             utils.setLinearLoading('open')
-            const url = new URL(`${window.location.origin}/api/employee/list${window.location.search}`);
 
             $.ajax({
-                url: url,
+                url: `${prefixApi}/api/employee/list${window.location.search}`,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
@@ -217,9 +213,8 @@
                 formData.append("employee_img", file);
             }
 
-            const url = new URL(`${window.location.origin}/api/employee`);
             $.ajax({
-                url: url,
+                url: `${prefixApi}/api/employee`,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -265,8 +260,6 @@
         function handleUpdateEmployee() {
             if (!selectedId) return
 
-            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
-
             formData = new FormData();
             formData.append('_method', 'PUT');
             formData.append('employee_name', $('input[name="employee_name"]').val());
@@ -286,7 +279,7 @@
             }
 
             $.ajax({
-                url: url.toString(),
+                url: `${prefixApi}/api/employee/${selectedId}`,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -308,12 +301,10 @@
         async function handleDeleteEmployee() {
             if (!selectedId) return
 
-            const url = new URL(`${window.location.origin}/api/employee/${selectedId}`);
-
             const confirm = await utils.confirmAlert();
             if (confirm) {
                 $.ajax({
-                    url: url,
+                    url: `${prefixApi}/api/employee/${selectedId}`,
                     type: "DELETE",
                     headers: headers,
                     success: function(data, textStatus, jqXHR) {

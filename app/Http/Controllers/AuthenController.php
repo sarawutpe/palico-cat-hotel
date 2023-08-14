@@ -204,7 +204,7 @@ class AuthenController extends Controller
 
             // Send to mail
             $url_to_recovery = url('/recovery/reset/' . $encrpy_token);
-            $res = Mail::sendMail('', $email_to, $url_to_recovery);
+            Mail::sendMail('', $email_to, $url_to_recovery);
 
             return redirect()->back()->with('success', 'ตรวจสอบอีเมลเพื่อดำเนินการรีเซ็ตรหัสผ่าน');
         } catch (ValidationException $exception) {

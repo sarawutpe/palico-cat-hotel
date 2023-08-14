@@ -7,10 +7,6 @@ use Illuminate\Support\Str;
 
 class HelperController extends Controller
 {
-    public function random() {
-
-    }
-
     public function uploadFile(Request $request, String $file)
     {
         if ($request->hasFile($file)) {

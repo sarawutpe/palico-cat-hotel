@@ -64,13 +64,11 @@
                         <!-- Section 2 Upload -->
                         <div class="col">
                             <div class="mb-3">
-                                <div class="d-flex flex-column gap-2" style="max-width: fit-content;">
-                                    <div class="border rounded bg-white"
-                                        style="overflow: hidden; width: 250px; height: 250px">
-                                        <img id="file-preview" src="" style="object-fit: cover; opacity: 0;"
-                                            width="100%" height="100%">
+                                <div class="upload-block">
+                                    <div class="preview-img-block">
+                                        <img id="file-preview" src="" style="opacity: 0;">
                                     </div>
-                                    <div class="d-flex gap-2">
+                                    <div class="btn-img-block">
                                         <div class="btn btn-light position-relative w-100">
                                             <input type="file" id="file-upload" name="img"
                                                 accept="image/png, image/jpeg"
@@ -135,7 +133,8 @@
 
                     $('input[name="name"]').val(value.member_name || value.employee_name || value.admin_name);
                     $('input[name="user"]').val(value.member_user || value.employee_user || value.admin_user);
-                    $('input[name="email"]').val(value.member_email || value.employee_email || value.admin_email);
+                    $('input[name="email"]').val(value.member_email || value.employee_email || value
+                        .admin_email);
 
                     $('input[name="pass"]').val("");
                     $('input[name="address"]').val(value.member_address || value.employee_address || value
@@ -164,6 +163,7 @@
 
         function handleSubmit(event) {
             event.preventDefault()
+            utils.setLinearLoading('open')
 
             formData = new FormData();
             formData.append('name', $('input[name="name"]').val());
@@ -195,6 +195,9 @@
                     const response = jqXHR.responseJSON
                     utils.showAlert('#alert-message', 'error', response.errors)
                 },
+            }).always(async function() {
+                await delay(1000)
+                utils.setLinearLoading('close')
             });
         }
     </script>

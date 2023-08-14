@@ -1,12 +1,12 @@
 @extends('layouts.dashboard')
-@section('title', 'การจองของฉัน')
+@section('title', 'ประวัติการจอง')
 @section('content')
     <section class="content">
         <div class="row">
             <div class="col">
                 <div class="col h-100">
                     <fieldset class="scroll">
-                        <legend>ประวัติการจอง</legend>
+                        <legend>ข้อมูลประวัติการจอง</legend>
                         <div id="alert-message"></div>
                         <div class="tab-pane fade show active" id="tab1" role="tabpanel" tabindex="0">
                             <table class="table">

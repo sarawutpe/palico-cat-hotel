@@ -84,12 +84,11 @@
                     <!-- Section 2 Upload -->
                     <div class="col">
                         <div class="mb-3">
-                            <div class="d-flex flex-column gap-2" style="max-width: fit-content;">
-                                <div class="border rounded bg-white" style="overflow: hidden; width: 250px; height: 250px">
-                                    <img id="file-preview" src="" style="object-fit: cover; opacity: 0;"
-                                        width="100%" height="100%">
+                            <div class="upload-block">
+                                <div class="preview-img-block">
+                                    <img id="file-preview" src="" style="opacity: 0;">
                                 </div>
-                                <div class="d-flex gap-2">
+                                <div class="btn-img-block">
                                     <div class="btn btn-light position-relative w-100">
                                         <input type="file" id="file-upload" name="member_img"
                                             accept="image/png, image/jpeg" class="position-absolute opacity-0 w-100 h-100"

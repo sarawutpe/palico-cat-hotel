@@ -28,16 +28,23 @@
                 </svg>ประวัติการจอง
             </a>
         </li>
-        {{-- <li class="nav-item">
-            <a class="nav-link" href="{{ route('dashboard.book.history') }}">
-                <svg class="nav-icon">
-                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
-                </svg>ประวัติการจอง
-            </a>
-        </li> --}}
     @endif
 
     @if (session('type') === 'EMPLOYEE')
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('dashboard.cat') }}">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                </svg>ลูกค้า
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('dashboard.cat') }}">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                </svg>แมว
+            </a>
+        </li>
     @endif
 
     @if (session('type') === 'ADMIN')
@@ -66,4 +73,3 @@
 </ul>
 
 <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
-
