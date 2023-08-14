@@ -224,6 +224,7 @@
                     resetForm()
                     toastr.success('Successfully');
                     handleGetAllEmployee()
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
@@ -290,6 +291,7 @@
                     toastr.success('Successfully');
                     handleGetAllEmployee()
                     handleShowEmployee(selectedIndex, JSON.stringify(response.data))
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON

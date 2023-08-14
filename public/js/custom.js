@@ -242,4 +242,8 @@ const utils = {
                 `<div class="${colorClass} font-medium mb-2"><ul>${html}</ul></div>`
             );
     },
+    clearAlert(elementId) {
+        const target = $(elementId);
+        target.empty();
+    },
 };
