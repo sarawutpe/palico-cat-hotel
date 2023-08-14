@@ -55,7 +55,10 @@
     <script src="{{ asset('js/lodash.min.js') }}"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.9/plugin/buddhistEra.min.js"></script>
+
     {{-- <script src="https://cdn.jsdelivr.net/npm/lodash.debounce@4.0.8/index.min.js"></script> --}}
 </head>
 

@@ -116,6 +116,17 @@
             }
         });
 
+        function calcDateDiff() {
+            const inDatetime = $('input[name="in_datetime"]').val();
+            const outDatetime = $('input[name="out_datetime"]').val();
+            const diff = dayjs(outDatetime).diff(inDatetime, 'day')
+            const displayDiff = diff === 0 ? 1 : diff
+
+            if (inDatetime && outDatetime) {
+                $('#date-diff').text(`จำนวน ${displayDiff} วัน`)
+            }
+        }
+
         function goTab(id) {
             if (!id) return
             $(`button[data-coreui-target="#tab${id}"]`).prop('disabled', false).css('opacity', 1).tab('show');
@@ -221,15 +232,21 @@
                     <div class="mb-3 row">
                         <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
                         <div class="col-sm-9">
-                            <input type="datetime-local" name="in_datetime" class="form-control">
+                            <input type="datetime-local" name="in_datetime" class="form-control" onchange="calcDateDiff()">
                             <div class="invalid-feedback">กรุณากรอกวันที่เช็กอิน</div>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
                         <div class="col-sm-9">
-                            <input type="datetime-local" name="out_datetime" class="form-control">
+                            <input type="datetime-local" name="out_datetime" class="form-control" onchange="calcDateDiff()">
                             <div class="invalid-feedback">กรุณากรอกวันที่เช็กเอ้าท์</div>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-9">
+                            <p id="date-diff" class="border rounded"></p>
                         </div>
                     </div>
                     <div class="d-flex gap-4" style="padding: 12px">
@@ -288,6 +305,10 @@
                         <p>฿ ${room.room_price}</p>
                     </div>
                     <hr>
+                    <!-- QR -->
+                    <div class="d-flex justify-content-center">
+                        <img src="{{ asset('assets/img/qr-payment.jpeg') }}" width="250px" height="100%" />
+                    </div>
                     <div class="d-flex justify-content-between">
                         <p class="font-medium">สรุปยอด</p>
                         <p class="font-medium">฿ ${room.room_price}</p>
@@ -345,8 +366,6 @@
         }
 
         function handleAddRent() {
-            utils.setLinearLoading()
-
             const room = selectedRoom
 
             const inDatetime = $('input[name="in_datetime"]').val();
@@ -360,6 +379,8 @@
             }
 
             if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice) return
+
+            utils.setLinearLoading()
 
             formData = new FormData();
             formData.append('rent_datetime', dayjs().format());

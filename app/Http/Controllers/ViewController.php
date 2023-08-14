@@ -87,6 +87,11 @@ class ViewController extends Controller
         return view('dashboard.book');
     }
 
+    public function dashboardBookManage()
+    {
+        return view('dashboard.book-manage');
+    }
+
     public function dashboardBookHistory()
     {
         return view('dashboard.book-history');

@@ -71,6 +71,47 @@ $(document).ready(function () {
     fileToolkit();
 });
 
+function formatDate(dateTime = "") {
+    if (!dayjs(dateTime).isValid()) return "invalid date";
+
+    dayjs.extend(dayjs_plugin_buddhistEra);
+    return dayjs().format("DD-MM-BBBB HH:MM");
+}
+
+function formatRentStatus(type = "") {
+    switch (type) {
+        case "PENDING":
+            return "กำลังรอ";
+        case "RESERVED":
+            return "จองแล้ว";
+        case "CHECKED_IN":
+            return "เช็คอิน";
+        case "CHECKED_OUT":
+            return "เช็คเอาท์";
+        case "COMPLETED":
+            return "เสร็จสิ้น";
+        case "CANCELED":
+            return "ยกเลิก";
+        default:
+            return "ประเภทไม่ถูกต้อง";
+    }
+}
+
+function formatPayStatus(type = "") {
+    switch (type) {
+        case "PENDING":
+            return "กำลังรอ";
+        case "PAYING":
+            return "จ่ายแล้ว";
+        case "COMPLETED":
+            return "เสร็จสิ้น";
+        case "CANCELED":
+            return "ยกเลิก";
+        default:
+            return "ประเภทไม่ถูกต้อง";
+    }
+}
+
 function setQueryParameter(key, value) {
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set(key, value);
@@ -92,8 +133,8 @@ const files = {
         return fileUploadElement.prop("files")[0];
     },
     setMessage(type, message) {
-        fileMessageElement.addClass('text-danger').text(message)
-    }
+        fileMessageElement.addClass("text-danger").text(message);
+    },
 };
 
 function delay(ms) {
@@ -199,5 +240,5 @@ const utils = {
             .append(
                 `<div class="${colorClass} font-medium mb-2"><ul>${html}</ul></div>`
             );
-    }
+    },
 };
