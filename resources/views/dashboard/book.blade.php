@@ -267,6 +267,12 @@
 
         function handleShowStepPay() {
             const room = selectedRoom
+
+            const inDatetime = $('input[name="in_datetime"]');
+            const outDatetime = $('input[name="out_datetime"]');
+            const currentDate = dayjs();
+            const diff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
+
             const html = `
             <div class="row">
                 <!-- Upload -->
@@ -308,7 +314,7 @@
                     <h3 class="col-sm-3 col-form-label">รายการชำระเงิน</h3>
                     <div class="d-flex justify-content-between">
                         <p>1. ${selectedRoomType} (${room.room_name})</p>
-                        <p>฿ ${room.room_price}</p>
+                        <p>฿${room.room_price}</p>
                     </div>
                     <hr>
                     <!-- QR -->
@@ -316,8 +322,8 @@
                         <img src="{{ asset('assets/img/qr-payment.jpeg') }}" width="250px" height="100%" />
                     </div>
                     <div class="d-flex justify-content-between">
-                        <p class="font-medium">สรุปยอด</p>
-                        <p class="font-medium">${room.room_price}</p>
+                        <p class="font-medium">สรุปยอด ${diff} วัน</p>
+                        <p class="font-medium">฿${room.room_price * diff}</p>
                     </div>
           
                     <div class="d-flex gap-4" style="padding: 12px">
@@ -380,8 +386,9 @@
 
             const inDatetime = $('input[name="in_datetime"]').val();
             const outDatetime = $('input[name="out_datetime"]').val();
+            const diff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
             const roomId = room.room_id
-            const rentPrice = room.room_price
+            const rentPrice = room.room_price * diff
             const file = files.getFileUpload()
 
             if (!file) {
