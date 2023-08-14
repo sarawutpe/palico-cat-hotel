@@ -50,7 +50,7 @@
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
-        var storagePath = "{{ asset('storage/') }}"
+        var storagePath = "{{ asset('storage') }}"
 
         $(document).ready(async function() {
             await handleGetAllRent()
@@ -58,7 +58,7 @@
 
         function handleGetAllRent() {
             return new Promise((resolve, reject) => {
-                utils.setLinearLoading()
+                utils.setLinearLoading('open')
                 $.ajax({
                     url: `${prefixApi}/api/rent/list`,
                     type: "GET",
@@ -75,7 +75,7 @@
                 }).always(async function() {
                     resolve()
                     await delay(1000)
-                    utils.setLinearLoading()
+                    utils.setLinearLoading('close')
                 });
             });
         }

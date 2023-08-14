@@ -23,12 +23,8 @@ class RentController extends Controller
     public function getAllRent(Request $request)
     {
         try {
-            $q = $request->input('q', '');
-
-            $query = Rent::orderBy('updated_at', 'desc');
-            // $query->where('room_name', 'like', '%' . $q . '%');
-            $room = $query->get();
-            return response()->json(['success' => true, 'data' => $room]);
+            $rents = Rent::orderBy('updated_at', 'desc')->get();
+            return response()->json(['success' => true, 'data' => $rents]);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);
         } catch (\Throwable $th) {
@@ -40,8 +36,6 @@ class RentController extends Controller
     {
         try {
             $rooms = Rent::with('room')->where('member_id', $id)->orderBy('updated_at', 'desc')->get();
-            // $query->where('member_id', $id);
-            // $room = $query->get();
             return response()->json(['success' => true, 'data' => $rooms]);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);

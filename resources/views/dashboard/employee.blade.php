@@ -142,7 +142,7 @@
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
-        var storagePath = "{{ asset('storage/') }}"
+        var storagePath = "{{ asset('storage') }}"
         var formData = null
         var search = null
 
@@ -164,7 +164,7 @@
         }
 
         function handleGetAllEmployee() {
-            utils.setLinearLoading()
+            utils.setLinearLoading('open')
             const url = new URL(`${window.location.origin}/api/employee/list${window.location.search}`);
 
             $.ajax({
@@ -197,7 +197,7 @@
                 }
             }).always(async function() {
                 await delay(1000)
-                utils.setLinearLoading()
+                utils.setLinearLoading('close')
             });
         }
 

@@ -31,4 +31,9 @@ class Rent extends Model
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
+
+    public function payReceipt()
+    {
+        return $this->belongsTo(PayReceipt::class, 'rent_id');
+    }
 }

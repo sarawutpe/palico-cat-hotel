@@ -116,7 +116,7 @@
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
-        var storagePath = "{{ asset('storage/') }}"
+        var storagePath = "{{ asset('storage') }}"
         var formData = null
         var search = null
 
@@ -146,7 +146,7 @@
         }
 
         function handleGetAllRoom() {
-            utils.setLinearLoading()
+            utils.setLinearLoading('open')
 
             $.ajax({
                 url: `${window.location.origin}/api/room/list${window.location.search}`,
@@ -179,7 +179,7 @@
                 }
             }).always(async function() {
                 await delay(1000)
-                utils.setLinearLoading()
+                utils.setLinearLoading('close')
             });
         }
 

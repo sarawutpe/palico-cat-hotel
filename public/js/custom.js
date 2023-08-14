@@ -222,8 +222,12 @@ const utils = {
             Swal.close();
         }
     },
-    setLinearLoading() {
-        linearIndeterminate.toggleClass("active");
+    setLinearLoading(action = "") {
+        if (action === "open") {
+            linearIndeterminate.addClass("active");
+        } else if (action === "close") {
+            linearIndeterminate.removeClass("active");
+        }
     },
     showAlert(elementId, color, message) {
         const target = $(elementId);

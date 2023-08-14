@@ -132,7 +132,7 @@
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
-        var storagePath = "{{ asset('storage/') }}"
+        var storagePath = "{{ asset('storage') }}"
         var id = "{{ session('id') }}"
         var formData = null
         var search = null
@@ -163,7 +163,7 @@
         }
 
         function handleGetAllCat() {
-            utils.setLinearLoading()
+            utils.setLinearLoading('open')
 
             $.ajax({
                 url: `${prefixApi}/api/cat/list${window.location.search}`,
@@ -195,7 +195,7 @@
                 }
             }).always(async function() {
                 await delay(1000)
-                utils.setLinearLoading()
+                utils.setLinearLoading('close')
             });
         }
 

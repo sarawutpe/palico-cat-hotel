@@ -8,6 +8,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\CatController;
 use App\Http\Controllers\RentController;
+use App\Http\Controllers\PayReceiptController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
@@ -76,6 +77,7 @@ Route::get('/api/rent/list', [RentController::class, 'getAllRent']);
 Route::get('/api/rent/member/{id}', [RentController::class, 'getRentByMember']);
 Route::post('/api/rent', [RentController::class, 'addRent']);
 
+Route::get('/api/pay-receipt/{id}', [PayReceiptController::class, 'getPayReceiptByRent']);
 
 // Route::put('/api/cat/{id}', [RentController::class, 'updateCat']);
 // Route::delete('/api/cat/{id}', [RentController::class, 'deleteCat']);

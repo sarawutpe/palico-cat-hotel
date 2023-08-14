@@ -75,7 +75,7 @@
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
-        var storagePath = "{{ asset('storage/') }}"
+        var storagePath = "{{ asset('storage') }}"
 
         var id = "{{ session('id') }}"
 
@@ -134,7 +134,7 @@
 
         function handleGetAllRent() {
             return new Promise((resolve, reject) => {
-                utils.setLinearLoading()
+                utils.setLinearLoading('open')
                 $.ajax({
                     url: `${prefixApi}/api/rent/list`,
                     type: "GET",
@@ -149,16 +149,16 @@
                 }).always(async function() {
                     resolve()
                     await delay(1000)
-                    utils.setLinearLoading()
+                    utils.setLinearLoading('close')
                 });
             });
         }
 
         function handleGetAllRoom() {
-            if (!Array.isArray(rents) || rents.length === 0) return
+            if (!Array.isArray(rents)) return
 
             return new Promise((resolve, reject) => {
-                utils.setLinearLoading()
+                utils.setLinearLoading('open')
                 $.ajax({
                     url: `${prefixApi}/api/room/list${window.location.search}`,
                     type: "GET",
@@ -209,7 +209,7 @@
                 }).always(async function() {
                     resolve()
                     await delay(1000)
-                    utils.setLinearLoading()
+                    utils.setLinearLoading('close')
                 });
             });
         }
@@ -311,7 +311,7 @@
                     </div>
                     <div class="d-flex justify-content-between">
                         <p class="font-medium">สรุปยอด</p>
-                        <p class="font-medium">฿ ${room.room_price}</p>
+                        <p class="font-medium">${room.room_price}</p>
                     </div>
           
                     <div class="d-flex gap-4" style="padding: 12px">
@@ -380,7 +380,7 @@
 
             if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice) return
 
-            utils.setLinearLoading()
+            utils.setLinearLoading('open')
 
             formData = new FormData();
             formData.append('rent_datetime', dayjs().format());
@@ -413,7 +413,7 @@
                 },
             }).always(async function() {
                 await delay(1000)
-                utils.setLinearLoading()
+                utils.setLinearLoading('close')
             });
         }
     </script>
