@@ -32,12 +32,33 @@
                                 <div class="row">
                                     <!-- Section 1 -->
                                     <div class="col-12">
-                                        {{-- <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required"></label>
+
+
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="" class="form-control">
+                                                <input type="datetime-local" name="in_datetime" class="form-control"
+                                                    onchange="calcDateDiff()">
+                                                <div id="error-in-datetime" class="invalid-feedback"></div>
                                             </div>
-                                        </div> --}}
+                                        </div>
+
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
+                                            <div class="col-sm-9">
+                                                <input type="datetime-local" name="out_datetime" class="form-control"
+                                                    onchange="calcDateDiff()">
+                                                <div id="error-in-datetime" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 row">
+                                            <div class="col-sm-3"></div>
+                                            <div class="col-sm-9">
+                                                <p id="date-diff" class="border rounded"></p>
+                                            </div>
+                                        </div>
+
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">สถานะการจอง</label>
                                             <div class="col-sm-9">
@@ -62,7 +83,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -103,6 +124,9 @@
         $(document).ready(function() {
             handleGetAllRent()
             callSearchFunc = handleGetAllRent;
+
+            // const inDatetime = $('input[name="in_datetime"]');
+            // const outDatetime = $('input[name="out_datetime"]');
         })
 
         function resetForm() {
@@ -124,6 +148,29 @@
             target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
         }
 
+        async function calcDateDiff() {
+
+
+            // await delay(1000)
+            // const inDatetime = $('input[name="in_datetime"]');
+            // const outDatetime = $('input[name="out_datetime"]');
+            // const currentDate = dayjs();
+            // const dateDiff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
+
+            // if (dayjs(inDatetime.val()).isBefore(currentDate, 'day')) {
+            //     inDatetime.val(currentDate.format('YYYY-MM-DDTHH:mm'))
+            // }
+
+            // if (dateDiff <= 0) {
+            //     outDatetime.val(dayjs(inDatetime.val()).add(1, 'day').format('YYYY-MM-DDTHH:mm'))
+            // }
+
+            // if (dayjs(outDatetime.val()).diff(inDatetime.val(), 'day') > 0) {
+            //     console.log('ok')
+            //     $('#date-diff').text(`จำนวน ${dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')} วัน`)
+            // }
+        }
+
         function handleGetAllRent() {
             utils.setLinearLoading('open')
 
@@ -134,13 +181,11 @@
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
 
-
-                    console.log(response.data)
-
+                    console.log(response)
 
                     let html = ''
                     response.data.forEach(function(rent, index) {
-                        const dateDiff = dayjs(rent.outDatetime).diff(rent.inDatetime, 'day')
+                        const dateDiff = dayjs(rent.out_datetime).diff(rent.in_datetime, 'day')
                         html += `
                         <div class="box-card-list" onclick="handleShowRent(${index} ,${utils.jsonString(rent)})">
                             <div>
@@ -148,7 +193,6 @@
                                 <p>รหัสสมาชิก ${rent.member_id}</p>
                                 <p>ชื่อสมาชิก ${rent.member.member_name}</p>
                                 <p>ชื่อห้อง ${rent.room.room_name}</p>
-                                <p>ระยะเวลา ${dateDiff}</p>
                                 <p>วันที่เช็คอิน ${formatDate(rent.in_datetime)}</p>
                                 <p>วันที่เช็คเอาท์ ${formatDate(rent.out_datetime)}</p>
                                 <p>ระยะเวลา ${dateDiff}</p>
@@ -173,14 +217,19 @@
             });
         }
 
+
         function handleShowRent(index, data) {
             const rent = JSON.parse(data)
             if (typeof rent !== 'object') return
 
+            // console.log(rent)
             selectedId = rent.rent_id
             selectedIndex = index
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
             $('select[name="rent_status"]').val(rent.rent_status || "");
+
+            $('input[name="in_datetime"]').val(dayjs.utc(rent.in_datetime).format('YYYY-MM-DDTHH:mm'));
+            $('input[name="out_datetime"]').val(dayjs.utc(rent.out_datetime).format('YYYY-MM-DDTHH:mm'));
             $('select[name="pay_status"]').val(rent.pay_status || "");
         }
 
@@ -190,9 +239,12 @@
             formData = new FormData();
             formData.append('_method', 'PUT');
             formData.append('rent_status', $('select[name="rent_status"]').val());
+            formData.append('in_datetime', $('input[name="in_datetime"]').val());
+            formData.append('out_datetime', $('input[name="out_datetime"]').val());
             formData.append('pay_status', $('select[name="pay_status"]').val());
             formData.append('employee_in', id);
             formData.append('employee_pay', id);
+
 
             $.ajax({
                 url: `${prefixApi}/api/rent/${selectedId}`,

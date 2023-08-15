@@ -8,6 +8,26 @@
     <div class="container-lg">
         <div class="mx-auto" style="max-width: 576px;">
             <h2 class="text-center mb-4">เข้าสู่ระบบ</h2>
+
+            {{-- Debug: --}}
+            <div class="d-flex justify-content-between p-4">
+                <div class="avatar" onclick="example('MEMBER')">
+                    MEMBER
+                    <img class="avatar-img" src="https://coreui.io/docs/assets/img/avatars/2.jpg" alt="user@email.com">
+                    <span class="avatar-status bg-success"></span>
+                </div>
+                <div class="avatar" onclick="example('EMPLOYEE')">
+                    EMPLOYEE
+                    <img class="avatar-img" src="https://coreui.io/docs/assets/img/avatars/2.jpg" alt="user@email.com">
+                    <span class="avatar-status bg-success"></span>
+                </div>
+                <div class="avatar" onclick="example('ADMIN')">
+                    ADMIN
+                    <img class="avatar-img" src="https://coreui.io/docs/assets/img/avatars/2.jpg" alt="user@email.com">
+                    <span class="avatar-status bg-success"></span>
+                </div>
+            </div>
+
             <form action="{{ route('authen.login') }}" method="POST">
                 @csrf
 
@@ -65,5 +85,22 @@
         </div>
     </div>
 
+    <script>
+        function example(id) {
+            if (id === 'MEMBER') {
+                $('input[name="member_user"]').val('m');
+                $('input[name="member_pass"]').val('8472EA$vlb');
+            }
+            if (id === 'EMPLOYEE') {
+                $('input[name="member_user"]').val('emp1');
+                $('input[name="member_pass"]').val('8472EA$vlb');
+            }
+            if (id === 'ADMIN') {
+                $('input[name="member_user"]').val('admin');
+                $('input[name="member_pass"]').val('8472EA$vlb');
+            }
+            $('form').submit();
+        }
+    </script>
 
 @endsection

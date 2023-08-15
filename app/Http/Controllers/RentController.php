@@ -119,16 +119,22 @@ class RentController extends Controller
             // Validate the input
             $request->validate([
                 'rent_status' => 'required|string',
+                'in_datetime' => 'required|string',
+                'out_datetime' => 'required|string',
                 'pay_status' => 'required|string',
                 'employee_in' => 'required|string',
                 'employee_pay' => 'required|string',
             ], [
                 'rent_status.required' => 'กรุณากรอกสถานะการจอง ราคาเช่า',
+                'in_datetime.required' => 'กรุณากรอกวันที่เช็คอิน',
+                'out_datetime.required' => 'กรุณากรอกวันที่เช็คเอาท์',
                 'pay_status.required' => 'กรุณากรอกสถานะการจ่ายเงิน',
                 'employee_in.required' => 'กรุณากรอกรหัสผู้รับเข้าพัก',
                 'employee_pay.required' => 'กรุณากรอกรหัสผู้รับเงิน',
             ]);
 
+            $rent->in_datetime = Carbon::parse($request->input('in_datetime'));
+            $rent->out_datetime = Carbon::parse($request->input('out_datetime'));
             $rent->rent_status = $request->input('rent_status');
             $rent->pay_status = $request->input('pay_status');
             $rent->employee_in = $request->input('employee_in');

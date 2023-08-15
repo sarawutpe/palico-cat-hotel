@@ -221,7 +221,7 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
-                    toastr.success('Successfully');
+                    toastr.success();
                     handleGetAllEmployee()
                     utils.clearAlert('#alert-message')
                 },
@@ -287,7 +287,7 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
-                    toastr.success('Successfully');
+                    toastr.success();
                     handleGetAllEmployee()
                     handleShowEmployee(selectedIndex, JSON.stringify(response.data))
                     utils.clearAlert('#alert-message')

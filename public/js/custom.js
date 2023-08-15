@@ -71,8 +71,10 @@ $(document).ready(function () {
 function formatDate(dateTime = "") {
     if (!dayjs(dateTime).isValid()) return "invalid date";
 
-    dayjs.extend(dayjs_plugin_buddhistEra);
-    return dayjs().format("DD-MM-BBBB HH:MM");
+    return dayjs(dateTime).format('YYYY-MM-DDTHH:mm');
+
+    // dayjs.extend(dayjs_plugin_buddhistEra); 
+    // return dayjs(dateTime).format("DD-MM-BBBB HH:MM");
 }
 
 function formatRentStatus(type = "") {

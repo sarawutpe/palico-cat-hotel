@@ -187,7 +187,7 @@
                 processData: false,
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
-                    toastr.success('Successfully');
+                    toastr.success();
                     getProfile()
                 },
                 error: function(jqXHR, textStatus, errorThrown) {

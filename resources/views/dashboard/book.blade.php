@@ -126,7 +126,7 @@
                 inDatetime.val(currentDate.format('YYYY-MM-DDTHH:mm'))
             }
 
-            if (diff <= 0) {
+            if (dateDiff <= 0) {
                 outDatetime.val(dayjs(inDatetime.val()).add(1, 'day').format('YYYY-MM-DDTHH:mm'))
             }
 
@@ -317,8 +317,8 @@
                         <img src="{{ asset('assets/img/qr-payment.jpeg') }}" width="250px" height="100%" />
                     </div>
                     <div class="d-flex justify-content-between">
-                        <p class="font-medium">สรุปยอด ${diff} วัน</p>
-                        <p class="font-medium">฿${room.room_price * diff}</p>
+                        <p class="font-medium">สรุปยอด ${dateDiff} วัน</p>
+                        <p class="font-medium">฿${room.room_price * dateDiff}</p>
                     </div>
           
                     <div class="d-flex gap-4" style="padding: 12px">
@@ -383,7 +383,7 @@
             const outDatetime = $('input[name="out_datetime"]').val();
             const dateDiff = dayjs(outDatetime).diff(inDatetime, 'day')
             const roomId = room.room_id
-            const rentPrice = room.room_price * diff
+            const rentPrice = room.room_price * dateDiff
             const file = files.getFileUpload()
 
             if (!file) {
