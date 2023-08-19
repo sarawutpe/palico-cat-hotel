@@ -46,6 +46,9 @@ Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
   
   Route::get('/dashboard/book', [ViewController::class, 'dashboardBook'])->name('dashboard.book');
   Route::get('/dashboard/book/history', [ViewController::class, 'dashboardBookHistory'])->name('dashboard.book.history');
+
+  Route::get('/dashboard/book/service', [ViewController::class, 'dashboardService'])->name('dashboard.book.service');
+
   
   Route::get('/dashboard/profile', [ViewController::class, 'dashboardProfile'])->name('dashboard.profile');
   Route::get('/dashboard/logout', [AuthenController::class, 'logout'])->name('dashboard.logout');

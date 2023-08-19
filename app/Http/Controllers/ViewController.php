@@ -98,6 +98,11 @@ class ViewController extends Controller
         return view('dashboard.book-manage');
     }
 
+    public function dashboardService()
+    {
+        return view('dashboard.service');
+    }
+
     public function dashboardBookHistory()
     {
         if (Helper::is_member()) {

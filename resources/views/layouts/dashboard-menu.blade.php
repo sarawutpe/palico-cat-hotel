@@ -59,6 +59,13 @@
                 </svg>ประวัติการจอง
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('dashboard.book.service') }}">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                </svg>การดูแลแมว
+            </a>
+        </li>
     @endif
 
     @if (session('type') === 'ADMIN')

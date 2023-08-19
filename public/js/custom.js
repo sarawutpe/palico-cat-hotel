@@ -267,7 +267,7 @@ function pdf() {
     // Define a custom Thai font
     pdfMake.fonts = {
         ThaiFont: {
-            normal: "{{ asset('fonts/DBHeavent.ttf') }}", // Replace with the path to your Thai font file
+            normal: "fonts/DBHeavent.ttf",
         },
     };
 

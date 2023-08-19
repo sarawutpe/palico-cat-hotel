@@ -288,3 +288,11 @@ hr.custom {
     flex-direction: column;
     gap: 0.4rem;
 }
+
+.select-none {
+    user-select: none;
+}
+
+.input-core {
+    
+}
