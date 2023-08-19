@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use Illuminate\Support\Facades\Session;
+use App\Http\Helpers\Helper;
 
 class ViewController extends Controller
 {
@@ -98,6 +100,10 @@ class ViewController extends Controller
 
     public function dashboardBookHistory()
     {
+        if (Helper::is_member()) {
+            return view('dashboard.member-book-history');
+        }
+        
         return view('dashboard.book-history');
     }
 

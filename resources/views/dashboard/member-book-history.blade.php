@@ -73,7 +73,7 @@
             return new Promise((resolve, reject) => {
                 utils.setLinearLoading('open')
                 $.ajax({
-                    url: `${prefixApi}/api/rent/list`,
+                    url: `${prefixApi}/api/rent/member/${id}`,
                     type: "GET",
                     headers: headers,
                     success: function(response, textStatus, jqXHR) {

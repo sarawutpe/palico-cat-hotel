@@ -6,9 +6,26 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\Input;
+use Illuminate\Support\Facades\Session;
 
 class Helper
 {
+
+  public static function is_member()
+  {
+    return Session::get('type') === Key::$member;
+  }
+
+  public  static function is_employee()
+  {
+    return Session::get('type') === Key::$employee;
+  }
+
+  public static function is_admin()
+  {
+    return Session::get('type') === Key::$admin;
+  }
+
   public static function random($length = 10)
   {
     return Str::random($length);

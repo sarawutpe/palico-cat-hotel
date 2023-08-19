@@ -34,10 +34,11 @@ php artisan make:model Member -m
 
 php artisan make:controller MemberController
 
-# migrate
-
-php artisan migrate
+# create table
 php artisan make:migration [CREATE_TABLE_NAME]
+
+# migrate
+php artisan migrate
 
 R all cache
 php artisan cache:clear

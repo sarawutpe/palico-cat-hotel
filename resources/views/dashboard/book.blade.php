@@ -29,23 +29,27 @@
                             <div class="tab-pane fade show active" id="tab1" role="tabpanel" tabindex="0">
                                 <div class="d-flex flex-wrap gap-4">
                                     @php
-                                        $room_types = collect([['id' => 1, 'name' => 'ห้องเล็ก', 'img' => 'assets/img/hotel-1.jpg'], ['id' => 2, 'name' => 'ห้องกลาง', 'img' => 'assets/img/hotel-2.jpg'], ['id' => 3, 'name' => 'ห้องใหญ่', 'img' => 'assets/img/hotel-3.jpg']])->map(function ($item) {
+                                        $room_types = collect([
+                                            ['id' => 1, 'name' => 'ห้องเล็ก', 'room_type' => 'S', 'img' => 'assets/img/hotel-1.jpg'], 
+                                            ['id' => 2, 'name' => 'ห้องกลาง', 'room_type' => 'M', 'img' => 'assets/img/hotel-2.jpg'], 
+                                            ['id' => 3, 'name' => 'ห้องใหญ่', 'room_type' => 'L', 'img' => 'assets/img/hotel-3.jpg'],
+                                        ])->map(function ($item) {
                                             return (object) $item;
                                         });
                                     @endphp
 
-                                    @foreach ($room_types as $room_type)
+                                    @foreach ($room_types as $r)
                                         <div class="card" style="width: 18rem;">
                                             <div>
-                                                <img src="{{ asset($room_type->img) }}" class="card-img-top" width="100%"
+                                                <img src="{{ asset($r->img) }}" class="card-img-top" width="100%"
                                                     height="180px">
                                             </div>
                                             <div class="card-body h-100 d-flex flex-column" style="flex: inherit;">
                                                 <div class="mb-2 d-flex flex-column flex-1" style="flex: 1">
                                                     <h5 class="card-title"></h5>
-                                                    <p class="card-text">{{ $room_type->name }}</p>
+                                                    <p class="card-text">{{ $r->name }}</p>
                                                 </div>
-                                                <button onclick="handleStepRoomType('{{ $room_type->name }}')"
+                                                <button onclick="handleStepRoomType('{{ $r->room_type }}')"
                                                     class="btn btn-outline-primary w-100">เลือก</button>
                                             </div>
                                         </div>
@@ -183,31 +187,37 @@
                             return true
                         })
 
-                        newData.forEach(function(room, index) {
-                            const isBookedOut = rents.find((rent) => rent.room_id === room
-                                .room_id && rent.rent_status === 'RESERVED')
+                        if (newData.length > 0) {
+                            newData.forEach(function(room, index) {
+                                const isBookedOut = rents.find((rent) => rent.room_id === room
+                                    .room_id && rent.rent_status === 'RESERVED')
 
-                            const buttonHtml = isBookedOut ?
-                                `<div class="cursor-not-allowed"><button class="btn btn-outline-danger w-100" disabled>เต็ม</button></div>` :
-                                `<button class="btn btn-outline-primary w-100" onclick="handleStepRoom(${utils.jsonString(room)})">จอง</button>`;
+                                const buttonHtml = isBookedOut ?
+                                    `<div class="cursor-not-allowed"><button class="btn btn-outline-danger w-100" disabled>เต็ม</button></div>` :
+                                    `<button class="btn btn-outline-primary w-100" onclick="handleStepRoom(${utils.jsonString(room)})">จอง</button>`;
 
-                            html += `
-                        <div class="d-flex flex-wrap gap-4">
-                                  <div class="card" style="width: 18rem;">
-                                      <div>
-                                          <img src="{{ asset('storage/${room.room_img}') }}" class="card-img-top" width="100%" height="180px">
-                                      </div>
-                                      <div class="card-body h-100 d-flex flex-column" style="flex: inherit;">
-                                          <div class="mb-2 d-flex flex-column flex-1" style="flex: 1">
-                                              <h5 class="card-title">${room.room_name}</h5>
-                                              <p class="card-text">฿ ${room.room_price}</p>
-                                              <p>${room.room_detail}</p>
-                                          </div>
-                                          ${buttonHtml}
-                                      </div>
-                                  </div>
-                          </div>`;
-                        });
+                                html += `
+                                <div class="d-flex flex-wrap gap-4">
+                                        <div class="card" style="width: 18rem;">
+                                            <div>
+                                                <img src="{{ asset('storage/${room.room_img}') }}" class="card-img-top" width="100%" height="180px">
+                                            </div>
+                                            <div class="card-body h-100 d-flex flex-column" style="flex: inherit;">
+                                                <div class="mb-2 d-flex flex-column flex-1" style="flex: 1">
+                                                    <h5 class="card-title">${room.room_name}</h5>
+                                                    <p class="card-text">฿ ${room.room_price}</p>
+                                                    <p>${room.room_detail}</p>
+                                                </div>
+                                                ${buttonHtml}
+                                            </div>
+                                        </div>
+                                </div>`;
+                            });
+                        } else {
+                            html = `<p>ไม่พบห้องว่าง</p>`
+                        }
+
+
                         $('#step-select-room').empty().append(html);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {

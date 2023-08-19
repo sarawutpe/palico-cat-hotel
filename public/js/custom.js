@@ -71,10 +71,10 @@ $(document).ready(function () {
 function formatDate(dateTime = "") {
     if (!dayjs(dateTime).isValid()) return "invalid date";
 
-    return dayjs(dateTime).format('YYYY-MM-DDTHH:mm');
+    // return dayjs(dateTime).format('YYYY-MM-DDTHH:mm');
 
-    // dayjs.extend(dayjs_plugin_buddhistEra); 
-    // return dayjs(dateTime).format("DD-MM-BBBB HH:MM");
+    dayjs.extend(dayjs_plugin_buddhistEra);
+    return dayjs(dateTime).format("DD-MM-BBBB HH:MM");
 }
 
 function formatRentStatus(type = "") {
@@ -262,3 +262,25 @@ const utils = {
         target.empty();
     },
 };
+
+function pdf() {
+    // Define a custom Thai font
+    pdfMake.fonts = {
+        ThaiFont: {
+            normal: "{{ asset('fonts/DBHeavent.ttf') }}", // Replace with the path to your Thai font file
+        },
+    };
+
+    // Your PDF document definition
+    var docDefinition = {
+        content: [
+            {
+                text: "สวัสดี, pdfMake!",
+                font: "ThaiFont",
+            }, // Use the Thai font here
+        ],
+    };
+
+    // Create a PDF document
+    pdfMake.createPdf(docDefinition).download("output.pdf");
+}
