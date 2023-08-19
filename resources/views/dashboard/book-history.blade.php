@@ -39,7 +39,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="pay-receipt-modal">การชำระเงิน</h5>
-                        <div class="icon-button">
+                        <div class="icon-button" onclick="handleClosePayReceipt()">
                             <i class="fa-solid fa-close fa-xs align-middle"></i>
                         </div>
                     </div>
@@ -111,6 +111,10 @@
                     utils.setLinearLoading('close')
                 });
             });
+        }
+
+        function handleClosePayReceipt() {
+            $('#pay-receipt-modal').modal('hide')
         }
 
         async function handleOpenPayReceipt(id) {

@@ -10,6 +10,8 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\CatController;
 use App\Http\Controllers\RentController;
 use App\Http\Controllers\PayReceiptController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServiceListController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
@@ -89,7 +91,12 @@ Route::post('/api/rent', [RentController::class, 'addRent']);
 Route::put('/api/rent/{id}', [RentController::class, 'updateRent']);
 Route::delete('/api/rent/{id}', [RentController::class, 'deleteRent']);
 
-
 Route::get('/api/pay-receipt/{id}', [PayReceiptController::class, 'getPayReceiptByRent']);
 
-// Route::put('/api/cat/{id}', [RentController::class, 'updateCat']);
+Route::get('/api/service/list', [ServiceController::class, 'getAllService']);
+Route::post('/api/service', [ServiceController::class, 'addService']);
+
+Route::get('/api/service-list/rent/{id}', [ServiceListController::class, 'getAllServiceListByService']);
+Route::post('/api/service-list', [ServiceListController::class, 'addServiceList']);
+Route::put('/api/service-list/{id}', [ServiceListController::class, 'updateServiceList']);
+Route::delete('/api/service-list/{id}', [ServiceListController::class, 'deleteServiceList']);

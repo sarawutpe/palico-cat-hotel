@@ -19,4 +19,6 @@ class Room extends Model
         'room_detail',
         'room_img',
     ];
+
+    
 }

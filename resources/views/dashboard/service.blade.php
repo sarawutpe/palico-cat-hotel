@@ -92,7 +92,20 @@
         var selectedRentId = null
         var selectedServiceId = null
         var selectedServiceListId = null
+        var serviceLists = []
 
+        function showAlert(type, message) {
+            const target = $('#alert-message')
+            const color = message === 'success' ? 'text-success' : 'text-danger'
+            let html = '';
+
+            if (Array.isArray(message)) {
+                message.forEach((item) => html += `<li>${item}</li>`)
+            } else {
+                html = message || ''
+            }
+            target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
+        }
 
         $(document).ready(async function() {
             await handleGetAllRent()
@@ -113,7 +126,7 @@
                             const dateDiff = dayjs(rent.outDatetime).diff(rent.inDatetime,
                                 'day')
                             html += `
-                            <tr onclick="handleViewService('${rent.rent_id}')">
+                            <tr onclick="handleAddService('${rent.rent_id}')">
                                 <th scope="row">${index + 1}</th>
                                 <td>${rent.rent_id}</td>
                                 <td>${formatDate(rent.rent_datetime)}</td>
@@ -142,8 +155,39 @@
             });
         }
 
-        function handleViewService(id) {
+        function handleAddService(id) {
             selectedRentId = id
+
+            utils.setLinearLoading('open')
+
+            formData = new FormData();
+            formData.append('rent_id', id);
+            formData.append('service_detail', 'test');
+            $.ajax({
+                url: `${prefixApi}/api/service`,
+                type: "POST",
+                headers: headers,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response, textStatus, jqXHR) {
+                    selectedServiceId = response.data.service_id ?? ''
+                    serviceLists = response.data?.service_lists ?? []
+
+                    if (selectedServiceId) {
+                        handleStepServiceList()
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    const response = jqXHR.responseJSON
+                    showAlert('error', response.errors)
+                },
+            }).always(function() {
+                utils.setLinearLoading('close')
+            });
+        }
+
+        function handleStepServiceList() {
             $('#title-legend').text('จัดการการดูแลแมว');
             $('button[data-coreui-target="#tab2"]').trigger('click');
             handleAddServiceList()
@@ -153,8 +197,6 @@
             $('#title-legend').text('ข้อมูลการดูแลแมว');
             $('button[data-coreui-target="#tab1"]').trigger('click');
         }
-
-        var serviceLists = []
 
         function handleAddServiceList() {
             serviceLists.push({
@@ -166,7 +208,7 @@
             handleDisplayServiceList()
         }
 
-        function handleRmoveSeerviceList(index) {
+        function handleRemoveServiceList(index) {
             serviceLists.splice(index, 1)
             handleDisplayServiceList();
         }
@@ -181,13 +223,13 @@
                         <input class="form-control form-change p-1" type="text" name="service_list_name" value="${serviceList.service_list_name}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">    
                     </td>
                     <td>
-                        <input class="form-control p-1" type="time" name="service_list_datetime" value="${serviceList.service_list_datetime}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
+                        <input class="form-control p-1" type="time" name="service_list_datetime" value="${dayjs(serviceList.service_list_datetime).format('HH:mm')}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
                     </td>
                     <td class="text-center">
                         <input class="form-check-input m-0" type="checkbox" name="service_list_checked" value="" ${serviceList.service_list_checked ? 'checked' : ''} oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
                     </td>
                     <td>
-                        <p class="text-danger select-none" onclick="handleRmoveSeerviceList(${index})">ลบรายการ</p>
+                        <p class="text-danger select-none" onclick="handleRemoveServiceList(${index})">ลบรายการ</p>
                     </td>
                 </tr>`;
             })
@@ -201,17 +243,18 @@
 
             if (name === 'service_list_name' && serviceLists[index].service_list_name != null) {
                 serviceLists[index].service_list_name = input.value
-                console.log(input.value)
             }
 
             if (name === 'service_list_datetime' && serviceLists[index].service_list_datetime != null) {
-                serviceLists[index].service_list_datetime = input.value
-                console.log(input.value)
+                const [newHours, newMinutes] = input.value.split(':').map(Number);
+                const newValue = dayjs.utc(serviceLists[index].service_list_datetime)
+                    .hour(newHours)
+                    .minute(newMinutes);
+                serviceLists[index].service_list_datetime = newValue
             }
 
             if (name === 'service_list_checked' && serviceLists[index].service_list_checked != null) {
                 serviceLists[index].service_list_checked = input.checked
-                console.log(input.checked)
             }
 
             debounceSubmit()
@@ -220,9 +263,38 @@
         const debounceSubmit = debounce(function() {
             if (!selectedServiceListId) return
 
+            // Update service list
+            const serviceList = serviceLists.find(function(serviceList) {
+                return serviceList.service_list_id === selectedServiceListId
+            })
 
-            console.log('debounce called')
-        }, 500);
+            if (serviceList) {
+                formData = new FormData();
+                formData.append('_method', 'PUT');
+                formData.append('service_list_name', serviceList.service_list_name);
+                formData.append('service_list_datetime', serviceList.service_list_datetime);
+                formData.append('service_list_checked', serviceList.service_list_checked ? 1 : 0);
 
+                $.ajax({
+                    url: `${prefixApi}/api/service-list/${selectedServiceListId}`,
+                    type: "POST",
+                    headers: headers,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response, textStatus, jqXHR) {},
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        const response = jqXHR.responseJSON
+                        showAlert('error', response.errors)
+                    },
+                });
+            }
+        }, 200);
+
+
+        function j() {
+
+
+        }
     </script>
 @endsection

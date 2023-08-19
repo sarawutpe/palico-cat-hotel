@@ -159,7 +159,6 @@
 
         async function calcDateDiff() {
 
-
             // await delay(1000)
             // const inDatetime = $('input[name="in_datetime"]');
             // const outDatetime = $('input[name="out_datetime"]');
@@ -253,7 +252,6 @@
             formData.append('pay_status', $('select[name="pay_status"]').val());
             formData.append('employee_in', id);
             formData.append('employee_pay', id);
-
 
             $.ajax({
                 url: `${prefixApi}/api/rent/${selectedId}`,
