@@ -100,7 +100,10 @@ class ViewController extends Controller
 
     public function dashboardService()
     {
-        return view('dashboard.service');
+        if (Helper::is_member() || Helper::is_admin()) {
+            return view('dashboard.view-service');
+        }
+        return view('dashboard.manage-service');
     }
 
     public function dashboardBookHistory()

@@ -144,9 +144,9 @@
                                 <td>${formatDate(rent.in_datetime)}</td>
                                 <td>${formatDate(rent.out_datetime)}</td>
                                 <td>${dateDiff} วัน</td>
-                                <td>${countServiceLists}</td>
-                                <td>${countDoneServiceLists}</td>
-                                <td>${countInProgressServiceLists}</td>
+                                <td><div class="badge rounded-pill text-bg-dark">${countServiceLists}</div></td>
+                                <td><div class="badge rounded-pill text-bg-success">${countDoneServiceLists}</div></td>
+                                <td><div class="badge rounded-pill text-bg-warning">${countInProgressServiceLists}</div></td>
                                 <td>
                                     <div class="icon-button">
                                         <i class="fa-solid fa-magnifying-glass fa-xs align-middle"></i>
@@ -247,7 +247,7 @@
                         <input class="form-control form-change p-1" type="text" name="service_list_name" value="${serviceList?.service_list_name ?? ''}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">    
                     </td>
                     <td>
-                        <input class="form-control p-1" type="time" name="service_list_datetime" value="${dayjs(serviceList?.service_list_datetime ?? '').format('HH:mm')}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
+                        <input class="form-control p-1" type="time" name="service_list_datetime" value="${serviceList?.service_list_datetime ? dayjs(serviceList?.service_list_datetime).format('HH:mm') : ''}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
                     </td>
                     <td class="text-center">
                         <input class="form-check-input m-0" type="checkbox" name="service_list_checked" value="" ${serviceList.service_list_checked ? 'checked' : ''} oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
