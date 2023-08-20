@@ -276,8 +276,6 @@
         async function handleDeleteEmployee() {
             if (!selectedId) return
 
-            return
-
             const confirm = await utils.confirmAlert();
             if (confirm) {
                 $.ajax({

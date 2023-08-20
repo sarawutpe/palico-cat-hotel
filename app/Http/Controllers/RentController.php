@@ -16,7 +16,12 @@ class RentController extends Controller
     public function getAllRent(Request $request)
     {
         try {
-            $rents = Rent::with('member')->with('room')->orderBy('updated_at', 'desc')->get();
+            $rents = Rent::with('member')
+                ->with('room')
+                ->with('service')
+                ->with('service.service_lists')
+                ->orderBy('updated_at', 'desc')
+                ->get();
             return response()->json(['success' => true, 'data' => $rents]);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);

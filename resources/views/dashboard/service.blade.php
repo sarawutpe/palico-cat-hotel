@@ -37,9 +37,10 @@
                                                 <th scope="col">วันที่เช็คอิน</th>
                                                 <th scope="col">วันที่เช็คเอาท์</th>
                                                 <th scope="col">ระยะเวลา</th>
-                                                <th scope="col">สถานะการจ่ายเงิน</th>
-                                                <th scope="col">สถานะการจอง</th>
-                                                <th scope="col">การดูแลแมว</th>
+                                                <th scope="col">รายการดูแลทั้งหมด</th>
+                                                <th scope="col">รายการดูแลที่เสร็จ</th>
+                                                <th scope="col">รายการดูแลที่เหลือ</th>
+                                                <th scope="col">รายละเอียด</th>
                                             </tr>
                                         </thead>
                                         <tbody id="rent-list"></tbody>
@@ -120,11 +121,20 @@
                     headers: headers,
                     success: function(response, textStatus, jqXHR) {
                         if (!Array.isArray(response.data)) return
-                        rents = response.data
                         let html = ''
+
                         response.data.forEach(function(rent, index) {
                             const dateDiff = dayjs(rent.outDatetime).diff(rent.inDatetime,
                                 'day')
+
+                            const serviceLists = rent.service && rent.service.service_lists ?
+                                rent.service.service_lists : [];
+                            const countServiceLists = serviceLists.length;
+                            const countDoneServiceLists = serviceLists.filter((item) => item
+                                .service_list_checked === 1).length;
+                            const countInProgressServiceLists = serviceLists.filter((item) => item
+                                .service_list_checked === 0).length;
+
                             html += `
                             <tr onclick="handleAddService('${rent.rent_id}')">
                                 <th scope="row">${index + 1}</th>
@@ -134,8 +144,9 @@
                                 <td>${formatDate(rent.in_datetime)}</td>
                                 <td>${formatDate(rent.out_datetime)}</td>
                                 <td>${dateDiff} วัน</td>
-                                <td>${formatPayStatus(rent.pay_status)}</td>
-                                <td>${formatRentStatus(rent.rent_status)}</td>
+                                <td>${countServiceLists}</td>
+                                <td>${countDoneServiceLists}</td>
+                                <td>${countInProgressServiceLists}</td>
                                 <td>
                                     <div class="icon-button">
                                         <i class="fa-solid fa-magnifying-glass fa-xs align-middle"></i>
@@ -190,27 +201,40 @@
         function handleStepServiceList() {
             $('#title-legend').text('จัดการการดูแลแมว');
             $('button[data-coreui-target="#tab2"]').trigger('click');
-            handleAddServiceList()
+            handleDisplayServiceList()
         }
 
         function handleCloseService() {
+            handleGetAllRent()
             $('#title-legend').text('ข้อมูลการดูแลแมว');
             $('button[data-coreui-target="#tab1"]').trigger('click');
         }
 
-        function handleAddServiceList() {
-            serviceLists.push({
-                service_list_id: "1",
-                service_list_name: "",
-                service_list_datetime: "",
-                service_list_checked: false
-            })
-            handleDisplayServiceList()
+        async function handleAddServiceList() {
+            try {
+                const response = await serviceAddServiceList()
+                const serviceListId = response.data.service_list_id
+                serviceLists.push({
+                    service_list_id: serviceListId,
+                    service_list_name: "",
+                    service_list_datetime: "",
+                    service_list_checked: false
+                })
+                handleDisplayServiceList()
+            } catch (error) {
+                toastr.error();
+            }
         }
 
-        function handleRemoveServiceList(index) {
-            serviceLists.splice(index, 1)
-            handleDisplayServiceList();
+        async function handleRemoveServiceList(index, serviceListId) {
+            try {
+                selectedServiceListId = serviceListId
+                serviceLists.splice(index, 1)
+                handleDisplayServiceList();
+                await serviceDeleteServiceList()
+            } catch (error) {
+                toastr.error();
+            }
         }
 
         function handleDisplayServiceList() {
@@ -220,16 +244,16 @@
                 <tr>
                     <td>${index + 1}</td>
                     <td>
-                        <input class="form-control form-change p-1" type="text" name="service_list_name" value="${serviceList.service_list_name}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">    
+                        <input class="form-control form-change p-1" type="text" name="service_list_name" value="${serviceList?.service_list_name ?? ''}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">    
                     </td>
                     <td>
-                        <input class="form-control p-1" type="time" name="service_list_datetime" value="${dayjs(serviceList.service_list_datetime).format('HH:mm')}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
+                        <input class="form-control p-1" type="time" name="service_list_datetime" value="${dayjs(serviceList?.service_list_datetime ?? '').format('HH:mm')}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
                     </td>
                     <td class="text-center">
                         <input class="form-check-input m-0" type="checkbox" name="service_list_checked" value="" ${serviceList.service_list_checked ? 'checked' : ''} oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
                     </td>
                     <td>
-                        <p class="text-danger select-none" onclick="handleRemoveServiceList(${index})">ลบรายการ</p>
+                        <p class="text-danger select-none" onclick="handleRemoveServiceList(${index}, ${serviceList.service_list_id})">ลบรายการ</p>
                     </td>
                 </tr>`;
             })
@@ -241,19 +265,20 @@
             const name = input.name;
             selectedServiceListId = serviceListId
 
-            if (name === 'service_list_name' && serviceLists[index].service_list_name != null) {
-                serviceLists[index].service_list_name = input.value
+            if (name === 'service_list_name') {
+                serviceLists[index].service_list_name = input.value || ''
             }
 
-            if (name === 'service_list_datetime' && serviceLists[index].service_list_datetime != null) {
+            if (name === 'service_list_datetime') {
                 const [newHours, newMinutes] = input.value.split(':').map(Number);
-                const newValue = dayjs.utc(serviceLists[index].service_list_datetime)
+                const targetDate = serviceLists[index].service_list_datetime || dayjs().format()
+                const newValue = dayjs.utc(targetDate)
                     .hour(newHours)
-                    .minute(newMinutes);
+                    .minute(newMinutes)
                 serviceLists[index].service_list_datetime = newValue
             }
 
-            if (name === 'service_list_checked' && serviceLists[index].service_list_checked != null) {
+            if (name === 'service_list_checked') {
                 serviceLists[index].service_list_checked = input.checked
             }
 
@@ -261,20 +286,54 @@
         }
 
         const debounceSubmit = debounce(function() {
-            if (!selectedServiceListId) return
+            try {
+                if (!selectedServiceListId) return
+                serviceUpdateServiceList()
+            } catch (error) {
+                toastr.error();
+            }
+        }, 100);
 
-            // Update service list
+        async function serviceAddServiceList() {
+            if (!selectedServiceId) return;
+
+            const formData = new FormData();
+            formData.append('service_id', selectedServiceId);
+            formData.append('service_list_name', '');
+            formData.append('service_list_datetime', '');
+            formData.append('service_list_checked', 0);
+
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: `${prefixApi}/api/service-list`,
+                    type: 'POST',
+                    headers: headers,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response, textStatus, jqXHR) {
+                        resolve(jqXHR.responseJSON);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        reject(jqXHR.responseJSON);
+                    },
+                }).always(function() {});
+            });
+        }
+
+        async function serviceUpdateServiceList() {
+            if (!selectedServiceListId) return;
             const serviceList = serviceLists.find(function(serviceList) {
                 return serviceList.service_list_id === selectedServiceListId
             })
+            if (!serviceList) return;
 
-            if (serviceList) {
+            return new Promise((resolve, reject) => {
                 formData = new FormData();
                 formData.append('_method', 'PUT');
-                formData.append('service_list_name', serviceList.service_list_name);
-                formData.append('service_list_datetime', serviceList.service_list_datetime);
+                formData.append('service_list_name', serviceList?.service_list_name ?? '');
+                formData.append('service_list_datetime', serviceList?.service_list_datetime ?? '');
                 formData.append('service_list_checked', serviceList.service_list_checked ? 1 : 0);
-
                 $.ajax({
                     url: `${prefixApi}/api/service-list/${selectedServiceListId}`,
                     type: "POST",
@@ -282,19 +341,31 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function(response, textStatus, jqXHR) {},
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        const response = jqXHR.responseJSON
-                        showAlert('error', response.errors)
+                    success: function(response, textStatus, jqXHR) {
+                        resolve(jqXHR.responseJSON);
                     },
-                });
-            }
-        }, 200);
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        reject(jqXHR.responseJSON);
+                    },
+                }).always(function() {});
+            });
+        }
 
-
-        function j() {
-
-
+        async function serviceDeleteServiceList() {
+            if (!selectedServiceListId) return;
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: `${prefixApi}/api/service-list/${selectedServiceListId}`,
+                    type: "DELETE",
+                    headers: headers,
+                    success: function(data, textStatus, jqXHR) {
+                        resolve(jqXHR.responseJSON);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        reject(jqXHR.responseJSON);
+                    },
+                }).always(function() {});
+            })
         }
     </script>
 @endsection

@@ -10,7 +10,7 @@ class Rent extends Model
     use HasFactory;
 
     public $incrementing = true;
-    
+
     protected $table = 'rents';
     protected $primaryKey = 'rent_id';
 
@@ -35,5 +35,15 @@ class Rent extends Model
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id');
+    }
+
+    public function service()
+    {
+        return $this->hasOne(Service::class, 'rent_id');
+    }
+
+    public function service_lists()
+    {
+        return $this->hasMany(ServiceList::class, 'service_id');
     }
 }
