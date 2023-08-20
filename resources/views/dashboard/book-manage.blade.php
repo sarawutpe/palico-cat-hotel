@@ -262,7 +262,6 @@
 
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
-            console.log(rent)
             if (rent.checkin) {
                 selectedCatId = rent.checkin.cat_id
 
@@ -277,7 +276,6 @@
                     scrollLeft: 110 * catIndex
                 }, 'fast');
             } else {
-                console.log('r')
                 $('input[name="checkin_status"]').prop('checked', false);
                 $('textarea[name="checkin_detail"]').val("");
                 selectedCatId = null
