@@ -141,22 +141,10 @@
         })
 
         function resetForm() {
+            console.log('called')
             $("#form")[0].reset();
             selectedId = null
             files.setFilePreview()
-        }
-
-        function showAlert(type, message) {
-            const target = $('#alert-message')
-            const color = message === 'success' ? 'text-success' : 'text-danger'
-            let html = '';
-
-            if (Array.isArray(message)) {
-                message.forEach((item) => html += `<li>${item}</li>`)
-            } else {
-                html = message || ''
-            }
-            target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
         }
 
         function handleGetAllCat() {
@@ -223,10 +211,11 @@
                     resetForm()
                     toastr.success();
                     handleGetAllCat()
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    utils.showAlert('#alert-message', 'error', response.errors)
                 },
             });
         }
@@ -276,14 +265,14 @@
                 processData: false,
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
-                    resetForm()
                     toastr.success();
                     handleGetAllCat()
                     handleShowCat(selectedIndex, JSON.stringify(response.data))
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    utils.showAlert('#alert-message', 'error', response.errors)
                 },
             });
         }
@@ -301,6 +290,7 @@
                         resetForm()
                         toastr.success()
                         handleGetAllCat()
+                        utils.clearAlert('#alert-message')
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         toastr.success()

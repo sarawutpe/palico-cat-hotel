@@ -134,19 +134,6 @@
             files.setFilePreview()
         }
 
-        function showAlert(type, message) {
-            const target = $('#alert-message')
-            const color = message === 'success' ? 'text-success' : 'text-danger'
-            let html = '';
-
-            if (Array.isArray(message)) {
-                message.forEach((item) => html += `<li>${item}</li>`)
-            } else {
-                html = message || ''
-            }
-            target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
-        }
-
         function handleGetAllRoom() {
             utils.setLinearLoading('open')
 
@@ -209,10 +196,11 @@
                     resetForm()
                     toastr.success();
                     handleGetAllRoom()
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    utils.showAlert('#alert-message', 'error', response.errors)
                 },
             });
         }
@@ -261,10 +249,11 @@
                     toastr.success();
                     handleGetAllRoom()
                     handleShowEmployee(selectedIndex, JSON.stringify(response.data))
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    utils.showAlert('#alert-message', 'error', response.errors)
                 },
             });
         }

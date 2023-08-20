@@ -46,4 +46,8 @@ class Rent extends Model
     {
         return $this->hasMany(ServiceList::class, 'service_id');
     }
+
+    public function checkin() {
+        return $this->hasOne(Checkin::class, 'rent_id');
+    }
 }

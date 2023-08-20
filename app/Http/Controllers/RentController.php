@@ -20,6 +20,7 @@ class RentController extends Controller
                 ->with('room')
                 ->with('service')
                 ->with('service.service_lists')
+                ->with('checkin')
                 ->orderBy('updated_at', 'desc')
                 ->get();
             return response()->json(['success' => true, 'data' => $rents]);

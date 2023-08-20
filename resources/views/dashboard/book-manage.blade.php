@@ -26,20 +26,20 @@
                         <fieldset class="scroll">
                             <legend>ข้อมูลการจอง</legend>
 
-                            
-                            <div class="mb-3 row">
-                                <div class="col-sm-3"></div>
-                                <div class="col-sm-9">
-                                    <p id="date-diff" class="border rounded"></p>
-                                </div>
-                            </div>
-
                             <div id="alert-message"></div>
 
                             <div class="">
                                 <div class="row">
                                     <!-- Section 1 -->
                                     <div class="col-12">
+
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">เลือกแมว</label>
+                                            <div class="col-sm-9">
+                                                หกหก
+                                            </div>
+                                        </div>
+
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
                                             <div class="col-sm-9">
@@ -61,12 +61,14 @@
 
                                         <div class="row">
                                             <div class="col-lg-4">
-                                              <div data-coreui-locale="en-US" data-coreui-timepicker="true" data-coreui-toggle="date-picker"></div>
+                                                <div data-coreui-locale="en-US" data-coreui-timepicker="true"
+                                                    data-coreui-toggle="date-picker"></div>
                                             </div>
                                             <div class="col-lg-4">
-                                              <div data-coreui-date="2023/03/15 02:22:13 PM" data-coreui-locale="en-US" data-coreui-timepicker="true" data-coreui-toggle="date-picker"></div>
+                                                <div data-coreui-date="2023/03/15 02:22:13 PM" data-coreui-locale="en-US"
+                                                    data-coreui-timepicker="true" data-coreui-toggle="date-picker"></div>
                                             </div>
-                                          </div>
+                                        </div>
 
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">สถานะการจอง</label>
@@ -81,6 +83,7 @@
                                                 </select>
                                             </div>
                                         </div>
+
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">สถานะการจ่ายเงิน</label>
                                             <div class="col-sm-9">
@@ -92,7 +95,6 @@
                                                 </select>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -142,19 +144,6 @@
             $("#form")[0].reset();
             selectedId = null
             files.setFilePreview()
-        }
-
-        function showAlert(type, message) {
-            const target = $('#alert-message')
-            const color = message === 'success' ? 'text-success' : 'text-danger'
-            let html = '';
-
-            if (Array.isArray(message)) {
-                message.forEach((item) => html += `<li>${item}</li>`)
-            } else {
-                html = message || ''
-            }
-            target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
         }
 
         async function calcDateDiff() {
@@ -265,10 +254,11 @@
                     toastr.success();
                     handleGetAllRent()
                     handleShowRent(selectedIndex, JSON.stringify(response.data))
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     const response = jqXHR.responseJSON
-                    showAlert('error', response.errors)
+                    utils.showAlert('#alert-message', 'error', response.errors)
                 },
             });
         }

@@ -95,19 +95,6 @@
             await handleGetAllRoom()
         })
 
-        function showAlert(type, message) {
-            const target = $('#alert-message')
-            const color = message === 'success' ? 'text-success' : 'text-danger'
-            let html = '';
-
-            if (Array.isArray(message)) {
-                message.forEach((item) => html += `<li>${item}</li>`)
-            } else {
-                html = message || ''
-            }
-            target.empty().append(`<div class="${color} font-medium mb-2"><ul>${html}</ul></div>`);
-        }
-
         $('#nav-tab button').click(function() {
             event.preventDefault();
             const targetTab = $(this).attr('data-coreui-target');

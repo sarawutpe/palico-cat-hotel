@@ -12,6 +12,7 @@ use App\Http\Controllers\RentController;
 use App\Http\Controllers\PayReceiptController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceListController;
+use App\Http\Controllers\CheckinController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
@@ -100,3 +101,6 @@ Route::get('/api/service-list/rent/{id}', [ServiceListController::class, 'getAll
 Route::post('/api/service-list', [ServiceListController::class, 'addServiceList']);
 Route::put('/api/service-list/{id}', [ServiceListController::class, 'updateServiceList']);
 Route::delete('/api/service-list/{id}', [ServiceListController::class, 'deleteServiceList']);
+
+Route::post('/api/checkin', [CheckinController::class, 'addCheckin']);
+Route::put('/api/checkin/{id}', [CheckinController::class, 'updateCheckin']);
