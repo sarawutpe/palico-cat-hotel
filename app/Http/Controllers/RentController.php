@@ -146,6 +146,16 @@ class RentController extends Controller
             $rent->employee_in = $request->input('employee_in');
             $rent->employee_pay = $request->input('employee_pay');
             $rent->save();
+
+            $rent = Rent::where('rent_id', $id)
+            ->with('member')
+            ->with('room')
+            ->with('service')
+            ->with(['service.service_lists'])
+            ->with('checkin')
+            ->orderBy('updated_at', 'desc')
+            ->first();
+        
             return response()->json(['success' => true, 'data' => $rent]);
         } catch (ValidationException $exception) {
             $errors = $exception->validator->errors()->all();
