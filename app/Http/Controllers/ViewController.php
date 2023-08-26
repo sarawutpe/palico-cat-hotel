@@ -20,6 +20,21 @@ class ViewController extends Controller
         return view('room', ['rooms' => $rooms]);
     }
 
+    public function roomS()
+    {
+        return view('room-s');
+    }
+
+    public function roomM()
+    {
+        return view('room-m');
+    }
+
+    public function roomL()
+    {
+        return view('room-l');
+    }
+
     public function service()
     {
         return view('service');
@@ -111,7 +126,7 @@ class ViewController extends Controller
         if (Helper::is_member()) {
             return view('dashboard.member-book-history');
         }
-        
+
         return view('dashboard.book-history');
     }
 

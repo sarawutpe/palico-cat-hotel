@@ -29,6 +29,10 @@
     <meta name="msapplication-TileImage" content="{{ asset('') }}assets/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
+    <link rel="preload" href="{{ asset('fonts/DBHeavent.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('fonts/DBHeavent-Med.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('fonts/DBHeavent-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
+
 
     <!-- Font Awesome Icons -->
     <!-- <link rel="stylesheet" href="{{ asset('vendors/font-awesome/all.min.css') }}"> -->
@@ -37,7 +41,6 @@
 
 
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"  /> -->
-
 
     <!-- Vendors styles-->
     <link rel="stylesheet" href="{{ asset('vendors/simplebar/css/simplebar.css') }}">
@@ -64,11 +67,12 @@
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="/">
-                        <img src="{{ asset('assets/img/logo.jpg') }}" alt="" width="50px" height="50px" class="d-inline-block align-top">
+                        <img src="{{ asset('assets/img/logo.jpg') }}" alt="" width="50px" height="50px"
+                            class="d-inline-block align-top">
                     </a>
                     <button class="navbar-toggler" type="button" data-coreui-toggle="collapse"
-                        data-coreui-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
-                        aria-label="Toggle navigation">
+                        data-coreui-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+                        aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNavDropdown">

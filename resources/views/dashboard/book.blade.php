@@ -29,11 +29,7 @@
                             <div class="tab-pane fade show active" id="tab1" role="tabpanel" tabindex="0">
                                 <div class="d-flex flex-wrap gap-4">
                                     @php
-                                        $room_types = collect([
-                                            ['id' => 1, 'name' => 'ห้องเล็ก', 'room_type' => 'S', 'img' => 'assets/img/hotel-1.jpg'], 
-                                            ['id' => 2, 'name' => 'ห้องกลาง', 'room_type' => 'M', 'img' => 'assets/img/hotel-2.jpg'], 
-                                            ['id' => 3, 'name' => 'ห้องใหญ่', 'room_type' => 'L', 'img' => 'assets/img/hotel-3.jpg'],
-                                        ])->map(function ($item) {
+                                        $room_types = collect([['id' => 1, 'name' => 'ห้องเล็ก', 'room_type' => 'S', 'img' => 'assets/img/hotel-1.jpg'], ['id' => 2, 'name' => 'ห้องกลาง', 'room_type' => 'M', 'img' => 'assets/img/hotel-2.jpg'], ['id' => 3, 'name' => 'ห้องใหญ่', 'room_type' => 'L', 'img' => 'assets/img/hotel-3.jpg']])->map(function ($item) {
                                             return (object) $item;
                                         });
                                     @endphp
@@ -62,7 +58,49 @@
                             </div>
                             {{-- Step 3 --}}
                             <div class="tab-pane fade" id="tab3" role="tabpanel" tabindex="0">
-                                <div id="step-detail"></div>
+                                <div class="row">
+                                    <div class="col">
+                                        <img src="{{ asset('storage/${room.room_img}') }}" class="card-img-top"
+                                            width="100%" height="">
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">รหัสสมาชิก</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" name="member_id" value="${id}" class="form-control"
+                                                    disabled>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
+                                            <div class="col-sm-9">
+                                                <input id="in_datetime" type="text" name="in_datetime"
+                                                    class="form-control" autocomplete="off">
+                                                <div id="error-in-datetime" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
+                                            <div class="col-sm-9">
+                                                <input id="out_datetime" type="text" name="out_datetime"
+                                                    class="form-control" autocomplete="off">
+                                                <div id="error-out-datetime" class="invalid-feedback"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <div class="col-sm-3"></div>
+                                            <div class="col-sm-9">
+                                                <p id="date-diff" class="border rounded"></p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-4" style="padding: 12px">
+                                            <button type="button" class="btn btn-secondary"
+                                                onclick="goTab(2)">ย้อนกลับ</button>
+                                            <button id="next-to-pay" type="submit" class="btn btn-primary"
+                                                onclick="handleStepPay()">ถัดไป</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             {{-- Step 3 --}}
                             <div class="tab-pane fade" id="tab4" role="tabpanel" tabindex="0">
@@ -91,6 +129,31 @@
 
         // Initialize
         $(document).ready(async function() {
+            // Initialize the in_datetime datepicker
+            const inDatetimePicker = $('input[name="in_datetime"]').datepicker({
+                dateFormat: "dd/mm/yy",
+                isBuddhist: true,
+                showButtonPanel: true,
+                onSelect: function(selectedDate) {
+                    var inDateObject = $(this).datepicker('getDate');
+                    var outDateObject = outDatetimePicker.datepicker('getDate');
+
+                    if (dayjs(outDateObject).diff(inDateObject, 'day') > 0) {
+                        // is ok
+                    } else {
+                        var minDate = dayjs(inDateObject).add('1', 'day').toDate();
+                        outDatetimePicker.datepicker("option", "minDate", minDate);
+                    }
+                }
+            });
+
+            // Initialize the out_datetime datepicker
+            const outDatetimePicker = $('input[name="out_datetime"]').datepicker({
+                dateFormat: "dd/mm/yy",
+                isBuddhist: true,
+                showButtonPanel: true,
+            });
+
             await handleGetAllRent()
             await handleGetAllRoom()
         })
@@ -220,43 +283,7 @@
         function handleShowStepDetail() {
             const room = selectedRoom
             const html = `
-            <div class="row">
-                <div class="col">
-                    <img src="{{ asset('storage/${room.room_img}') }}" class="card-img-top" width="100%" height="">
-                </div>
-                <div class="col">
-                    <div class="mb-3 row">
-                        <label class="col-sm-3 col-form-label required">รหัสสมาชิก</label>
-                        <div class="col-sm-9">
-                            <input type="text" name="member_id" value="${id}" class="form-control" disabled>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
-                        <div class="col-sm-9">
-                            <input type="datetime-local" name="in_datetime" class="form-control" min="${dayjs().format('YYYY-MM-DDTHH:mm')}" max="" onchange="calcDateDiff()">
-                            <div id="error-in-datetime" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
-                        <div class="col-sm-9">
-                            <input type="datetime-local" name="out_datetime" class="form-control" min="${dayjs().format('YYYY-MM-DDTHH:mm')}" max="" onchange="calcDateDiff()">
-                            <div id="error-out-datetime" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <div class="col-sm-3"></div>
-                        <div class="col-sm-9">
-                            <p id="date-diff" class="border rounded"></p>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-4" style="padding: 12px">
-                        <button type="button" class="btn btn-secondary" onclick="goTab(2)">ย้อนกลับ</button>
-                        <button id="next-to-pay" type="submit" class="btn btn-primary" onclick="handleStepPay()">ถัดไป</button>
-                    </div>
-                </div>
-            </div>`;
+            `;
             $('#step-detail').empty().append(html);
         }
 

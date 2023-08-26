@@ -67,6 +67,10 @@
                                             </div>
                                         </div>
                                         <div class="mb-3">
+                                            <label class="col-sm-3 col-form-label">ของใช้แมว</label>
+                                            <textarea name="cat_accessory" class="form-control" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
                                             <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
                                             <textarea name="cat_ref" class="form-control" rows="3"></textarea>
                                         </div>
@@ -192,6 +196,7 @@
             formData.append('cat_sex', $('select[name="cat_sex"]').val());
             formData.append('cat_color', $('input[name="cat_color"]').val());
             formData.append('cat_gen', $('input[name="cat_gen"]').val());
+            formData.append('cat_accessory', $('textarea[name="cat_accessory"]').val());
             formData.append('cat_ref', $('textarea[name="cat_ref"]').val());
             formData.append('member_id', id);
 
@@ -233,6 +238,7 @@
             $('select[name="cat_sex"]').val(cat.cat_sex || "");
             $('input[name="cat_color"]').val(cat.cat_color);
             $('input[name="cat_gen"]').val(cat.cat_gen || "");
+            $('textarea[name="cat_accessory"]').val(cat.cat_accessory || "");
             $('textarea[name="cat_ref"]').val(cat.cat_ref || "");
 
             files.setFilePreview(`${storagePath}/${(cat.cat_img || "")}`)
@@ -248,6 +254,7 @@
             formData.append('cat_sex', $('select[name="cat_sex"]').val());
             formData.append('cat_color', $('input[name="cat_color"]').val());
             formData.append('cat_gen', $('input[name="cat_gen"]').val());
+            formData.append('cat_accessory', $('textarea[name="cat_accessory"]').val());
             formData.append('cat_ref', $('textarea[name="cat_ref"]').val());
 
             const file = files.getFileUpload()

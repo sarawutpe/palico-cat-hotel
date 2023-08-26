@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 @section('title', 'หน้าแรก')
 @section('content')
+
     <div class="container-lg">
         <div class="row">
             <div class="col-sm-6 col-lg-3">

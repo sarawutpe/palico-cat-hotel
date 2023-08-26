@@ -32,15 +32,17 @@ class CatController extends Controller
         try {
             // Validate the input
             $request->validate([
+                'member_id' => 'required|string',
                 'cat_name' => 'required|string',
                 'cat_age' => 'required|string',
                 'cat_sex' => 'required|string',
                 'cat_color' => 'required|string',
                 'cat_gen' => 'required|string',
+                'cat_accessory' => 'nullable|string',
                 'cat_ref' => 'nullable|string',
                 'cat_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-                'member_id' => 'required|string',
             ], [
+                'member_id.required' => 'กรุณากรอกรหัสสมาชิก',
                 'cat_name.required' => 'กรุณากรอกชื่อ',
                 'cat_age.required' => 'กรุณากรอกอายุ',
                 'cat_sex.required' => 'กรุณากรอกเพศ',
@@ -57,6 +59,7 @@ class CatController extends Controller
                 'cat_sex' => $request->input('cat_sex'),
                 'cat_color' => $request->input('cat_color'),
                 'cat_gen' => $request->input('cat_gen'),
+                'cat_accessory' => $request->input('cat_accessory'),
                 'cat_ref' => $request->input('cat_ref'),
                 'member_id' => $request->input('member_id'),
             ]);
@@ -87,6 +90,7 @@ class CatController extends Controller
                 'cat_sex' => 'required|string',
                 'cat_color' => 'required|string',
                 'cat_gen' => 'required|string',
+                'cat_accessory' => 'nullable|string',
                 'cat_ref' => 'nullable|string',
                 'cat_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
@@ -105,6 +109,8 @@ class CatController extends Controller
             $cat->cat_sex = $request->input('cat_sex');
             $cat->cat_color = $request->input('cat_color');
             $cat->cat_gen = $request->input('cat_gen');
+            $cat->cat_accessory = $request->input('cat_accessory');
+            $cat->cat_ref = $request->input('cat_ref');
 
             // Upload and save the cat_img if provided
             if ($request->hasFile('cat_img')) {

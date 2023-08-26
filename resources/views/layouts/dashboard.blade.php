@@ -48,12 +48,16 @@
     {{-- <script src="{{ asset('vendors/sweetalert2/sweetalert2.css') }}"></script> --}}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    <link href="{{ asset('vendors/datepicker/jquery-ui.css') }}" rel="stylesheet">
+
     {{-- JS --}}
     <script src="{{ asset('vendors/jquery/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('vendors/sweetalert2/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
     <script src="{{ asset('js/lodash.min.js') }}"></script>
 
+    <script src="{{ asset('vendors/datepicker/jquery-ui.min.js') }}"></script>
+    
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 
@@ -68,7 +72,27 @@
 
 <body>
     <script>
+        // Init JS
         dayjs.extend(window.dayjs_plugin_utc);
+
+        $.datepicker.regional['th'] = {
+          closeText: 'ปิด',
+          prevText: 'ก่อน',
+          nextText: 'ถัดไป',
+          currentText: 'วันนี้',
+          monthNames: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
+          monthNamesShort: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
+          dayNames: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'],
+          dayNamesShort: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
+          dayNamesMin: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
+          weekHeader: 'Wk',
+          dateFormat: 'dd/mm/yy',
+          firstDay: 0,
+          isRTL: false,
+          showMonthAfterYear: false,
+          yearSuffix: ''
+        };
+        $.datepicker.setDefaults($.datepicker.regional['th']);
     </script>
 
     <style>

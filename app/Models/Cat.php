@@ -13,6 +13,7 @@ class Cat extends Model
     protected $primaryKey = 'cat_id';
 
     protected $fillable = [
+        'member_id',
         'cat_name',
         'cat_age',
         'cat_sex',
@@ -20,7 +21,7 @@ class Cat extends Model
         'cat_gen',
         'cat_ref',
         'cat_img',
-        'member_id',
+        'cat_accessory',
     ];
 
     public function member()

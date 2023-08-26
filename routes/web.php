@@ -32,6 +32,11 @@ Route::middleware([PublicRoute::class])->group(function () {
   Route::get('/recovery', [ViewController::class, 'recovery'])->name('recovery');
   Route::get('/recovery/reset/{token}', [ViewController::class, 'recoveryReset'])->name('recovery.reset');
   Route::get('/room', [ViewController::class, 'room'])->name('room');
+  Route::get('/room/room-s', [ViewController::class, 'roomS'])->name('room-s');
+  Route::get('/room/room-m', [ViewController::class, 'roomM'])->name('room-m');
+  Route::get('/room/room-l', [ViewController::class, 'roomL'])->name('room-l');
+
+
   Route::get('/price', [ViewController::class, 'price'])->name('price');
   Route::get('/service', [ViewController::class, 'service'])->name('service');
   Route::get('/rule', [ViewController::class, 'rule'])->name('rule');
@@ -49,10 +54,8 @@ Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
   
   Route::get('/dashboard/book', [ViewController::class, 'dashboardBook'])->name('dashboard.book');
   Route::get('/dashboard/book/history', [ViewController::class, 'dashboardBookHistory'])->name('dashboard.book.history');
-
   Route::get('/dashboard/book/service', [ViewController::class, 'dashboardService'])->name('dashboard.book.service');
 
-  
   Route::get('/dashboard/profile', [ViewController::class, 'dashboardProfile'])->name('dashboard.profile');
   Route::get('/dashboard/logout', [AuthenController::class, 'logout'])->name('dashboard.logout');
 });
