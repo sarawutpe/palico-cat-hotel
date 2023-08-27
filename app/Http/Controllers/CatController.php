@@ -16,6 +16,7 @@ class CatController extends Controller
 
             $cats = Cat::with('member')
                 ->where('cat_name', 'like', '%' . $q . '%')
+                ->where('is_active', 1)
                 ->orderBy('updated_at', 'desc')
                 ->get();
 
@@ -32,6 +33,7 @@ class CatController extends Controller
         try {
             $cats = Cat::with('member')
                 ->where('member_id', $id)
+                ->where('is_active', 1)
                 ->orderBy('updated_at', 'desc')
                 ->get();
 
@@ -154,7 +156,8 @@ class CatController extends Controller
     {
         try {
             $cat = Cat::findOrFail($id);
-            $cat->delete();
+            $cat->is_active = 0;
+            $cat->save();
             return response()->json(['success' => true], 200);
         } catch (ValidationException $exception) {
             return response()->json(['success' => false, 'errors' => $exception->errors()], 422);

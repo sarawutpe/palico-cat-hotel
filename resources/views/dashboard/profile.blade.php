@@ -11,56 +11,106 @@
                 <form enctype="multipart/form-data" onsubmit="handleSubmit(event)">
                     <div class="row">
                         <!-- Section 1 -->
-                        <div class="col-6">
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="user" class="form-control">
+                        @if (session('type') === 'MEMBER' || session('type') === 'EMPLOYEE')
+                            <div class="col-6">
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="user" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">อีเมล</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="email" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">ชื่อ-สกุล</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">ที่อยู่</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="address" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">เบอร์โทรศัพท์</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="phone" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Facebook</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="facebook" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Line ID</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="lineid" class="form-control">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
-                                <div class="col-sm-9">
-                                    <input type="password" name="pass" class="form-control">
+                        @endif
+
+                        @if (session('type') === 'ADMIN')
+                            <div class="col-6">
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="user" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
+                                    <div class="col-sm-9">
+                                        <input type="password" name="pass" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">อีเมล</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="email" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">ชื่อ-สกุล</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">ที่อยู่</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="address" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label required">เบอร์โทรศัพท์</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="phone" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Facebook</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="facebook" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Line ID</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="lineid" class="form-control">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label required">อีเมล</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="email" class="form-control">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label required">ชื่อ-สกุล</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="name" class="form-control">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label required">ที่อยู่</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="address" class="form-control">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label required">เบอร์โทรศัพท์</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="phone" class="form-control">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label">Facebook</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="facebook" class="form-control">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label">Line ID</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="lineid" class="form-control">
-                                </div>
-                            </div>
-                        </div>
+                        @endif
+
                         <!-- Section 2 Upload -->
                         <div class="col-6">
                             <div class="mb-3">
@@ -69,7 +119,7 @@
                                         <img id="file-preview" src="" style="opacity: 0;">
                                     </div>
                                     <div class="btn-img-block">
-                                        <div class="btn btn-light position-relative w-100">
+                                        <div class="btn btn-secondary position-relative w-100">
                                             <input type="file" id="file-upload" name="img"
                                                 accept="image/png, image/jpeg"
                                                 class="position-absolute opacity-0 w-100 h-100"
@@ -77,7 +127,7 @@
                                             <span class="mx-1">อัพโหลด</span>
                                             <i class="fa-solid fa-upload fa-xs align-middle"></i>
                                         </div>
-                                        <div class="btn btn-light position-relative w-100" style="display: none;">
+                                        <div class="btn btn-secondary position-relative w-100" style="display: none;">
                                             <input type="button" id="file-delete"
                                                 class="position-absolute opacity-0 w-100 h-100"
                                                 style="top: 0; left: 0; cursor: pointer;">
@@ -102,7 +152,6 @@
         </div>
     </section>
 
-
     <script>
         var selectedIndex = null
         var headers = {
@@ -111,11 +160,8 @@
         var storagePath = "{{ asset('storage') }}"
         var formData = null
         var search = null
-
         var id = "{{ session('id') }}"
         var type = "{{ session('type') }}"
-
-        console.log(type)
 
         // Initialize
         $(document).ready(function() {

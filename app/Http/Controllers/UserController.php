@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Employee;
 use App\Models\Admin;
-
 use App\Http\Helpers\Helper;
 use App\Http\Helpers\Key;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Session;
+use App\Rules\UniqueUser;
+use App\Rules\UniqueEmail;
 
 class UserController extends Controller
 {
@@ -48,6 +49,7 @@ class UserController extends Controller
             $request->validate([
                 'name' => 'required|string',
                 'user' => 'nullable|string',
+                'email' => 'nullable|string',
                 'pass' => 'nullable|string',
                 'address' => 'required|string',
                 'phone' => 'required|string',
@@ -71,6 +73,14 @@ class UserController extends Controller
 
             if ($type === Key::$member) {
                 $member = Member::findOrFail($id);
+                $request->validate([
+                    'user' => ['required', new UniqueUser($member->member_user)],
+                    'email' => ['required', new UniqueEmail($member->member_email)],
+                ], [
+                    'user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                    'email.unique' => 'อีเมลผู้ใช้งานนี้มีอยู่แล้ว',
+                ]);
+
                 $member->member_name = $request->input('name');
                 $member->member_user = $request->input('user');
                 $member->member_email = $request->input('email');
@@ -104,6 +114,14 @@ class UserController extends Controller
 
             if ($type === Key::$employee) {
                 $employee = Employee::findOrFail($id);
+                $request->validate([
+                    'user' => ['required', new UniqueUser($employee->employee_user)],
+                    'email' => ['required', new UniqueEmail($employee->employee_email)],
+                ], [
+                    'user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                    'email.unique' => 'อีเมลผู้ใช้งานนี้มีอยู่แล้ว',
+                ]);
+
                 $employee->employee_name = $request->input('name');
                 $employee->employee_user = $request->input('user');
                 $employee->employee_email = $request->input('email');
@@ -137,6 +155,14 @@ class UserController extends Controller
 
             if ($type === Key::$admin) {
                 $admin = Admin::findOrFail($id);
+                $request->validate([
+                    'user' => ['required', new UniqueUser($admin->admin_user)],
+                    'email' => ['required', new UniqueEmail($admin->admin_email)],
+                ], [
+                    'user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
+                    'email.unique' => 'อีเมลผู้ใช้งานนี้มีอยู่แล้ว',
+                ]);
+
                 $admin->admin_name = $request->input('name');
                 $admin->admin_user = $request->input('user');
                 $admin->admin_email = $request->input('email');
