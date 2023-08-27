@@ -43,9 +43,9 @@
                                             <div class="col-sm-9">
                                                 <select class="form-select" name="room_type">
                                                     <option selected value="">เลือกขนาดห้อง</option>
-                                                    <option value="S">ขนาดเล็ก</option>
-                                                    <option value="M">ขนาดเล็ก</option>
-                                                    <option value="L">ขนาดใหญ่</option>
+                                                    <option value="S">ห้องเล็ก</option>
+                                                    <option value="M">ห้องเล็ก</option>
+                                                    <option value="L">ห้องใหญ่</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -53,6 +53,12 @@
                                             <label class="col-sm-3 col-form-label required">ราคาห้อง</label>
                                             <div class="col-sm-9">
                                                 <input type="number" name="room_price" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">จำกัดจำนวนแมว</label>
+                                            <div class="col-sm-9">
+                                                <input type="number" name="room_limit" class="form-control">
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -178,6 +184,7 @@
             formData.append('room_name', $('input[name="room_name"]').val());
             formData.append('room_type', $('select[name="room_type"]').val());
             formData.append('room_price', $('input[name="room_price"]').val());
+            formData.append('room_limit', $('input[name="room_limit"]').val());
             formData.append('room_detail', $('input[name="room_detail"]').val());
 
             const file = files.getFileUpload()
@@ -216,6 +223,7 @@
             $('input[name="room_name"]').val(room.room_name || "");
             $('select[name="room_type"]').val(room.room_type || "");
             $('input[name="room_price"]').val(room.room_price || "");
+            $('input[name="room_limit"]').val(room.room_limit || "");
             $('textarea[name="room_detail"]').val(room.room_detail || "");
 
             files.setFilePreview(`${storagePath}/${(room.room_img || "")}`)
@@ -229,6 +237,7 @@
             formData.append('room_name', $('input[name="room_name"]').val());
             formData.append('room_type', $('select[name="room_type"]').val());
             formData.append('room_price', $('input[name="room_price"]').val());
+            formData.append('room_limit', $('input[name="room_limit"]').val());
             formData.append('room_detail', $('textarea[name="room_detail"]').val());
 
             const file = files.getFileUpload()

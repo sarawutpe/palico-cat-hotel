@@ -13,6 +13,7 @@ use App\Http\Controllers\PayReceiptController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceListController;
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\CheckinCatController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
@@ -85,12 +86,13 @@ Route::put('/api/room/{id}', [RoomController::class, 'updateRoom']);
 Route::delete('/api/room/{id}', [RoomController::class, 'deleteRoom']);
 
 Route::get('/api/cat/list', [CatController::class, 'getAllCat']);
+Route::get('/api/cat/member/{id}', [CatController::class, 'getCatByMember']);
 Route::post('/api/cat', [CatController::class, 'addCat']);
 Route::put('/api/cat/{id}', [CatController::class, 'updateCat']);
 Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
 
 Route::get('/api/rent/list', [RentController::class, 'getAllRent']);
-Route::get('/api/rent/member/{id}', [RentController::class, 'getRentByMember']);
+Route::get('/api/rent-list/member/{id}', [RentController::class, 'getRentByMember']);
 Route::post('/api/rent', [RentController::class, 'addRent']);
 Route::put('/api/rent/{id}', [RentController::class, 'updateRent']);
 Route::delete('/api/rent/{id}', [RentController::class, 'deleteRent']);
@@ -107,3 +109,6 @@ Route::delete('/api/service-list/{id}', [ServiceListController::class, 'deleteSe
 
 Route::post('/api/checkin', [CheckinController::class, 'addCheckin']);
 Route::put('/api/checkin/{id}', [CheckinController::class, 'updateCheckin']);
+
+Route::post('/api/checkin-cat', [CheckinCatController::class, 'addCheckinCat']);
+

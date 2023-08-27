@@ -30,7 +30,6 @@ function fileToolkit() {
 
     filePreviewElement.on("load", function (event) {
         isRemovedFile = false;
-
         $(this).css("opacity", 1);
         deleteFileElement.parent().show();
     });
@@ -43,13 +42,10 @@ function fileToolkit() {
 
     fileUploadElement.change(function (event) {
         isRemovedFile = false;
-
         const fileInput = event.target;
-
         if (fileInput && fileInput.files) {
             const file = fileInput.files[0];
             const imageURL = URL.createObjectURL(file);
-
             filePreviewElement.attr("src", imageURL);
         } else {
             filePreviewElement.attr("src", "");
@@ -114,11 +110,11 @@ function formatPayStatus(type = "") {
 function formatRoomType(type = "") {
     switch (type) {
         case "S":
-            return "ขนาดเล็ก";
+            return "ห้องเล็ก";
         case "M":
-            return "ขนาดกลาง";
+            return "ห้องกลาง";
         case "L":
-            return "ขนาดใหญ่";
+            return "ห้องใหญ่";
         default:
             return "ประเภทไม่ถูกต้อง";
     }
@@ -171,11 +167,11 @@ const utils = {
             ? `'${JSON.stringify(jsonData).replace(/"/g, "&quot;")}'`
             : "invalid json";
     },
-    showDialog(message) {
+    showDialog(message, icon = '') {
         return new Promise((resolve, reject) => {
             Swal.fire({
                 title: `<strong>${message}</strong>`,
-                icon: "info",
+                icon: icon ? icon : "info",
                 showCloseButton: true,
                 showCancelButton: false,
                 showConfirmButton: false,
@@ -210,15 +206,16 @@ const utils = {
         if (action === "open") {
             let timerInterval;
             Swal.fire({
+                title: "กำลังตรวจสอบข้อมูล",
                 timerProgressBar: true,
                 showCloseButton: false,
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    const b = Swal.getHtmlContainer().querySelector("b");
-                    timerInterval = setInterval(() => {
-                        b.textContent = Swal.getTimerLeft();
-                    }, 100);
+                    // const b = Swal.getHtmlContainer().querySelector("b");
+                    // timerInterval = setInterval(() => {
+                    //     b.textContent = Swal.getTimerLeft();
+                    // }, 100);
                 },
                 willClose: () => {
                     clearInterval(timerInterval);

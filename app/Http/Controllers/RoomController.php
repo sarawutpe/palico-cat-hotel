@@ -33,12 +33,14 @@ class RoomController extends Controller
                 'room_name' => 'required|string',
                 'room_type' => 'required|string',
                 'room_price' => 'required|string',
+                'room_limit' => 'required|string',
                 'room_detail' => 'nullable|string',
                 'room_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
                 'room_name.required' => 'กรุณากรอกชื่อ',
                 'room_type.required' => 'กรุณากรอกขนาดหัอง',
                 'room_price.required' => 'กรุณากรอกราคา',
+                'room_limit.required' => 'กรุณากรอกจำกัดจำนวนแมว',
                 'room_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
                 'room_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
                 'room_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
@@ -48,6 +50,7 @@ class RoomController extends Controller
             $room->room_name = $request->input('room_name');
             $room->room_type = $request->input('room_type');
             $room->room_price = $request->input('room_price');
+            $room->room_limit = $request->input('room_limit');
             $room->room_detail = $request->input('room_detail');
 
             // Upload and save the room_img if provided
@@ -74,12 +77,14 @@ class RoomController extends Controller
                 'room_name' => 'required|string',
                 'room_type' => 'required|string',
                 'room_price' => 'required|string',
+                'room_limit' => 'required|string',
                 'room_detail' => 'nullable|string',
                 'room_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
                 'room_name.required' => 'กรุณากรอกชื่อ',
                 'room_type.required' => 'กรุณากรอกขนาดหัอง',
                 'room_price.required' => 'กรุณากรอกราคา',
+                'room_limit.required' => 'กรุณากรอกจำกัดจำนวนแมว',
                 'room_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
                 'room_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
                 'room_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
@@ -88,6 +93,7 @@ class RoomController extends Controller
             $room->room_name = $request->input('room_name');
             $room->room_type = $request->input('room_type');
             $room->room_price = $request->input('room_price');
+            $room->room_limit = $request->input('room_limit');
             $room->room_detail = $request->input('room_detail');
 
             // Upload and save the room_img if provided

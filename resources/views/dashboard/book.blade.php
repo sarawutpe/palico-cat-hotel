@@ -1,6 +1,69 @@
 @extends('layouts.dashboard')
 @section('title', 'จัดการข้อมูลการจอง')
 @section('content')
+
+    <style>
+        #cat-list {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .box-card-list {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.5rem;
+            width: 180px;
+            height: 180px;
+            border-radius: 0.375rem;
+        }
+
+        .box-card-list img {
+            object-fit: contain;
+        }
+
+        .box-card-list.active .box-card-icon {
+            opacity: 1 !important;
+        }
+
+        .box-card-content {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 8px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .box-card-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 70px;
+            padding: 8px;
+            color: #2eb85c;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .box-card-list:hover,
+        .box-card-list.active {
+            background: rgba(255, 255, 255, 0.50);
+            border-color: #eee;
+        }
+    </style>
+
     <section class="content">
         <div class="row">
             <div class="col">
@@ -60,8 +123,7 @@
                             <div class="tab-pane fade" id="tab3" role="tabpanel" tabindex="0">
                                 <div class="row">
                                     <div class="col">
-                                        <img src="{{ asset('storage/${room.room_img}') }}" class="card-img-top"
-                                            width="100%" height="">
+                                        <div id="cat-list"></div>
                                     </div>
                                     <div class="col">
                                         <div class="mb-3 row">
@@ -126,68 +188,76 @@
         var selectedRoomId = ''
         var selectedRoom = ''
         var rents = []
+        var selectedCats = []
+
+        var inDatePicker = null
+        var outDatePicker = null
 
         // Initialize
         $(document).ready(async function() {
+            await handleGetAllRent()
+            await handleGetAllRoom()
+            await handleGetAllCat()
+
             // Initialize the in_datetime datepicker
-            const inDatetimePicker = $('input[name="in_datetime"]').datepicker({
+            inDatePicker = $('input[name="in_datetime"]').datepicker({
                 dateFormat: "dd/mm/yy",
                 isBuddhist: true,
                 showButtonPanel: true,
                 onSelect: function(selectedDate) {
-                    var inDateObject = $(this).datepicker('getDate');
-                    var outDateObject = outDatetimePicker.datepicker('getDate');
-
-                    if (dayjs(outDateObject).diff(inDateObject, 'day') > 0) {
-                        // is ok
-                    } else {
-                        var minDate = dayjs(inDateObject).add('1', 'day').toDate();
-                        outDatetimePicker.datepicker("option", "minDate", minDate);
-                    }
+                    calcDateDiff()
                 }
             });
 
             // Initialize the out_datetime datepicker
-            const outDatetimePicker = $('input[name="out_datetime"]').datepicker({
+            outDatePicker = $('input[name="out_datetime"]').datepicker({
                 dateFormat: "dd/mm/yy",
                 isBuddhist: true,
                 showButtonPanel: true,
+                onSelect: function(selectedDate) {
+                    calcDateDiff()
+                }
             });
-
-            await handleGetAllRent()
-            await handleGetAllRoom()
         })
+
+        function calcDateDiff() {
+            var inDateObject = inDatePicker.datepicker('getDate');
+            var outDateObject = outDatePicker.datepicker('getDate');
+
+            const minDate = dayjs(inDateObject).add('1', 'day').toDate();
+            outDatePicker.datepicker("option", "minDate", minDate);
+
+            if (!inDateObject || !outDateObject) return
+
+            if (dayjs(outDateObject).diff(inDateObject, 'day')) {
+                const minDate = dayjs(inDateObject).add('1', 'day').toDate();
+                outDatePicker.datepicker("option", "minDate", minDate);
+            }
+
+            $('#date-diff').text(`จำนวน ${getDateDiff()} วัน`)
+        }
+
+        function getDateDiff() {
+            var inDateObject = inDatePicker.datepicker('getDate');
+            var outDateObject = outDatePicker.datepicker('getDate');
+            var diff = dayjs(outDateObject).diff(inDateObject, 'day')
+            return diff > 0 ? diff : 0
+        }
+
 
         $('#nav-tab button').click(function() {
             event.preventDefault();
             const targetTab = $(this).attr('data-coreui-target');
 
-            // prevent
+            // prevent tab 4
             if (targetTab === '#tab4') {
-                if (!$('input[name="in_datetime"]').val() || !$('input[name="out_datetime"]').val()) {
+                if (!selectedCats.length || !$('input[name="in_datetime"]').val() || !$(
+                        'input[name="out_datetime"]').val()) {
                     $('button[data-coreui-target="#tab3"]').tab('show');
+                    handleStepPay()
                 }
             }
         });
-
-        function calcDateDiff() {
-            const inDatetime = $('input[name="in_datetime"]');
-            const outDatetime = $('input[name="out_datetime"]');
-            const currentDate = dayjs();
-            const dateDiff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
-
-            if (dayjs(inDatetime.val()).isBefore(currentDate, 'day')) {
-                inDatetime.val(currentDate.format('YYYY-MM-DDTHH:mm'))
-            }
-
-            if (dateDiff <= 0) {
-                outDatetime.val(dayjs(inDatetime.val()).add(1, 'day').format('YYYY-MM-DDTHH:mm'))
-            }
-
-            if (dayjs(outDatetime.val()).diff(inDatetime.val(), 'day') > 0) {
-                $('#date-diff').text(`จำนวน ${dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')} วัน`)
-            }
-        }
 
         function goTab(id) {
             if (!id) return
@@ -227,6 +297,8 @@
                     success: function(response, textStatus, jqXHR) {
                         if (!Array.isArray(response.data)) return
 
+                        $('#step-select-room').empty()
+
                         let html = ''
                         let newData = response.data
 
@@ -256,6 +328,7 @@
                                                 <div class="mb-2 d-flex flex-column flex-1" style="flex: 1">
                                                     <h5 class="card-title">${room.room_name}</h5>
                                                     <p class="card-text">฿ ${room.room_price}</p>
+                                                    <p class="card-text">จำกัดแมว ${room.room_limit} ตัว</p>
                                                     <p>${room.room_detail}</p>
                                                 </div>
                                                 ${buttonHtml}
@@ -267,8 +340,7 @@
                             html = `<p>ไม่พบห้องว่าง</p>`
                         }
 
-
-                        $('#step-select-room').empty().append(html);
+                        $('#step-select-room').append(html);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         toastr.error();
@@ -280,55 +352,83 @@
             });
         }
 
+        function handleGetAllCat() {
+            utils.setLinearLoading('open')
+
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: `${prefixApi}/api/cat/member/${id}`,
+                    type: "GET",
+                    headers: headers,
+                    success: function(response, textStatus, jqXHR) {
+                        if (!Array.isArray(response.data)) return
+
+                        cats = response.data
+
+                        let html = ''
+                        response.data.forEach(function(cat, index) {
+                            html += `
+                        <div class="box-card-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
+                            <img onerror="this.style.opacity = 0"
+                                src="${storagePath}/${cat.cat_img}"
+                                style="object-fit: cover;" width="100%" height="100%">
+                            <div class="box-card-content">
+                                <p>รหัสประจำตัวแมว ${cat.cat_id}</p>
+                                <p>ชื่อแมว ${cat.cat_name}</p>
+                            </div>
+                            <div class="box-card-icon">
+                                <i class="fa-regular fa-circle-check fa-lg"></i>
+                            </div>
+                        </div>`;
+                        });
+                        $('#cat-list').empty().append(html);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        toastr.error();
+                    }
+                }).always(async function() {
+                    resolve()
+                    utils.setLinearLoading('close')
+                });
+            });
+        }
+
+        function handleSelectCat(index, cat) {
+            const catObj = JSON.parse(cat);
+            if (typeof catObj !== 'object') return;
+
+            const targetDiv = $('.box-card-list').eq(index);
+            const isSelected = targetDiv.hasClass('active');
+
+            // Check limit room
+            if (!isSelected && selectedCats.length < selectedRoom.room_limit) {
+                selectedCats.push(catObj);
+                targetDiv.addClass('active');
+            } else {
+                selectedCats = selectedCats.filter(item => item.cat_id !== catObj.cat_id);
+                targetDiv.removeClass('active');
+            }
+        }
+
         function handleShowStepDetail() {
             const room = selectedRoom
-            const html = `
-            `;
-            $('#step-detail').empty().append(html);
+            $('input[name="member_id"]').val(id)
         }
 
         function handleShowStepPay() {
             const room = selectedRoom
-
-            const inDatetime = $('input[name="in_datetime"]');
-            const outDatetime = $('input[name="out_datetime"]');
             const currentDate = dayjs();
-            const dateDiff = dayjs(outDatetime.val()).diff(inDatetime.val(), 'day')
+            const dateDiff = getDateDiff()
 
             const html = `
             <div class="row">
-                <!-- Upload -->
-                <div class="col d-flex justify-content-center">
-                    <div class="col-4">
-                        <div class="mb-3">
-                            <div class="upload-block">
-                                <div class="preview-img-block"
-                                    <img id="file-preview" src="" style="opacity: 0;">
-                                </div>
-                                <div class="btn-img-block">
-                                    <div class="btn btn-secondary position-relative w-100">
-                                        <input type="file" id="file-upload" name="slip_img"
-                                            accept="image/png, image/jpeg"
-                                            class="position-absolute opacity-0 w-100 h-100"
-                                            style="top: 0; left: 0; cursor: pointer;">
-                                        <span class="mx-1">สลิปโอนเงิน</span>
-                                        <i class="fa-solid fa-upload fa-xs align-middle"></i>
-                                    </div>
-                                    <div class="btn btn-secondary position-relative w-100"
-                                        style="display: none;">
-                                        <input type="button" id="file-delete"
-                                            class="position-absolute opacity-0 w-100 h-100"
-                                            style="top: 0; left: 0; cursor: pointer;">
-                                        <span class="mx-1">ลบ</span>
-                                        <i class="fa-solid fa-trash fa-xs align-middle"></i>
-                                    </div>
-                                    <div id="file-message" class="font-medium mb-2"></div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Details 1 -->
+                <div class="col">
+                    <div class="mb-3">
+                        <h3 class="col-sm-3 col-form-label">รายการ</h3>
                     </div>
                 </div>
-                <!-- Details -->
+                <!-- Details 2 -->
                 <div class="col">
                     <h3 class="col-sm-3 col-form-label">รายการชำระเงิน</h3>
                     <div class="d-flex justify-content-between">
@@ -336,9 +436,37 @@
                         <p>฿${room.room_price}</p>
                     </div>
                     <hr>
-                    <!-- QR -->
-                    <div class="d-flex justify-content-center">
-                        <img src="{{ asset('assets/img/qr-payment.jpeg') }}" width="250px" height="100%" />
+                    <!-- Section -->
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <!-- QR -->
+                        <div>
+                            <img src="{{ asset('assets/img/qr-payment.jpg') }}" width="200px" height="100%" />
+                        </div>
+                        <!-- Upload -->
+                        <div class="upload-block">
+                            <div class="preview-img-block">
+                                <img id="file-preview" src="" style="opacity: 0;">
+                            </div>
+                            <div class="btn-img-block">
+                                <div class="btn btn-secondary position-relative w-100">
+                                    <input type="file" id="file-upload" name="slip_img"
+                                        accept="image/png, image/jpeg"
+                                        class="position-absolute opacity-0 w-100 h-100"
+                                        style="top: 0; left: 0; cursor: pointer;">
+                                    <span class="mx-1">สลิปโอนเงิน</span>
+                                    <i class="fa-solid fa-upload fa-xs align-middle"></i>
+                                </div>
+                                <div class="btn btn-secondary position-relative w-100"
+                                    style="display: none;">
+                                    <input type="button" id="file-delete"
+                                        class="position-absolute opacity-0 w-100 h-100"
+                                        style="top: 0; left: 0; cursor: pointer;">
+                                    <span class="mx-1">ลบ</span>
+                                    <i class="fa-solid fa-trash fa-xs align-middle"></i>
+                                </div>
+                                <div id="file-message" class="font-medium mb-2"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-between">
                         <p class="font-medium">สรุปยอด ${dateDiff} วัน</p>
@@ -351,6 +479,7 @@
                     </div>
                 </div>
             </div>`;
+
             $('#step-pay').empty().append(html).ready(function() {
                 fileToolkit()
             });
@@ -394,62 +523,113 @@
                 outDatetime.removeClass('is-invalid');
             }
 
-            if (inDatetime.val() && outDatetime.val()) {
+            if (!selectedCats.length) {
+                utils.showAlert('#alert-message', 'error', 'กรุณาเลือกแมว')
+            } else {
+                utils.clearAlert('#alert-message')
+            }
+
+            if (selectedCats.length > 0 && inDatetime.val() && outDatetime.val()) {
                 goTab(4)
                 handleShowStepPay()
             }
         }
 
-        function handleAddRent() {
-            const room = selectedRoom
+        // Service add rent, checkin, checkin list
+        async function handleAddRent() {
+            try {
+                const room = selectedRoom
 
-            const inDatetime = $('input[name="in_datetime"]').val();
-            const outDatetime = $('input[name="out_datetime"]').val();
-            const dateDiff = dayjs(outDatetime).diff(inDatetime, 'day')
-            const roomId = room.room_id
-            const rentPrice = room.room_price * dateDiff
-            const file = files.getFileUpload()
+                const inDatetime = dayjs(inDatePicker.datepicker('getDate')).format();
+                const outDatetime = dayjs(outDatePicker.datepicker('getDate')).format();
+                const dateDiff = dayjs(outDatetime).diff(inDatetime, 'day')
+                const roomId = room.room_id
+                const rentPrice = room.room_price * dateDiff
+                const file = files.getFileUpload()
 
-            if (!file) {
-                files.setMessage('error', 'กรุณาอัพโหลดสลิป')
+                if (!file) {
+                    files.setMessage('error', 'กรุณาอัพโหลดสลิป')
+                }
+
+                if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice || !selectedCats.length) return
+
+                utils.loading('open')
+                utils.setLinearLoading('open')
+
+                formData = new FormData();
+                formData.append('rent_datetime', dayjs().format());
+                formData.append('rent_status', '');
+                formData.append('rent_price', rentPrice);
+                formData.append('in_datetime', inDatetime);
+                formData.append('out_datetime', outDatetime);
+                formData.append('member_id', id);
+                formData.append('employee_in', '');
+                formData.append('employee_pay', '');
+                formData.append('room_id', roomId);
+                formData.append('pay_status', '');
+                formData.append("slip_img", file);
+
+                // Add Rent to db
+                const rentResult = await $.ajax({
+                    url: `${prefixApi}/api/rent`,
+                    type: "POST",
+                    headers: headers,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                });
+
+                const rentId = rentResult?.data?.rent_id ?? ''
+                if (!rentResult.success || !rentId) throw new Error('error save rent!')
+
+                // Add Checkin to db
+                formData = new FormData();
+                formData.append('rent_id', rentId);
+                formData.append('checkin_status', 0);
+                formData.append('checkin_detail', '');
+
+                const checkinResult = await $.ajax({
+                    url: `${prefixApi}/api/checkin`,
+                    type: "POST",
+                    headers: headers,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                });
+
+                const checkinId = checkinResult?.data?.checkin_id ?? ''
+                if (!checkinResult.success || !checkinId) throw new Error('error save checkin!')
+
+                // Add Checkin Cat to db
+                formData = new FormData();
+                formData.append('checkin_id', checkinId);
+                selectedCats.forEach(function (cat) {
+                    formData.append('cat_id[]', cat.cat_id);
+                })
+
+                const checkinCatResult = await $.ajax({
+                    url: `${prefixApi}/api/checkin-cat`,
+                    type: "POST",
+                    headers: headers,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                });
+
+                if (!checkinCatResult.success) throw new Error('error save checkin cat!')
+
+                // Set loading
+                utils.loading('close')
+                utils.setLinearLoading('close');
+                await utils.showDialog('บันทึกข้อมูลสำเร็จ', 'success')
+                location.reload();
+            } catch (error) {
+                toastr.error();
+                console.log(error)
+            } finally {
+                utils.loading('close')
+                utils.setLinearLoading('close');
             }
-
-            if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice) return
-
-            utils.setLinearLoading('open')
-
-            formData = new FormData();
-            formData.append('rent_datetime', dayjs().format());
-            formData.append('rent_status', '');
-            formData.append('rent_price', rentPrice);
-            formData.append('in_datetime', inDatetime);
-            formData.append('out_datetime', outDatetime);
-            formData.append('member_id', id);
-            formData.append('employee_in', '');
-            formData.append('employee_pay', '');
-            formData.append('room_id', roomId);
-            formData.append('pay_status', '');
-            formData.append("slip_img", file);
-
-            $.ajax({
-                url: `${prefixApi}/api/rent`,
-                type: "POST",
-                headers: headers,
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response, textStatus, jqXHR) {
-                    toastr.success();
-                    handleGetAllRoom()
-                },
-                error: async function(jqXHR, textStatus, errorThrown) {
-                    const response = jqXHR.responseJSON
-                    await utils.showDialog(response.errors)
-                    location.reload()
-                },
-            }).always(async function() {
-                utils.setLinearLoading('close')
-            });
         }
     </script>
 @endsection

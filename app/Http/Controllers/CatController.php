@@ -27,6 +27,22 @@ class CatController extends Controller
         }
     }
 
+    public function getCatByMember($id)
+    {
+        try {
+            $cats = Cat::with('member')
+                ->where('member_id', $id)
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            return response()->json(['success' => true, 'data' => $cats]);
+        } catch (ValidationException $exception) {
+            return response()->json(['error' => $exception->errors()], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
     public function addCat(Request $request)
     {
         try {

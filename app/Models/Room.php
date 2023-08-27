@@ -18,6 +18,7 @@ class Room extends Model
         'room_price',
         'room_detail',
         'room_img',
+        'room_limit',
     ];
 
     
