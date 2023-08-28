@@ -76,7 +76,7 @@
                                 <button class="nav-link active" data-coreui-toggle="tab" data-coreui-target="#tab1"
                                     type="button" role="tab" aria-selected="true">เลือกขนาดห้องพัก</button>
                                 <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab2" type="button"
-                                    role="tab" aria-selected="false">สถานะห้องพัก</button>
+                                    role="tab" aria-selected="false">ห้องพักทั้งหมด</button>
                                 <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab3" type="button"
                                     role="tab" aria-selected="false" disabled
                                     style="opacity: 0">รายละเอียดการจอง</button>
@@ -108,7 +108,7 @@
                                                     <h5 class="card-title"></h5>
                                                     <p class="card-text">{{ $r->name }}</p>
                                                 </div>
-                                                <button onclick="handleStepRoomType('{{ $r->room_type }}')"
+                                                <button onclick="handleStepRoomType('{{ json_encode($r) }}')"
                                                     class="btn btn-outline-primary w-100">เลือก</button>
                                             </div>
                                         </div>
@@ -181,7 +181,8 @@
         }
         var storagePath = "{{ asset('storage') }}"
 
-        var id = "{{ session('id') }}"
+        var sessionId = "{{ session('id') }}"
+        var sessionName = "{{ session('name') }}"
 
         var selectedId = null
         var selectedRoomType = ''
@@ -220,9 +221,24 @@
             });
         })
 
+        function getInDate() {
+            return inDatePicker.datepicker('getDate')
+        }
+
+        function getOutDate() {
+            return outDatePicker.datepicker('getDate')
+        }
+
+        function getDateDiff() {
+            var inDateObject = getInDate();
+            var outDateObject = getOutDate();
+            var diff = dayjs(outDateObject).diff(inDateObject, 'day')
+            return diff > 0 ? diff : 0
+        }
+
         function calcDateDiff() {
-            var inDateObject = inDatePicker.datepicker('getDate');
-            var outDateObject = outDatePicker.datepicker('getDate');
+            var inDateObject = getInDate();
+            var outDateObject = getOutDate();
 
             const minDate = dayjs(inDateObject).add('1', 'day').toDate();
             outDatePicker.datepicker("option", "minDate", minDate);
@@ -233,17 +249,8 @@
                 const minDate = dayjs(inDateObject).add('1', 'day').toDate();
                 outDatePicker.datepicker("option", "minDate", minDate);
             }
-
             $('#date-diff').text(`จำนวน ${getDateDiff()} วัน`)
         }
-
-        function getDateDiff() {
-            var inDateObject = inDatePicker.datepicker('getDate');
-            var outDateObject = outDatePicker.datepicker('getDate');
-            var diff = dayjs(outDateObject).diff(inDateObject, 'day')
-            return diff > 0 ? diff : 0
-        }
-
 
         $('#nav-tab button').click(function() {
             event.preventDefault();
@@ -302,17 +309,18 @@
                         let html = ''
                         let newData = response.data
 
-                        newData = newData.filter(function(item) {
-                            if (selectedRoomType) {
-                                return item.room_type === selectedRoomType
-                            }
-                            return true
-                        })
+                        newData = newData.filter(function (item) {
+                            return !selectedRoomType || item.room_type === selectedRoomType.room_type
+                        });
 
                         if (newData.length > 0) {
                             newData.forEach(function(room, index) {
-                                const isBookedOut = rents.find((rent) => rent.room_id === room
-                                    .room_id && rent.rent_status === 'RESERVED')
+                                // Check book out
+                                const isBookedOut = rents.find(function(rent) {
+                                    return rent.room_id === room.room_id && rent
+                                        .rent_status === 'RESERVED';
+                                });
+
 
                                 const buttonHtml = isBookedOut ?
                                     `<div class="cursor-not-allowed"><button class="btn btn-outline-danger w-100" disabled>เต็ม</button></div>` :
@@ -357,7 +365,7 @@
 
             return new Promise((resolve, reject) => {
                 $.ajax({
-                    url: `${prefixApi}/api/cat/member/${id}`,
+                    url: `${prefixApi}/api/cat/member/${sessionId}`,
                     type: "GET",
                     headers: headers,
                     success: function(response, textStatus, jqXHR) {
@@ -412,28 +420,56 @@
 
         function handleShowStepDetail() {
             const room = selectedRoom
-            $('input[name="member_id"]').val(id)
+            $('input[name="member_id"]').val(sessionId)
         }
 
         function handleShowStepPay() {
             const room = selectedRoom
             const currentDate = dayjs();
-            const dateDiff = getDateDiff()
+
+            var catNameHtml = ``;
+            selectedCats.forEach(function(cat, index) {
+                catNameHtml += `${index + 1}.รหัส CAT${cat.cat_id} ชื่อ ${cat.cat_name}  `;
+            });
 
             const html = `
             <div class="row">
                 <!-- Details 1 -->
                 <div class="col">
-                    <div class="mb-3">
-                        <h3 class="col-sm-3 col-form-label">รายการ</h3>
+                    <div class="mb-3 border border-secondary rounded p-4">
+
+                        <div>
+                            <h3 class="col-sm-3 col-form-label">รายการ</h3>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="font-medium">${room.room_name}</p>
+                                    <p>${formatRoomType(selectedRoom.room_type)} ${selectedRoom.room_type}</p>
+                                    <p>ราคาต่อวัน <b>฿${room.room_price}</b></p>
+                                </div>
+                                <div>
+                                    <img src="{{ asset('storage/${room.room_img}') }}" width="100%" height="100px">
+                                </div>
+                            </div>
+
+                            <p>วันที่เช็คเอาท์ <b>${dayjs(getInDate()).format('DD/MM/YYYY')}</b></p>
+                            <p>วันที่เช็คอิน <b>${dayjs(getOutDate()).format('DD/MM/YYYY')}</b></p>
+                            <p>ระยะเวลา <b>${getDateDiff()}</b> วัน</p>
+                            
+                            <br>
+                            <p>รหัสสมาชิก <b>${sessionId} ${sessionName}</b></p>
+                            <p>รายชื่อแมว <b>${catNameHtml}</b></p>
+                        </div>
                     </div>
                 </div>
                 <!-- Details 2 -->
                 <div class="col">
                     <h3 class="col-sm-3 col-form-label">รายการชำระเงิน</h3>
-                    <div class="d-flex justify-content-between">
-                        <p>1. ${selectedRoomType} (${room.room_name})</p>
-                        <p>฿${room.room_price}</p>
+                    <div>
+                        <p>1. ${selectedRoom.room_name} (${formatRoomType(selectedRoom.room_type)}) ราคาสำหรับ x ${getDateDiff()} วัน</p>
+                        <div class="d-flex justify-content-between">
+                            <h4 class="font-medium">ราคารวม</h4>
+                            <h4 class="font-medium">฿${room.room_price * getDateDiff()}</h4>
+                        </div>
                     </div>
                     <hr>
                     <!-- Section -->
@@ -467,12 +503,7 @@
                                 <div id="file-message" class="font-medium mb-2"></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <p class="font-medium">สรุปยอด ${dateDiff} วัน</p>
-                        <p class="font-medium">฿${room.room_price * dateDiff}</p>
-                    </div>
-          
+                    </div>          
                     <div class="d-flex gap-4" style="padding: 12px">
                         <button type="button" class="btn btn-secondary" onclick="goTab(3)">ย้อนกลับ</button>
                         <button id="next-to-pay" type="submit" class="btn btn-primary" onclick="handleAddRent()">ยืนยัน</button>
@@ -485,9 +516,11 @@
             });
         }
 
-        function handleStepRoomType(name) {
-            if (!name) return
-            selectedRoomType = name;
+        function handleStepRoomType(roomType) {
+            const roomTypeObj = JSON.parse(roomType)
+            if (typeof roomTypeObj !== 'object') return
+
+            selectedRoomType = roomTypeObj;
             goTab(2)
             handleGetAllRoom()
         }
@@ -499,6 +532,8 @@
             if (typeof roomObj !== 'object') return
 
             selectedRoom = roomObj
+            console.log(roomObj)
+
             goTab(3)
             handleShowStepDetail()
         }
@@ -540,7 +575,7 @@
             try {
                 const room = selectedRoom
 
-                const inDatetime = dayjs(inDatePicker.datepicker('getDate')).format();
+                const inDatetime = dayjs(getInDate()).format();
                 const outDatetime = dayjs(outDatePicker.datepicker('getDate')).format();
                 const dateDiff = dayjs(outDatetime).diff(inDatetime, 'day')
                 const roomId = room.room_id
@@ -562,7 +597,7 @@
                 formData.append('rent_price', rentPrice);
                 formData.append('in_datetime', inDatetime);
                 formData.append('out_datetime', outDatetime);
-                formData.append('member_id', id);
+                formData.append('member_id', sessionId);
                 formData.append('employee_in', '');
                 formData.append('employee_pay', '');
                 formData.append('room_id', roomId);
@@ -603,7 +638,7 @@
                 // Add Checkin Cat to db
                 formData = new FormData();
                 formData.append('checkin_id', checkinId);
-                selectedCats.forEach(function (cat) {
+                selectedCats.forEach(function(cat) {
                     formData.append('cat_id[]', cat.cat_id);
                 })
 
@@ -621,7 +656,7 @@
                 // Set loading
                 utils.loading('close')
                 utils.setLinearLoading('close');
-                await utils.showDialog('บันทึกข้อมูลสำเร็จ', 'success')
+                await utils.showDialog(`หมายเลขการจอง #${rentId}`, 'success')
                 location.reload();
             } catch (error) {
                 toastr.error();
