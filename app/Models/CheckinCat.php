@@ -13,7 +13,11 @@ class CheckinCat extends Model
     protected $primaryKey = 'checkin_cat_id';
 
     protected $fillable = [
-        'checkin_id',
+        'rent_id',
         'cat_id',
     ];
+
+    public function cat() {
+        return $this->belongsTo(Cat::class, 'cat_id',);
+    }
 }

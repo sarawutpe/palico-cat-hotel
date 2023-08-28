@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 @section('title', 'จัดการการจอง')
 @section('content')
+
     <style>
         .box-card-list {
             border: 1px solid transparent;
@@ -17,12 +18,64 @@
             border-color: #eee;
         }
 
-        .cat-item {
-            border: 2px solid #d8dbe0 !important
+        #cat-list {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
-        .cat-item.active {
-            border-color: green !important;
+        .box-cat-list {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.5rem;
+            width: 180px;
+            height: 180px;
+            border-radius: 0.375rem;
+        }
+
+        .box-cat-list img {
+            object-fit: contain;
+        }
+
+        .box-cat-list.active .box-cat-icon {
+            opacity: 1 !important;
+        }
+
+        .box-cat-content {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 8px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .box-cat-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 70px;
+            padding: 8px;
+            color: #2eb85c;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .box-cat-list:hover,
+        .box-cat-list.active {
+            background: rgba(255, 255, 255, 0.50);
+            border-color: #eee;
         }
     </style>
 
@@ -183,6 +236,7 @@
                                 <p>รหัสสมาชิก ${rent.member_id}</p>
                                 <p>ชื่อสมาชิก ${rent.member.member_name}</p>
                                 <p>ชื่อห้อง ${rent.room.room_name}</p>
+                                <p>จำกัดแมว ${rent.room.room_limit} ตัว</p>
                                 <p>วันที่เช็คอิน ${formatDate(rent.in_datetime)}</p>
                                 <p>วันที่เช็คเอาท์ ${formatDate(rent.out_datetime)}</p>
                                 <p>ระยะเวลา ${dateDiff}</p>
@@ -222,16 +276,16 @@
                     let html = ''
                     response.data.forEach(function(cat, index) {
                         html += `
-                        <div class="cat-item border p-1 m-1 cursor-pointer rounded" style="width: 500px" onclick="handleCheckin(${index}, ${utils.jsonString(cat)})">
-                            <div>
-                                <p style="font-size: 18px">รหัส: ${cat.cat_id}</p>
-                                <p style="font-size: 18px">ชื่อแมว: ${cat.cat_name}</p>
-                                <p style="font-size: 18px">เจ้าของ: ${cat.member.member_name}</p>
-                            </div>
-                            <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
-                                <img id="file-preview" onerror="this.style.opacity = 0"
+                        <div class="box-cat-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
+                            <img onerror="this.style.opacity = 0"
                                 src="${storagePath}/${cat.cat_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
+                            <div class="box-cat-content">
+                                <p>รหัสประจำตัวแมว ${cat.cat_id}</p>
+                                <p>ชื่อแมว ${cat.cat_name}</p>
+                            </div>
+                            <div class="box-cat-icon">
+                                <i class="fa-regular fa-circle-check fa-lg"></i>
                             </div>
                         </div>`;
                     });
@@ -245,10 +299,15 @@
             });
         }
 
-        function handleCheckin(index, data) {
+        function handleSelectCat(index, data) {
             const cat = JSON.parse(data)
             if (typeof cat !== 'object') return
-            $('.cat-item').removeClass('active').eq(index).addClass('active');
+
+            const targetDiv = $('.box-cat-list').eq(index);
+            const isSelected = targetDiv.hasClass('active');
+            targetDiv.addClass('active');
+
+            // $('.cat-item').removeClass('active').eq(index).addClass('active');
             selectedCatId = cat.cat_id
         }
 
@@ -309,26 +368,6 @@
             formData.append('checkin_status', $('input[name="checkin_status"]').prop('checked') ? 1 : 0);
             formData.append('checkin_detail', $('textarea[name="checkin_detail"]').val());
 
-            // Add checkin
-            if (!selectedRent.checkin) {
-                $.ajax({
-                    url: `${prefixApi}/api/checkin`,
-                    type: "POST",
-                    headers: headers,
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response, textStatus, jqXHR) {
-                        utils.clearAlert('#alert-message')
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        const response = jqXHR.responseJSON
-                        utils.showAlert('#alert-message', 'error', response.errors)
-                    },
-                });
-            }
-
-            // Update checkin
             const checkinId = selectedRent?.checkin?.checkin_id ?? ''
             if (checkinId) {
                 formData.append('_method', 'PUT');

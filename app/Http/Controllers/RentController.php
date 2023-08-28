@@ -21,6 +21,8 @@ class RentController extends Controller
                 ->with('service')
                 ->with('service.service_lists')
                 ->with('checkin')
+                ->with('checkin.checkin_cats')
+                ->with('checkin.checkin_cats.cat')
                 ->orderBy('updated_at', 'desc')
                 ->get();
             return response()->json(['success' => true, 'data' => $rents]);

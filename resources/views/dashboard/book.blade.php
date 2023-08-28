@@ -10,7 +10,7 @@
             flex-wrap: wrap;
         }
 
-        .box-card-list {
+        .box-cat-list {
             position: relative;
             overflow: hidden;
             border: 1px solid #ddd;
@@ -24,15 +24,15 @@
             border-radius: 0.375rem;
         }
 
-        .box-card-list img {
+        .box-cat-list img {
             object-fit: contain;
         }
 
-        .box-card-list.active .box-card-icon {
+        .box-cat-list.active .box-cat-icon {
             opacity: 1 !important;
         }
 
-        .box-card-content {
+        .box-cat-content {
             position: absolute;
             bottom: 0;
             width: 100%;
@@ -43,7 +43,7 @@
             color: #fff;
         }
 
-        .box-card-icon {
+        .box-cat-icon {
             position: absolute;
             bottom: 0;
             right: 0;
@@ -58,8 +58,8 @@
             transition-duration: 150ms;
         }
 
-        .box-card-list:hover,
-        .box-card-list.active {
+        .box-cat-list:hover,
+        .box-cat-list.active {
             background: rgba(255, 255, 255, 0.50);
             border-color: #eee;
         }
@@ -377,15 +377,15 @@
                         let html = ''
                         response.data.forEach(function(cat, index) {
                             html += `
-                        <div class="box-card-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
+                        <div class="box-cat-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
                             <img onerror="this.style.opacity = 0"
                                 src="${storagePath}/${cat.cat_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
-                            <div class="box-card-content">
+                            <div class="box-cat-content">
                                 <p>รหัสประจำตัวแมว ${cat.cat_id}</p>
                                 <p>ชื่อแมว ${cat.cat_name}</p>
                             </div>
-                            <div class="box-card-icon">
+                            <div class="box-cat-icon">
                                 <i class="fa-regular fa-circle-check fa-lg"></i>
                             </div>
                         </div>`;
@@ -406,7 +406,7 @@
             const catObj = JSON.parse(cat);
             if (typeof catObj !== 'object') return;
 
-            const targetDiv = $('.box-card-list').eq(index);
+            const targetDiv = $('.box-cat-list').eq(index);
             const isSelected = targetDiv.hasClass('active');
 
             // Check limit room

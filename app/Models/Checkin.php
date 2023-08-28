@@ -16,4 +16,8 @@ class Checkin extends Model
         'checkin_detail',
         'checkin_status',
     ];
+
+    public function checkin_cats() {
+        return $this->hasMany(CheckinCat::class, 'checkin_id');
+    }
 }
