@@ -57,7 +57,7 @@
     <script src="{{ asset('js/lodash.min.js') }}"></script>
 
     <script src="{{ asset('vendors/datepicker/jquery-ui.min.js') }}"></script>
-    
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 
@@ -76,21 +76,25 @@
         dayjs.extend(window.dayjs_plugin_utc);
 
         $.datepicker.regional['th'] = {
-          closeText: 'ปิด',
-          prevText: 'ก่อน',
-          nextText: 'ถัดไป',
-          currentText: 'วันนี้',
-          monthNames: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
-          monthNamesShort: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
-          dayNames: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'],
-          dayNamesShort: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
-          dayNamesMin: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
-          weekHeader: 'Wk',
-          dateFormat: 'dd/mm/yy',
-          firstDay: 0,
-          isRTL: false,
-          showMonthAfterYear: false,
-          yearSuffix: ''
+            closeText: 'ปิด',
+            prevText: 'ก่อน',
+            nextText: 'ถัดไป',
+            currentText: 'วันนี้',
+            monthNames: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+                'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ],
+            monthNamesShort: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.',
+                'ธ.ค.'
+            ],
+            dayNames: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'],
+            dayNamesShort: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
+            dayNamesMin: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
+            weekHeader: 'Wk',
+            dateFormat: 'dd/mm/yy',
+            firstDay: 0,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: ''
         };
         $.datepicker.setDefaults($.datepicker.regional['th']);
     </script>
@@ -149,8 +153,10 @@
                             @yield('title', '')
                         </h4>
                         <div class="">
-                            <input type="text" name="search_input" class="form-control" placeholder="ค้นหา"
-                                style="border-radius: 50px;">
+                            @hasSection('is_search')
+                                <input type="text" name="search_input" class="form-control" placeholder="ค้นหา"
+                                    style="border-radius: 50px;">
+                            @endif
                         </div>
                     </ul>
 

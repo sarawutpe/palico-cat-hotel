@@ -1,5 +1,7 @@
 @extends('layouts.dashboard')
 @section('title', 'จัดการข้อมูลลูกค้า')
+@section('is_search', true)
+
 @section('content')
     <style>
         .box-card-list {

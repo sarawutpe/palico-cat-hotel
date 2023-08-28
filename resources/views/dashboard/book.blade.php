@@ -1,5 +1,6 @@
 @extends('layouts.dashboard')
 @section('title', 'จัดการข้อมูลการจอง')
+@section('is_search', false)
 @section('content')
 
     <style>
