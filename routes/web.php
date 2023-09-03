@@ -36,7 +36,7 @@ Route::middleware([PublicRoute::class])->group(function () {
   Route::get('/room/room-s', [ViewController::class, 'roomS'])->name('room-s');
   Route::get('/room/room-m', [ViewController::class, 'roomM'])->name('room-m');
   Route::get('/room/room-l', [ViewController::class, 'roomL'])->name('room-l');
-
+  Route::get('/guide', [ViewController::class, 'guide'])->name('guide');
 
   Route::get('/price', [ViewController::class, 'price'])->name('price');
   Route::get('/service', [ViewController::class, 'service'])->name('service');
@@ -47,6 +47,7 @@ Route::middleware([PublicRoute::class])->group(function () {
 // Protected Routes
 Route::middleware([OAuth::class, NoCacheHeaders::class])->group(function () {
   Route::get('/dashboard', [ViewController::class, 'dashboard'])->name('dashboard');
+
   Route::get('/dashboard/employee', [ViewController::class, 'dashboardEmployee'])->name('dashboard.employee');
   Route::get('/dashboard/member', [ViewController::class, 'dashboardMember'])->name('dashboard.member');
   Route::get('/dashboard/cat', [ViewController::class, 'dashboardCat'])->name('dashboard.cat');

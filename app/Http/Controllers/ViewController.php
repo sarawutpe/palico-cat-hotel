@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
-use Illuminate\Support\Facades\Session;
 use App\Http\Helpers\Helper;
 
 class ViewController extends Controller
@@ -50,6 +49,11 @@ class ViewController extends Controller
         return view('rule');
     }
 
+    public function guide()
+    {
+        return view('guide');
+    }
+
     public function contact()
     {
         return view('contact');
@@ -80,7 +84,17 @@ class ViewController extends Controller
     // Dashboard
     public function dashboard()
     {
-        return view('dashboard.index');
+        if (Helper::is_member()) {
+            return view('dashboard.member-index');
+        }
+
+        if (Helper::is_employee()) {
+            return view('dashboard.employee-index');
+        }
+
+        if (Helper::is_admin()) {
+            return view('dashboard.admin-index');
+        }
     }
 
     public function dashboardEmployee()

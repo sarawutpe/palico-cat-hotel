@@ -81,7 +81,7 @@
                         rents = response.data
                         let html = ''
                         response.data.forEach(function(rent, index) {
-                            const dateDiff = dayjs(rent.outDatetime).diff(rent.inDatetime, 'day')
+                            const dateDiff = dayjs(rent.out_datetime).diff(rent.in_datetime, 'day')
                             html += `
                             <tr>
                                 <th scope="row">${index + 1}</th>

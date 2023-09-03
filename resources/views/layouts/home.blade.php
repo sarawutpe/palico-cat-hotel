@@ -94,6 +94,9 @@
                                     <a class="nav-link active" href="{{ route('rule') }}">กติกา</a>
                                 </li>
                                 <li class="nav-item">
+                                    <a class="nav-link active" href="{{ route('guide') }}">วิธีการจอง</a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link active" href="{{ route('contact') }}">ติดต่อเรา</a>
                                 </li>
                             </div>
