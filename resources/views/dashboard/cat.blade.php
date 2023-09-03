@@ -68,10 +68,19 @@
                                                 <input type="text" name="cat_gen" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="col-sm-3 col-form-label">ของใช้แมว</label>
-                                            <textarea name="cat_accessory" class="form-control" rows="3"></textarea>
-                                        </div>
+
+                                        @if (session('type') === 'EMPLOYEE')
+                                            <div class="mb-3">
+                                                <label class="col-sm-3 col-form-label">ของใช้แมว</label>
+                                                <textarea name="cat_accessory" class="form-control" rows="3" disabled></textarea>
+                                            </div>
+                                        @else
+                                            <div class="mb-3">
+                                                <label class="col-sm-3 col-form-label">ของใช้แมว</label>
+                                                <textarea name="cat_accessory" class="form-control" rows="3"></textarea>
+                                            </div>
+                                        @endif
+
                                         <div class="mb-3">
                                             <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
                                             <textarea name="cat_ref" class="form-control" rows="3"></textarea>

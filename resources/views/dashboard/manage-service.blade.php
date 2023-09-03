@@ -111,7 +111,7 @@
                         let html = ''
 
                         response.data.forEach(function(rent, index) {
-                            const dateDiff = dayjs(rent.outDatetime).diff(rent.inDatetime,
+                            const dateDiff = dayjs(rent.out_datetime).diff(rent.in_datetime,
                                 'day')
 
                             const serviceLists = rent.service && rent.service.service_lists ?
