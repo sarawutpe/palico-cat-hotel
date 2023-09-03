@@ -116,5 +116,5 @@ Route::put('/api/checkin/{id}', [CheckinController::class, 'updateCheckin']);
 Route::post('/api/checkin-cat', [CheckinCatController::class, 'addCheckinCat']);
 Route::put('/api/checkin-cat/{id}', [CheckinCatController::class, 'updateCheckinCat']);
 
-Route::put('/api/report/stats', [ReportController::class, 'getAllStats']);
-Route::put('/api/report/income', [ReportController::class, 'getAllIncome']);
+Route::get('/api/report/stats', [ReportController::class, 'getAllStats']);
+Route::get('/api/report/income', [ReportController::class, 'getAllIncome']);
