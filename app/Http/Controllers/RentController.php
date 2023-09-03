@@ -21,8 +21,8 @@ class RentController extends Controller
                 ->with('service')
                 ->with('service.service_lists')
                 ->with('checkin')
-                ->with('checkin.checkin_cats')
-                ->with('checkin.checkin_cats.cat')
+                ->with('checkin_cats')
+                ->with('checkin_cats.cat')
                 ->orderBy('updated_at', 'desc')
                 ->get();
             return response()->json(['success' => true, 'data' => $rents]);
@@ -32,6 +32,28 @@ class RentController extends Controller
             return response()->json(['error' => $th->getMessage()], 500);
         }
     }
+
+    public function getRentById($id)
+    {
+        try {
+            $rent = Rent::where('rent_id', $id)
+                ->with('member')
+                ->with('room')
+                ->with('service')
+                ->with('service.service_lists')
+                ->with('checkin')
+                ->with('checkin_cats')
+                ->with('checkin_cats.cat')
+                ->orderBy('updated_at', 'desc')
+                ->first();
+            return response()->json(['success' => true, 'data' => $rent]);
+        } catch (ValidationException $exception) {
+            return response()->json(['error' => $exception->errors()], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
 
     public function getRentByMember($id)
     {
@@ -149,16 +171,7 @@ class RentController extends Controller
             $rent->employee_pay = $request->input('employee_pay');
             $rent->save();
 
-            $rent = Rent::where('rent_id', $id)
-            ->with('member')
-            ->with('room')
-            ->with('service')
-            ->with(['service.service_lists'])
-            ->with('checkin')
-            ->orderBy('updated_at', 'desc')
-            ->first();
-        
-            return response()->json(['success' => true, 'data' => $rent]);
+            return $this->getRentById($id);
         } catch (ValidationException $exception) {
             $errors = $exception->validator->errors()->all();
             return response()->json(['success' => false, 'errors' => $errors], 422);

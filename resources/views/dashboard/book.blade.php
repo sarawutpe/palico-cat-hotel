@@ -190,7 +190,7 @@
         var selectedRoomId = ''
         var selectedRoom = ''
         var rents = []
-        var selectedCats = []
+        var selectedCatList = []
 
         var inDatePicker = null
         var outDatePicker = null
@@ -259,7 +259,7 @@
 
             // prevent tab 4
             if (targetTab === '#tab4') {
-                if (!selectedCats.length || !$('input[name="in_datetime"]').val() || !$(
+                if (!selectedCatList.length || !$('input[name="in_datetime"]').val() || !$(
                         'input[name="out_datetime"]').val()) {
                     $('button[data-coreui-target="#tab3"]').tab('show');
                     handleStepPay()
@@ -310,8 +310,9 @@
                         let html = ''
                         let newData = response.data
 
-                        newData = newData.filter(function (item) {
-                            return !selectedRoomType || item.room_type === selectedRoomType.room_type
+                        newData = newData.filter(function(item) {
+                            return !selectedRoomType || item.room_type === selectedRoomType
+                                .room_type
                         });
 
                         if (newData.length > 0) {
@@ -406,15 +407,16 @@
             const catObj = JSON.parse(cat);
             if (typeof catObj !== 'object') return;
 
+            const catId = catObj.cat_id
             const targetDiv = $('.box-cat-list').eq(index);
             const isSelected = targetDiv.hasClass('active');
 
             // Check limit room
-            if (!isSelected && selectedCats.length < selectedRoom.room_limit) {
-                selectedCats.push(catObj);
+            if (!isSelected && selectedCatList.length < selectedRoom.room_limit) {
+                selectedCatList.push(catObj);
                 targetDiv.addClass('active');
             } else {
-                selectedCats = selectedCats.filter(item => item.cat_id !== catObj.cat_id);
+                selectedCatList = selectedCatList.filter(item => item.cat_id !== catId);
                 targetDiv.removeClass('active');
             }
         }
@@ -428,10 +430,9 @@
             const room = selectedRoom
             const currentDate = dayjs();
 
-            var catNameHtml = ``;
-            selectedCats.forEach(function(cat, index) {
-                catNameHtml += `${index + 1}.รหัส CAT${cat.cat_id} ชื่อ ${cat.cat_name}  `;
-            });
+            const catNameHtml = selectedCatList.map(function(cat, index) {
+                return `รหัส CAT${cat.cat_id ?? ''} ${cat.cat_name ?? ''}`
+            }).join(', ');
 
             const html = `
             <div class="row">
@@ -533,8 +534,6 @@
             if (typeof roomObj !== 'object') return
 
             selectedRoom = roomObj
-            console.log(roomObj)
-
             goTab(3)
             handleShowStepDetail()
         }
@@ -559,13 +558,13 @@
                 outDatetime.removeClass('is-invalid');
             }
 
-            if (!selectedCats.length) {
+            if (!selectedCatList.length) {
                 utils.showAlert('#alert-message', 'error', 'กรุณาเลือกแมว')
             } else {
                 utils.clearAlert('#alert-message')
             }
 
-            if (selectedCats.length > 0 && inDatetime.val() && outDatetime.val()) {
+            if (selectedCatList.length > 0 && inDatetime.val() && outDatetime.val()) {
                 goTab(4)
                 handleShowStepPay()
             }
@@ -587,7 +586,7 @@
                     files.setMessage('error', 'กรุณาอัพโหลดสลิป')
                 }
 
-                if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice || !selectedCats.length) return
+                if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice || !selectedCatList.length) return
 
                 utils.loading('open')
                 utils.setLinearLoading('open')
@@ -633,13 +632,12 @@
                     contentType: false,
                 });
 
-                const checkinId = checkinResult?.data?.checkin_id ?? ''
-                if (!checkinResult.success || !checkinId) throw new Error('error save checkin!')
+                if (!checkinResult.success) throw new Error('error save checkin!')
 
                 // Add Checkin Cat to db
                 formData = new FormData();
-                formData.append('checkin_id', checkinId);
-                selectedCats.forEach(function(cat) {
+                formData.append('rent_id', rentId);
+                selectedCatList.forEach(function(cat) {
                     formData.append('cat_id[]', cat.cat_id);
                 })
 
@@ -661,7 +659,6 @@
                 location.reload();
             } catch (error) {
                 toastr.error();
-                console.log(error)
             } finally {
                 utils.loading('close')
                 utils.setLinearLoading('close');

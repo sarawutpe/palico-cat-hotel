@@ -50,4 +50,8 @@ class Rent extends Model
     public function checkin() {
         return $this->hasOne(Checkin::class, 'rent_id');
     }
+
+    public function checkin_cats() {
+        return $this->hasMany(CheckinCat::class, 'rent_id');
+    }
 }

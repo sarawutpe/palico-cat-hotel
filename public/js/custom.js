@@ -67,10 +67,8 @@ $(document).ready(function () {
 function formatDate(dateTime = "") {
     if (!dayjs(dateTime).isValid()) return "invalid date";
 
-    // return dayjs(dateTime).format('YYYY-MM-DDTHH:mm');
-
     dayjs.extend(dayjs_plugin_buddhistEra);
-    return dayjs(dateTime).format("DD-MM-BBBB HH:MM");
+    return dayjs(dateTime).format("DD-MM-BBBB");
 }
 
 function formatRentStatus(type = "") {
@@ -98,8 +96,6 @@ function formatPayStatus(type = "") {
             return "กำลังรอ";
         case "PAYING":
             return "จ่ายแล้ว";
-        case "COMPLETED":
-            return "เสร็จสิ้น";
         case "CANCELED":
             return "ยกเลิก";
         default:
@@ -212,10 +208,6 @@ const utils = {
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    // const b = Swal.getHtmlContainer().querySelector("b");
-                    // timerInterval = setInterval(() => {
-                    //     b.textContent = Swal.getTimerLeft();
-                    // }, 100);
                 },
                 willClose: () => {
                     clearInterval(timerInterval);

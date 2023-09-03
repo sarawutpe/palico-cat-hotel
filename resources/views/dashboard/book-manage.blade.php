@@ -149,7 +149,6 @@
                                                     <option value="RESERVED">จองแล้ว</option>
                                                     <option value="CHECKED_IN">เช็คอิน</option>
                                                     <option value="CHECKED_OUT">เช็คเอาท์</option>
-                                                    <option value="COMPLETED">เสร็จสิ้น</option>
                                                     <option value="CANCELED">ยกเลิก</option>
                                                 </select>
                                             </div>
@@ -161,7 +160,6 @@
                                                 <select class="form-select" name="pay_status">
                                                     <option value="PENDING" selected>กำลังรอ</option>
                                                     <option value="PAYING">จ่ายแล้ว</option>
-                                                    <option value="COMPLETED">เสร็จสิ้น</option>
                                                     <option value="CANCELED">ยกเลิก</option>
                                                 </select>
                                             </div>
@@ -171,8 +169,10 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            <button type="button" class="btn btn-danger" onclick="handleDeleteBook()">ลบ</button>
-                            <button type="button" class="btn btn-info" onclick="handleManageBook()">แก้ไข</button>
+                            <button id="delete-btn" type="button" class="btn btn-danger"
+                                onclick="handleDeleteBook()">ลบ</button>
+                            <button id="edit-btn" type="button" class="btn btn-info"
+                                onclick="handleManageRentService()">แก้ไข</button>
                         </div>
                     </div>
                 </form>
@@ -199,15 +199,13 @@
         var id = "{{ session('id') }}"
         var formData = null
         var search = null
-        var selectedCatId = null
         var selectedRent = null
-        var catList = null
+        var selectedCatList = []
+        var selectedRoom = null
 
         // Initialize
         $(document).ready(function() {
             handleGetAllRent()
-            handleGetAllCat()
-            callSearchFunc = handleGetAllRent;
         })
 
         function resetForm() {
@@ -225,10 +223,20 @@
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
+                    const data = response.data
 
                     let html = ''
-                    response.data.forEach(function(rent, index) {
+                    var catNameHtml = ``;
+
+                    data.forEach(function(rent, index) {
                         const dateDiff = dayjs(rent.out_datetime).diff(rent.in_datetime, 'day')
+
+                        const catNameHtml = rent.checkin_cats.map(function(checkinCat, index) {
+                            return `รหัส CAT${checkinCat.cat?.cat_id ?? ''} ${checkinCat.cat?.cat_name ?? ''}`
+                        }).join(', ');
+
+                        const isCheckin = rent?.checkin?.checkin_status
+
                         html += `
                         <div class="box-card-list" onclick="handleShowRent(${index}, ${utils.jsonString(rent)})">
                             <div>
@@ -237,10 +245,12 @@
                                 <p>ชื่อสมาชิก ${rent.member.member_name}</p>
                                 <p>ชื่อห้อง ${rent.room.room_name}</p>
                                 <p>จำกัดแมว ${rent.room.room_limit} ตัว</p>
-                                <p>วันที่เช็คอิน ${formatDate(rent.in_datetime)}</p>
-                                <p>วันที่เช็คเอาท์ ${formatDate(rent.out_datetime)}</p>
-                                <p>ระยะเวลา ${dateDiff}</p>
-                                <p>ราคา ฿${rent.rent_price}</p>
+                                <br>
+                                <p>เช็คอิน-เอ้าท์ ${formatDate(rent.in_datetime)} - ${formatDate(rent.out_datetime)} (${dateDiff} วัน)</p>
+                                <p>รายชื่อแมว ${catNameHtml}</p>
+                                <p>ราคาการจอง ฿${rent.rent_price}</p>
+                                <br>
+                                <p class="${isCheckin ? 'text-success' : 'text-warning'}">${isCheckin ? 'เช็คอินสำเร็จ' : 'ยังไม่เช็คอิน'}</p>
                                 <p>สถานะการจ่ายเงิน ${formatPayStatus(rent.pay_status)}</p>
                                 <p>สถานะการจอง ${formatRentStatus(rent.rent_status)}</p>
                             </div>
@@ -261,22 +271,22 @@
             });
         }
 
-        function handleGetAllCat() {
+        async function handleGetCatByMember($id) {
             utils.setLinearLoading('open')
 
-            $.ajax({
-                url: `${prefixApi}/api/cat/list${window.location.search}`,
+            await $.ajax({
+                url: `${prefixApi}/api/cat/member/${id}`,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
 
-                    catList = response.data
+                    selectedCatList = response.data
 
                     let html = ''
                     response.data.forEach(function(cat, index) {
                         html += `
-                        <div class="box-cat-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
+                        <div id="${cat.cat_id}" class="box-cat-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
                             <img onerror="this.style.opacity = 0"
                                 src="${storagePath}/${cat.cat_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
@@ -290,6 +300,8 @@
                         </div>`;
                     });
                     $('#cat-list').empty().append(html);
+
+                    utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     toastr.error();
@@ -299,97 +311,135 @@
             });
         }
 
-        function handleSelectCat(index, data) {
-            const cat = JSON.parse(data)
-            if (typeof cat !== 'object') return
+        function handleSelectCat(index, cat) {
+            const catObj = JSON.parse(cat);
+            if (typeof catObj !== 'object') return;
 
-            const targetDiv = $('.box-cat-list').eq(index);
+            const catId = catObj.cat_id
+            const targetDiv = $(`.box-cat-list#${catId}`);
             const isSelected = targetDiv.hasClass('active');
-            targetDiv.addClass('active');
 
-            // $('.cat-item').removeClass('active').eq(index).addClass('active');
-            selectedCatId = cat.cat_id
+            // Check limit room
+            if (!isSelected && selectedCatList.length < selectedRoom.room_limit) {
+                console.log('case 1')
+                selectedCatList.push(catObj);
+                targetDiv.addClass('active');
+            } else {
+                selectedCatList = selectedCatList.filter(item => item.cat_id !== catId);
+                targetDiv.removeClass('active');
+            }
+
+            console.log('final', selectedCatList)
         }
 
-        function handleShowRent(index, data) {
-            const rent = JSON.parse(data)
+        async function handleShowRent(index, data) {
+            const rent = typeof data === 'object' ? data : JSON.parse(data)
             if (typeof rent !== 'object') return
 
+            await handleGetCatByMember(rent.member_id)
+
+            // Save global values
             selectedRentId = rent.rent_id
             selectedRent = rent
             selectedIndex = index
+            selectedRoom = rent.room
+            selectedCatList = rent.checkin_cats
 
+            // Set active box card list
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
-            if (rent.checkin) {
-                selectedCatId = rent.checkin.cat_id
+            // Set active class of cat list
+            const boxCatListHtml = $('.box-cat-list');
+            boxCatListHtml.removeClass('active');
+            rent.checkin_cats.forEach(function(checkinCat) {
+                boxCatListHtml.filter(`#${checkinCat.cat_id}`).addClass('active');
+            });
 
-                $('input[name="checkin_status"]').prop('checked', rent?.checkin?.checkin_status ?? false);
-                $('textarea[name="checkin_detail"]').val(rent?.checkin?.checkin_detail ?? "");
-                const catIndex = catList.findIndex((item) => item.cat_id === rent.checkin.cat_id)
-                if (catIndex > -1) {
-                    $('.cat-item').removeClass('active').eq(catIndex).addClass('active');
-                }
-
-                $('#cat-list').animate({
-                    scrollLeft: 110 * catIndex
-                }, 'fast');
+            // Hide update data button
+            if (rent.rent_status === 'CHECKED_OUT' && rent.pay_status === 'PAYING') {
+                $('#delete-btn').hide();
+                $('#edit-btn').hide();
             } else {
-                $('input[name="checkin_status"]').prop('checked', false);
-                $('textarea[name="checkin_detail"]').val("");
-                selectedCatId = null
-                $('.cat-item').removeClass('active')
-                $('#cat-list').animate({
-                    scrollLeft: 0
-                }, 'fast');
+                $('#delete-btn').show();
+                $('#edit-btn').show();
             }
 
-            $('select[name="rent_status"]').val(rent.rent_status || "");
+            $('input[name="checkin_status"]').prop('checked', rent?.checkin?.checkin_status ?? false);
+            $('textarea[name="checkin_detail"]').val(rent?.checkin?.checkin_detail ?? "");
+
+            $('select[name="rent_status"]').val(rent.rent_status);
             $('input[name="in_datetime"]').val(dayjs.utc(rent.in_datetime).format('YYYY-MM-DDTHH:mm'));
             $('input[name="out_datetime"]').val(dayjs.utc(rent.out_datetime).format('YYYY-MM-DDTHH:mm'));
-            $('select[name="pay_status"]').val(rent.pay_status || "");
+            $('select[name="pay_status"]').val(rent.pay_status);
         }
 
-        function handleManageBook() {
-            if (!selectedCatId) {
+        async function handleManageRentService() {
+            if (selectedCatList.length === 0) {
                 return utils.showAlert('#alert-message', 'error', "กรุณาเลือกแมว")
             }
 
-            handleUpdateCheckin()
-            handleUpdateBook()
+            utils.loading('open')
+            utils.setLinearLoading('open')
+
+            await handleUpdateCheckin()
+            await handleUpdateCheckinCat()
+            await handleUpdateRent()
+
+            utils.loading('close')
+            utils.setLinearLoading('close')
         }
 
-        function handleUpdateCheckin() {
-            if (!selectedCatId || !selectedRent) return
+
+
+        async function handleUpdateCheckin() {
+            if (!selectedRentId || selectedCatList.length === 0) return
 
             formData = new FormData();
-            formData.append('rent_id', selectedRent.rent_id);
-            formData.append('cat_id', selectedCatId);
-            formData.append('checkin_status', $('input[name="checkin_status"]').prop('checked') ? 1 : 0);
+            formData.append('_method', 'PUT');
+            formData.append('rent_id', selectedRentId);
             formData.append('checkin_detail', $('textarea[name="checkin_detail"]').val());
+            formData.append('checkin_status', $('input[name="checkin_status"]').prop('checked') ? 1 : 0);
 
             const checkinId = selectedRent?.checkin?.checkin_id ?? ''
-            if (checkinId) {
-                formData.append('_method', 'PUT');
-                $.ajax({
-                    url: `${prefixApi}/api/checkin/${checkinId}`,
-                    type: "POST",
-                    headers: headers,
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response, textStatus, jqXHR) {
-                        utils.clearAlert('#alert-message')
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        const response = jqXHR.responseJSON
-                        utils.showAlert('#alert-message', 'error', response.errors)
-                    },
-                });
-            }
+            if (!checkinId) return
+
+            await $.ajax({
+                url: `${prefixApi}/api/checkin/${checkinId}`,
+                type: "POST",
+                headers: headers,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response, textStatus, jqXHR) {
+                    utils.clearAlert('#alert-message')
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    const response = jqXHR.responseJSON
+                    utils.showAlert('#alert-message', 'error', response.errors)
+                },
+            });
         }
 
-        function handleUpdateBook() {
+        async function handleUpdateCheckinCat() {
+            if (!selectedRentId || selectedCatList.length === 0) return
+
+            formData = new FormData();
+            formData.append('_method', 'PUT');
+            selectedCatList.forEach(function(cat) {
+                formData.append('cat_id[]', cat.cat_id);
+            })
+
+            await $.ajax({
+                url: `${prefixApi}/api/checkin-cat/${selectedRentId}`,
+                type: "POST",
+                headers: headers,
+                data: formData,
+                processData: false,
+                contentType: false,
+            });
+        }
+
+        async function handleUpdateRent() {
             if (!selectedRentId) return
 
             formData = new FormData();
@@ -401,7 +451,7 @@
             formData.append('employee_in', id);
             formData.append('employee_pay', id);
 
-            $.ajax({
+            await $.ajax({
                 url: `${prefixApi}/api/rent/${selectedRentId}`,
                 type: "POST",
                 headers: headers,
@@ -411,7 +461,7 @@
                 success: function(response, textStatus, jqXHR) {
                     toastr.success();
                     handleGetAllRent()
-                    handleShowRent(selectedIndex, JSON.stringify(response.data))
+                    handleShowRent(selectedIndex, response.data)
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {

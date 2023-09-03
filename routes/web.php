@@ -92,6 +92,7 @@ Route::put('/api/cat/{id}', [CatController::class, 'updateCat']);
 Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
 
 Route::get('/api/rent/list', [RentController::class, 'getAllRent']);
+Route::get('/api/rent/{id}', [RentController::class, 'getRentById']);
 Route::get('/api/rent/member/{id}', [RentController::class, 'getRentByMember']);
 Route::post('/api/rent', [RentController::class, 'addRent']);
 Route::put('/api/rent/{id}', [RentController::class, 'updateRent']);
@@ -111,4 +112,5 @@ Route::post('/api/checkin', [CheckinController::class, 'addCheckin']);
 Route::put('/api/checkin/{id}', [CheckinController::class, 'updateCheckin']);
 
 Route::post('/api/checkin-cat', [CheckinCatController::class, 'addCheckinCat']);
+Route::put('/api/checkin-cat/{id}', [CheckinCatController::class, 'updateCheckinCat']);
 
