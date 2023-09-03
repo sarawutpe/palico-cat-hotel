@@ -15,8 +15,7 @@ class ViewController extends Controller
 
     public function room()
     {
-        $rooms = Room::orderBy('updated_at', 'desc')->get();
-        return view('room', ['rooms' => $rooms]);
+        return view('room');
     }
 
     public function roomS()

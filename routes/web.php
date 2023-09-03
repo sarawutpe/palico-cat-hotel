@@ -14,6 +14,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceListController;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\CheckinCatController;
+use App\Http\Controllers\ReportController;
 
 use App\Http\Middleware\OAuth;
 use App\Http\Middleware\NoCacheHeaders;
@@ -115,3 +116,5 @@ Route::put('/api/checkin/{id}', [CheckinController::class, 'updateCheckin']);
 Route::post('/api/checkin-cat', [CheckinCatController::class, 'addCheckinCat']);
 Route::put('/api/checkin-cat/{id}', [CheckinCatController::class, 'updateCheckinCat']);
 
+Route::put('/api/report/stats', [ReportController::class, 'getAllStats']);
+Route::put('/api/report/income', [ReportController::class, 'getAllIncome']);
