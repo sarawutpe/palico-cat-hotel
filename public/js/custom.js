@@ -65,7 +65,7 @@ $(document).ready(function () {
 });
 
 function formatDate(date = "") {
-    const newDate = dayjs(date)
+    const newDate = dayjs(date);
     if (!newDate.isValid()) return "invalid date";
 
     dayjs.extend(dayjs_plugin_buddhistEra);
@@ -164,7 +164,7 @@ const utils = {
             ? `'${JSON.stringify(jsonData).replace(/"/g, "&quot;")}'`
             : "invalid json";
     },
-    showDialog(message, icon = '') {
+    showDialog(message, icon = "") {
         return new Promise((resolve, reject) => {
             Swal.fire({
                 title: `<strong>${message}</strong>`,
@@ -253,24 +253,64 @@ const utils = {
     },
 };
 
-function pdf() {
-    // Define a custom Thai font
-    pdfMake.fonts = {
-        ThaiFont: {
-            normal: "fonts/DBHeavent.ttf",
-        },
-    };
+var fonts = `${window.location.origin}/fonts/DBHeavent.ttf`;
 
-    // Your PDF document definition
-    var docDefinition = {
-        content: [
-            {
-                text: "สวัสดี, pdfMake!",
-                font: "ThaiFont",
-            }, // Use the Thai font here
-        ],
-    };
+function makePdf() {
+    try {
+        pdfMake.fonts = {
+            DBHeavent: {
+                normal: fonts,
+            },
+            Roboto: {
+                normal: "Roboto-Regular.ttf",
+                bold: "Roboto-Bold.ttf",
+                italics: "Roboto-Italic.ttf",
+                bolditalics: "Roboto-BoldItalic.ttf",
+            },
+        };
 
-    // Create a PDF document
-    pdfMake.createPdf(docDefinition).download("output.pdf");
+        pdfMake.defaultStyle = {
+            font: "DBHeavent",
+        };
+
+        const tableData = [];
+        for (let i = 1; i <= 10; i++) {
+            tableData.push([i, "Name" + i, "Address" + i, "Phone" + i]);
+        }
+
+        // Your PDF document definition
+        var docDefinition = {
+            pageOrientation: "portrait",
+            pageSize: "A4",
+            content: [
+                {
+                    text: "รายงานข้อมูลพนักงาน",
+                    fontSize: 18,
+                    alignment: "center",
+                    margin: [0, 0, 0, 10],
+                    font: "DBHeavent",
+                },
+                {
+                    table: {
+                        headerRows: 1,
+                        widths: ["auto", "*", "*", "*"],
+                        body: [
+                            [
+                                "รหัสพนักงาน",
+                                "ชื่อ-สกุล",
+                                "ที่อยู่",
+                                "เบอร์โทรศํพท์",
+                            ],
+                            ...tableData,
+                        ],
+                    },
+                    layout: "lightHorizontalLines",
+                },
+            ],
+        };
+
+        pdfMake.createPdf(docDefinition).download("output.pdf");
+    } catch (error) {
+        console.log(error);
+    }
 }

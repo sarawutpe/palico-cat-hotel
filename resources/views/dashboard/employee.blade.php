@@ -21,6 +21,11 @@
     </style>
 
     <section class="content">
+
+        <button type="button" class="btn btn-primary" onclick="makePdf()">
+            <i class="fa-solid fa-print fa-xs align-middle"></i>
+        </button>
+
         <div class="row">
             <div class="col-6">
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">

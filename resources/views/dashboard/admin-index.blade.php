@@ -77,12 +77,7 @@
                             <label class="btn btn-outline-secondary" onclick="handleFilterStats('m')">เดือน</label>
                             <input class="btn-check" id="option-y" type="radio" name="option-stats" autocomplete="off">
                             <label class="btn btn-outline-secondary" onclick="handleFilterStats('y')">ปี</label>
-                        </div>
-                        <button class="btn btn-primary" type="button">
-                            <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-cloud-download"></use>
-                            </svg>
-                        </button>
+                        </div>                    
                     </div>
                 </div>
                 <div class="c-chart-wrapper" style="height:300px;margin-top:40px;">
