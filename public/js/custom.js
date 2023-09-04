@@ -64,11 +64,12 @@ $(document).ready(function () {
     fileToolkit();
 });
 
-function formatDate(dateTime = "") {
-    if (!dayjs(dateTime).isValid()) return "invalid date";
+function formatDate(date = "") {
+    const newDate = dayjs(date)
+    if (!newDate.isValid()) return "invalid date";
 
     dayjs.extend(dayjs_plugin_buddhistEra);
-    return dayjs(dateTime).format("DD-MM-BBBB");
+    return newDate.format("DD-MM-BBBB");
 }
 
 function formatRentStatus(type = "") {
