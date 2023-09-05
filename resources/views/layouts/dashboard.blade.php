@@ -50,24 +50,24 @@
 
     <link href="{{ asset('vendors/datepicker/jquery-ui.css') }}" rel="stylesheet">
 
-    {{-- JS --}}
+    {{-- Script --}}
     <script src="{{ asset('vendors/jquery/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('vendors/sweetalert2/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
     <script src="{{ asset('js/lodash.min.js') }}"></script>
-
     <script src="{{ asset('vendors/datepicker/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('vendors/toastr.js/toastr.min.js') }}"></script>
+    
+    <script src="{{ asset('vendors/dayjs/dayjs.min.js') }}"></script>
+    <script src="{{ asset('vendors/dayjs/plugin/buddhistEra.min.js') }}"></script>
+    <script src="{{ asset('vendors/dayjs/plugin/utc.min.js') }}"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="{{ asset('vendors/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('vendors/pdfmake/vfs_fonts.js') }}"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.9/plugin/buddhistEra.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.9/plugin/utc.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script> --}}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
 
-    {{-- <script src="https://cdn.jsdelivr.net/npm/lodash.debounce@4.0.8/index.min.js"></script> --}}
 </head>
 
 <body>

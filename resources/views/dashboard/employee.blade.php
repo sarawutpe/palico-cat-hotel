@@ -21,11 +21,6 @@
     </style>
 
     <section class="content">
-
-        <button type="button" class="btn btn-primary" onclick="makePdf()">
-            <i class="fa-solid fa-print fa-xs align-middle"></i>
-        </button>
-
         <div class="row">
             <div class="col-6">
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
@@ -120,7 +115,9 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            {{-- <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button> --}}
+                            <button type="button" class="btn btn-primary" onclick="handleReport()">
+                                <i class="fa-solid fa-print fa-xs align-middle"></i>
+                            </button>
                             <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
                             <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
@@ -149,6 +146,7 @@
         var storagePath = "{{ asset('storage') }}"
         var formData = null
         var search = null
+        var employeeList = []
 
         // Initialize
         $(document).ready(function() {
@@ -176,6 +174,8 @@
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
+
+                    employeeList = response.data
 
                     let html = ''
                     response.data.forEach(function(employee, index) {
@@ -325,6 +325,32 @@
                     },
                 })
             }
+        }
+
+        function handleReport() {
+            const tableHeader = ["รหัสพนักงาน",
+                "ชื่อ-สกุล",
+                "ที่อยู่",
+                "เบอร์โทรศํพท์"
+            ]
+            const tableData = []
+
+            employeeList.forEach(function(item) {
+                tableData.push([item?.employee_id ?? '', item?.employee_name ?? '', item?.employee_address ?? '',
+                    item?.employee_phone ?? ''
+                ])
+            })
+
+            const table = {
+                widths: ["auto", "*", "*", "*"],
+                body: [
+                    tableHeader,
+                    ...tableData
+
+                ]
+            }
+
+            printPdf(table)
         }
     </script>
 

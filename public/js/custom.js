@@ -253,13 +253,16 @@ const utils = {
     },
 };
 
-var fonts = `${window.location.origin}/fonts/DBHeavent.ttf`;
-
-function makePdf() {
+function printPdf(table) {
     try {
+        if (typeof table !== "object") return;
+
+        utils.setLinearLoading("open");
         pdfMake.fonts = {
             DBHeavent: {
-                normal: fonts,
+                normal: "DBHeavent.ttf",
+                medium: "DBHeavent-Med.ttf",
+                bold: "DBHeavent-Bold.ttf",
             },
             Roboto: {
                 normal: "Roboto-Regular.ttf",
@@ -269,47 +272,70 @@ function makePdf() {
             },
         };
 
-        pdfMake.defaultStyle = {
-            font: "DBHeavent",
-        };
-
-        const tableData = [];
-        for (let i = 1; i <= 10; i++) {
-            tableData.push([i, "Name" + i, "Address" + i, "Phone" + i]);
-        }
-
         // Your PDF document definition
         var docDefinition = {
             pageOrientation: "portrait",
             pageSize: "A4",
+            defaultStyle: {
+                font: "DBHeavent",
+                fontSize: 16,
+            },
+            header: function (currentPage, pageCount) {
+                return {
+                    text: `หน้า ${currentPage}`,
+                    fontSize: 14,
+                    alignment: "right",
+                    margin: [35, 10],
+                };
+            },
             content: [
                 {
-                    text: "รายงานข้อมูลพนักงาน",
-                    fontSize: 18,
-                    alignment: "center",
-                    margin: [0, 0, 0, 10],
-                    font: "DBHeavent",
+                    stack: [
+                        {
+                            text: "รายงานข้อมูลพนักงาน",
+                            fontSize: 18,
+                            bold: true,
+                            alignment: "center",
+                        },
+                        {
+                            text: `วันที่พิมพ์ ${formatDate(dayjs().format())}`,
+                            fontSize: 14,
+                            alignment: "right",
+                            margin: [0, 0, 0, 10],
+                        },
+                    ],
                 },
                 {
-                    table: {
-                        headerRows: 1,
-                        widths: ["auto", "*", "*", "*"],
-                        body: [
-                            [
-                                "รหัสพนักงาน",
-                                "ชื่อ-สกุล",
-                                "ที่อยู่",
-                                "เบอร์โทรศํพท์",
-                            ],
-                            ...tableData,
-                        ],
+                    table: table,
+                    layout: {
+                        hLineWidth: function (i, node) {
+                            return 1;
+                        },
+                        vLineWidth: function (i) {
+                            return 1;
+                        },
+                        hLineColor: function () {
+                            return "#ddd";
+                        },
+                        vLineColor: function () {
+                            return "#ddd";
+                        },
                     },
-                    layout: "lightHorizontalLines",
                 },
             ],
         };
 
-        pdfMake.createPdf(docDefinition).download("output.pdf");
+        function progressCallback(progress) {
+            if (progress === 1) {
+                setTimeout(() => {
+                    utils.setLinearLoading("close");
+                }, 500);
+            }
+        }
+
+        pdfMake.createPdf(docDefinition).download("output.pdf", null, {
+            progressCallback: progressCallback,
+        });
     } catch (error) {
         console.log(error);
     }
