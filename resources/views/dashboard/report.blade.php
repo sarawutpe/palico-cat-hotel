@@ -206,7 +206,7 @@
                 let payingStatusCount = 0
                 let canceledStatusCount = 0
 
-                const tableHeader = ["วัน/เดือน/ปี", "เลขที่ใบจอง", "ห้อง", "ชื่อสมาชิก", "จำนวนเงิน", "สถานะการจ่ายเงิน"];
+                const tableHeader = ["วัน/เดือน/ปี", "เลขที่ใบจอง", "ห้อง", "ชื่อสมาชิก", "โทรศํพท์", "จำนวนเงิน", "สถานะการจ่ายเงิน"];
                 const tableData = rentList.data.map((item, index) => {
 
                     if (item.pay_status === 'PENDING') {
@@ -222,13 +222,14 @@
                         `${item.rent_id}`,
                         `${item.room.room_name}`,
                         `${item.member.member_name}`,
+                        `${item.member.member_phone}`,
                         `฿${item.rent_price}`,
                         `${formatPayStatus(item.pay_status)}`
                     ]
                 });
 
                 const table = {
-                    widths: ["auto", "*", "*", "*", "*", "*"],
+                    widths: ["auto", "*", "*", "*", "*", "*", "*"],
                     body: [tableHeader, ...tableData],
                 };
 
