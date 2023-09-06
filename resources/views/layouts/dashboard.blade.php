@@ -153,10 +153,6 @@
                             @yield('title', '')
                         </h4>
                         <div class="">
-                            <button type="button" class="btn btn-primary" onclick="handleOpenReportModal()">
-                                <i class="fa-solid fa-print fa-xs align-middle"></i>
-                            </button>
-
                             @hasSection('is_search')
                                 <input type="text" name="search_input" class="form-control" placeholder="ค้นหา"
                                     style="border-radius: 50px;">

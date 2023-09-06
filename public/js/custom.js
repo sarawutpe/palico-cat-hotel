@@ -199,11 +199,11 @@ const utils = {
             });
         });
     },
-    loading(action) {
+    loading(action, title = 'กำลังตรวจสอบข้อมูล') {
         if (action === "open") {
             let timerInterval;
             Swal.fire({
-                title: "กำลังตรวจสอบข้อมูล",
+                title: title,
                 timerProgressBar: true,
                 showCloseButton: false,
                 allowOutsideClick: false,

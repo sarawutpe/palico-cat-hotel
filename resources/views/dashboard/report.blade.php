@@ -78,6 +78,7 @@
 
         async function getReportData() {
             try {
+                utils.loading('open', 'กำลังโหลดข้อมูล')
                 utils.setLinearLoading('open')
 
                 employeeList = await $.ajax({
@@ -111,6 +112,7 @@
             } catch (error) {
                 console.log(error)
             } finally {
+                utils.loading('close')
                 utils.setLinearLoading('close')
             }
         }
@@ -189,14 +191,12 @@
                     body: [tableHeader, ...tableData],
                 };
 
-                const summarize = [
-                    {
-                        text: `รายการจองทั้งหมด ${rentList.data.length} รายการ`,
-                        fontSize: 15,
-                        bold: true,
-                        margin: [0, 10, 0, 0],
-                    }
-                ]
+                const summarize = [{
+                    text: `รายการจองทั้งหมด ${rentList.data.length} รายการ`,
+                    fontSize: 15,
+                    bold: true,
+                    margin: [0, 10, 0, 0],
+                }]
 
                 printPdf('รายงานการจอง', table, summarize);
             }
