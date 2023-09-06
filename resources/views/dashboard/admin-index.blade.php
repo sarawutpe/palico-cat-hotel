@@ -53,7 +53,7 @@
                     <div class="card-body pb-0 d-flex justify-content-between align-items-start">
                         <div class="w-100">
                             <div class="d-flex justify-content-between">
-                                <p>รายได้</p>
+                                <p>รายได้ทั้งหมด</p>
                                 <div id="income-count" class="fs-4 fw-semibold">0</div>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                             <label class="btn btn-outline-secondary" onclick="handleFilterStats('m')">เดือน</label>
                             <input class="btn-check" id="option-y" type="radio" name="option-stats" autocomplete="off">
                             <label class="btn btn-outline-secondary" onclick="handleFilterStats('y')">ปี</label>
-                        </div>                    
+                        </div>
                     </div>
                 </div>
                 <div class="c-chart-wrapper" style="height:300px;margin-top:40px;">
@@ -146,10 +146,12 @@
             // Set label stats range
             if (data.income_stats.length === 1) {
                 labelStatsRangeHtml.text(formatDate(data.income_stats[0].day));
-            } else {
+            } else if (data.income_stats.length > 0) {
                 const lastIndex = data.income_stats.length - 1
                 labelStatsRangeHtml.text(
                     `${formatDate(data.income_stats[0].day)} - ${formatDate(data.income_stats[lastIndex].day)}`);
+            } else {
+                labelStatsRangeHtml.text('');
             }
 
             const labelList = []

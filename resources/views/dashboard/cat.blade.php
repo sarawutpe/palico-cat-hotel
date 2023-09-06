@@ -118,7 +118,9 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            {{-- <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button> --}}
+                            <button type="button" class="btn btn-primary" onclick="handleReport()">
+                                <i class="fa-solid fa-print fa-xs align-middle"></i>
+                            </button>
                             <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
                             <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
@@ -316,6 +318,7 @@
                 })
             }
         }
+
     </script>
 
 @endsection

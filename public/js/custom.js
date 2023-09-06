@@ -253,7 +253,7 @@ const utils = {
     },
 };
 
-function printPdf(table) {
+function printPdf(title, table, summarize = {}) {
     try {
         if (typeof table !== "object") return;
 
@@ -274,11 +274,11 @@ function printPdf(table) {
 
         // Your PDF document definition
         var docDefinition = {
-            pageOrientation: "portrait",
+            pageOrientation: "landscape", // landscape portrait
             pageSize: "A4",
             defaultStyle: {
                 font: "DBHeavent",
-                fontSize: 16,
+                fontSize: 14,
             },
             header: function (currentPage, pageCount) {
                 return {
@@ -292,7 +292,7 @@ function printPdf(table) {
                 {
                     stack: [
                         {
-                            text: "รายงานข้อมูลพนักงาน",
+                            text: title,
                             fontSize: 18,
                             bold: true,
                             alignment: "center",
@@ -322,6 +322,7 @@ function printPdf(table) {
                         },
                     },
                 },
+                summarize,
             ],
         };
 
@@ -338,5 +339,7 @@ function printPdf(table) {
         });
     } catch (error) {
         console.log(error);
+    } finally {
+        utils.setLinearLoading("close");
     }
 }

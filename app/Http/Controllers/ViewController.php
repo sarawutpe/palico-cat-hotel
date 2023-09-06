@@ -143,6 +143,11 @@ class ViewController extends Controller
         return view('dashboard.book-history');
     }
 
+    public function dashboardReport()
+    {
+        return view('dashboard.report');
+    }
+
     public function dashboardProfile()
     {
         return view('dashboard.profile');

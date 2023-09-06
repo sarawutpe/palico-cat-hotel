@@ -115,9 +115,8 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            {{-- <button type="button" class="btn btn-secondary" onclick="handleReport()">พิมพ์รายงาน</button> --}}
-                            <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
-                            <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
+                            <button type="button" class="btn btn-info" onclick="handleUpdateMember()">แก้ไข</button>
+                            <button type="button" class="btn btn-danger" onclick="handleDeleteMember()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
                         </div>
                     </div>
@@ -128,7 +127,7 @@
                 <div class="">
                     <fieldset class="scroll">
                         <legend>รายชื่อลูกค้า</legend>
-                        <div id="employee-list"></div>
+                        <div id="member-list"></div>
                     </fieldset>
                 </div>
             </div>
@@ -147,8 +146,8 @@
 
         // Initialize
         $(document).ready(function() {
-            handleGetAllEmployee()
-            callSearchFunc = handleGetAllEmployee;
+            handleGetAllMember()
+            callSearchFunc = handleGetAllMember;
         })
 
         function resetForm() {
@@ -159,10 +158,10 @@
 
         function handleSubmit(event) {
             event.preventDefault()
-            handleAddEmployee()
+            handleAddMember()
         }
 
-        function handleGetAllEmployee() {
+        function handleGetAllMember() {
             utils.setLinearLoading('open')
 
             $.ajax({
@@ -173,22 +172,22 @@
                     if (!Array.isArray(response.data)) return
 
                     let html = ''
-                    response.data.forEach(function(employee, index) {
+                    response.data.forEach(function(member, index) {
                         html += `
-                        <div class="box-card-list" onclick="handleShowEmployee(${index} ,${utils.jsonString(employee)})">
+                        <div class="box-card-list" onclick="handleShowMember(${index} ,${utils.jsonString(member)})">
                             <div>
-                                <p>รหัสลูกค้า ${employee.member_id}</p>
-                                <p>ชื่อ-สกุล ${employee.member_name}</p>
-                                <p>เบอร์โทรศัพท์ ${employee.member_phone}</p>
+                                <p>รหัสลูกค้า ${member.member_id}</p>
+                                <p>ชื่อ-สกุล ${member.member_name}</p>
+                                <p>เบอร์โทรศัพท์ ${member.member_phone}</p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
-                                src="${storagePath}/${employee.member_img}"
+                                src="${storagePath}/${member.member_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
                             </div>
                         </div>`;
                     });
-                    $('#employee-list').empty().append(html);
+                    $('#member-list').empty().append(html);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     toastr.error('Failed');
@@ -198,7 +197,7 @@
             });
         }
 
-        function handleAddEmployee() {
+        function handleAddMember() {
             formData = new FormData();
             formData.append('member_name', $('input[name="member_name"]').val());
             formData.append('member_user', $('input[name="member_user"]').val());
@@ -224,7 +223,7 @@
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
                     toastr.success();
-                    handleGetAllEmployee()
+                    handleGetAllMember()
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -234,32 +233,32 @@
             });
         }
 
-        function handleShowEmployee(index, data) {
-            const employee = JSON.parse(data)
-            if (typeof employee !== 'object') return
+        function handleShowMember(index, data) {
+            const member = JSON.parse(data)
+            if (typeof member !== 'object') return
 
-            selectedId = employee.member_id
+            selectedId = member.member_id
             selectedIndex = index
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
-            $('input[name="member_id"]').val(employee.member_id || "");
-            $('input[name="member_name"]').val(employee.member_name || "");
-            $('input[name="member_user"]').val(employee.member_user || "");
+            $('input[name="member_id"]').val(member.member_id || "");
+            $('input[name="member_name"]').val(member.member_name || "");
+            $('input[name="member_user"]').val(member.member_user || "");
             $('input[name="member_pass"]').val("");
-            $('input[name="member_email"]').val(employee.member_email || "");
-            $('input[name="member_address"]').val(employee.member_address || "");
-            $('input[name="member_phone"]').val(employee.member_phone || "");
-            $('input[name="member_facebook"]').val(employee.member_facebook || "");
-            $('input[name="member_lineid"]').val(employee.member_lineid || "");
+            $('input[name="member_email"]').val(member.member_email || "");
+            $('input[name="member_address"]').val(member.member_address || "");
+            $('input[name="member_phone"]').val(member.member_phone || "");
+            $('input[name="member_facebook"]').val(member.member_facebook || "");
+            $('input[name="member_lineid"]').val(member.member_lineid || "");
 
-            if (employee.member_img) {
-                $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.member_img || "")}`);
+            if (member.member_img) {
+                $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(member.member_img || "")}`);
             } else {
                 $('#file-preview').css('opacity', 0).attr('src', '');
             }
         }
 
-        function handleUpdateEmployee() {
+        function handleUpdateMember() {
             if (!selectedId) return
 
             formData = new FormData();
@@ -290,8 +289,8 @@
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
                     toastr.success();
-                    handleGetAllEmployee()
-                    handleShowEmployee(selectedIndex, JSON.stringify(response.data))
+                    handleGetAllMember()
+                    handleShowMember(selectedIndex, JSON.stringify(response.data))
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -301,7 +300,7 @@
             });
         }
 
-        async function handleDeleteEmployee() {
+        async function handleDeleteMember() {
             if (!selectedId) return
 
             const confirm = await utils.confirmAlert();
@@ -313,7 +312,7 @@
                     success: function(data, textStatus, jqXHR) {
                         resetForm()
                         toastr.success('', '')
-                        handleGetAllEmployee()
+                        handleGetAllMember()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         toastr.success('', '')

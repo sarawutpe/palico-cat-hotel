@@ -57,7 +57,7 @@
     <script src="{{ asset('js/lodash.min.js') }}"></script>
     <script src="{{ asset('vendors/datepicker/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('vendors/toastr.js/toastr.min.js') }}"></script>
-    
+
     <script src="{{ asset('vendors/dayjs/dayjs.min.js') }}"></script>
     <script src="{{ asset('vendors/dayjs/plugin/buddhistEra.min.js') }}"></script>
     <script src="{{ asset('vendors/dayjs/plugin/utc.min.js') }}"></script>
@@ -153,6 +153,10 @@
                             @yield('title', '')
                         </h4>
                         <div class="">
+                            <button type="button" class="btn btn-primary" onclick="handleOpenReportModal()">
+                                <i class="fa-solid fa-print fa-xs align-middle"></i>
+                            </button>
+
                             @hasSection('is_search')
                                 <input type="text" name="search_input" class="form-control" placeholder="ค้นหา"
                                     style="border-radius: 50px;">
@@ -207,7 +211,6 @@
             <div>© 2023 PALICO CAT HOTEL.</div>
         </footer>
     </div>
-
     <!-- CoreUI and necessary plugins-->
     <script src="{{ asset('vendors/@coreui/coreui/js/coreui.bundle.min.js') }}"></script>
     <script src="{{ asset('vendors/simplebar/js/simplebar.min.js') }}"></script>
