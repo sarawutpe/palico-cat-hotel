@@ -214,7 +214,7 @@
             formData.append('name', $('input[name="name"]').val());
             formData.append('user', $('input[name="user"]').val());
             formData.append('email', $('input[name="email"]').val());
-            formData.append('pass', $('input[name="pass"]').val());
+            formData.append('pass', $('input[name="pass"]').val() || "");
             formData.append('address', $('input[name="address"]').val());
             formData.append('phone', $('input[name="phone"]').val());
             formData.append('facebook', $('input[name="facebook"]').val());

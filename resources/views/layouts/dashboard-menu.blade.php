@@ -6,6 +6,13 @@
 <ul class="sidebar-nav">
     @if ($session_type === 'MEMBER')
         <li class="nav-item">
+            <a class="nav-link {{ $route_name === 'dashboard' ? ' active' : '' }}" href="{{ route('dashboard') }}">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-speedometer') }}"></use>
+                </svg>หน้าแรก
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ $route_name === 'dashboard.cat' ? ' active' : '' }}"
                 href="{{ route('dashboard.cat') }}">
                 <svg class="nav-icon">
@@ -152,6 +159,14 @@
                 <svg class="nav-icon">
                     <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
                 </svg>การดูแลแมว
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ $route_name === 'dashboard.product' ? ' active' : '' }}"
+                href="{{ route('dashboard.product') }}">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                </svg>อุปกรณ์
             </a>
         </li>
     @endif

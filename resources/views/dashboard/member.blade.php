@@ -265,7 +265,7 @@
             formData.append('_method', 'PUT');
             formData.append('member_name', $('input[name="member_name"]').val());
             formData.append('member_user', $('input[name="member_user"]').val());
-            formData.append('member_pass', $('input[name="member_pass"]').val());
+            formData.append('member_pass', $('input[name="member_pass"]').val() || "");
             formData.append('member_email', $('input[name="member_email"]').val());
             formData.append('member_address', $('input[name="member_address"]').val());
             formData.append('member_phone', $('input[name="member_phone"]').val());

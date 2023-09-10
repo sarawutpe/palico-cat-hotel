@@ -143,6 +143,7 @@ class AuthenController extends Controller
             Session::forget('id');
             Session::forget('type');
             Session::forget('img');
+            Session::forget('name');
             Session::flush();
 
             return redirect()->route('login');

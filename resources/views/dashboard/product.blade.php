@@ -20,6 +20,20 @@
     </style>
 
     <section class="content">
+
+        <div class="d-flex justify-content-end">
+            <div class="btn-toolbar d-none d-md-block" role="toolbar">
+                <div class="btn-group btn-group-toggle mx-3" data-coreui-toggle="buttons">
+                    <input class="btn-check" id="option-all" type="radio" name="option-stats" autocomplete="off" checked>
+                    <label class="btn btn-outline-secondary" onclick="handleFilter('all')">ทั้งหมด</label>
+                    <input class="btn-check" id="option-is-nearly" type="radio" name="option-stats" autocomplete="off">
+                    <label class="btn btn-outline-secondary" onclick="handleFilter('is-nearly')">สต๊อกใกล้หมด</label>
+                    <input class="btn-check" id="option-is-out" type="radio" name="option-stats" autocomplete="off">
+                    <label class="btn btn-outline-secondary" onclick="handleFilter('is-out')">หมดสต็อก</label>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-6">
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
@@ -148,7 +162,16 @@
             handleAddProduct()
         }
 
-        function handleGetAllProduct() {
+        function handleFilter(q) {
+            $(`input#option-${q}`).prop("checked", true);
+            debouncedSearch(q)
+        }
+
+        const debouncedSearch = debounce(function(searchTerm) {
+            handleGetAllProduct(searchTerm)
+        }, 250);
+
+        function handleGetAllProduct(q = '') {
             utils.setLinearLoading('open')
 
             $.ajax({
@@ -158,15 +181,25 @@
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
 
+                    // Filter all, is-nearly, is-out
+                    if (q === 'is-nearly') {
+                        response.data = response.data.filter((item) => Number(item.product_stock) <= 10)
+                    } else if (q === 'is-out') {
+                        response.data = response.data.filter((item) => Number(item.product_stock) === 0)
+                    }
+
                     let html = ''
                     response.data.forEach(function(product, index) {
+
+                        const isCancel = product.is_active === 0
+
                         html += `
                         <div class="box-card-list" onclick="handleShowProduct(${index} ,${utils.jsonString(product)})">
                             <div>
                                 <p>รหัสอุปกรณ์ ${product.product_id}</p>
                                 <p>ชื่ออุปกรณ์ ${product.product_name}</p>
                                 <p>สต๊อกสินค้า ${product.product_stock}</p>
-                                <p>สถานะ ${product.is_active ? 'จำหน่าย' : 'ยกเลิก'}</p>
+                                <p class="${isCancel ? 'text-danger' : ''}">สถานะ ${isCancel ? 'ยกเลิก' : 'จำหน่าย'}</p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
@@ -220,7 +253,7 @@
         function handleShowProduct(index, data) {
             const product = JSON.parse(data)
             if (typeof product !== 'object') return
-            
+
             selectedId = product.product_id
             selectedIndex = index
             $('.box-card-list').removeClass('active').eq(index).addClass('active');

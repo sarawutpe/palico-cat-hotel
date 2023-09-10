@@ -85,7 +85,7 @@ class UserController extends Controller
                 $member->member_user = $request->input('user');
                 $member->member_email = $request->input('email');
 
-                if ($request->filled('pass')) {
+                if ($request->input('pass')) {
                     $member->member_pass = md5($request->input('pass'));
                 }
 
@@ -126,7 +126,7 @@ class UserController extends Controller
                 $employee->employee_user = $request->input('user');
                 $employee->employee_email = $request->input('email');
 
-                if ($request->filled('pass')) {
+                if ($request->input('pass')) {
                     $employee->employee_pass = md5($request->input('pass'));
                 }
 
@@ -167,7 +167,7 @@ class UserController extends Controller
                 $admin->admin_user = $request->input('user');
                 $admin->admin_email = $request->input('email');
 
-                if ($request->filled('pass')) {
+                if ($request->input('pass')) {
                     $admin->admin_pass = md5($request->input('pass'));
                 }
 
