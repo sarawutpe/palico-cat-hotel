@@ -270,6 +270,7 @@
             formData.append('cat_accessory', $('textarea[name="cat_accessory"]').val());
             formData.append('cat_ref', $('textarea[name="cat_ref"]').val());
 
+            const url = new URL(`${prefixApi}/api/cat/${selectedId}`);
             const file = files.getFileUpload()
             if (file) {
                 formData.append("cat_img", file);
@@ -278,7 +279,7 @@
             }
 
             $.ajax({
-                url: `${prefixApi}/api/cat/${selectedId}`,
+                url: url,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -287,7 +288,7 @@
                 success: function(response, textStatus, jqXHR) {
                     toastr.success();
                     handleGetAllCat()
-                    handleShowCat(selectedIndex, JSON.stringify(response.data))
+                    resetForm()
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {

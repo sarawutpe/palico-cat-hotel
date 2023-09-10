@@ -81,6 +81,14 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ $route_name === 'dashboard.product' ? ' active' : '' }}"
+                href="{{ route('dashboard.product') }}">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                </svg>อุปกรณ์
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ $route_name === 'dashboard.report' ? ' active' : '' }}"
                 href="{{ route('dashboard.report') }}">
                 <svg class="nav-icon">

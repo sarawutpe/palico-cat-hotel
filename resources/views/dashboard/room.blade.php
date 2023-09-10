@@ -240,6 +240,7 @@
             formData.append('room_limit', $('input[name="room_limit"]').val());
             formData.append('room_detail', $('textarea[name="room_detail"]').val());
 
+            const url = new URL(`${prefixApi}/api/room/${selectedId}`);
             const file = files.getFileUpload()
             if (file) {
                 formData.append("room_img", file);
@@ -248,7 +249,7 @@
             }
 
             $.ajax({
-                url: `${prefixApi}/api/room/${selectedId}`,
+                url: url,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -257,7 +258,7 @@
                 success: function(response, textStatus, jqXHR) {
                     toastr.success();
                     handleGetAllRoom()
-                    handleShowEmployee(selectedIndex, JSON.stringify(response.data))
+                    resetForm()
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {

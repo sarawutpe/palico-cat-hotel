@@ -1,6 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'จัดการข้อมูลพนักงาน')
-@section('is_search', true)
+@section('title', 'จัดอุปกรณ์ในร้าน')
 
 @section('content')
     <style>
@@ -26,7 +25,7 @@
                 <form id="form" class="h-100" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
                     <div class="col h-100">
                         <fieldset class="scroll">
-                            <legend>ข้อมูลพนักงาน</legend>
+                            <legend>ข้อมูลอุปกรณ์</legend>
 
                             <div id="alert-message"></div>
 
@@ -35,52 +34,42 @@
                                     <!-- Section 1 -->
                                     <div class="col-8">
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
+                                            <label class="col-sm-3 col-form-label required">ชื่ออุปกรณ์</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="employee_user" class="form-control">
+                                                <input type="text" name="product_name" class="form-control">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">รหัสผ่าน</label>
+                                            <label class="col-sm-3 col-form-label required">สต๊อกสินค้า</label>
                                             <div class="col-sm-9">
-                                                <input type="password" name="employee_pass" class="form-control">
+                                                <input type="number" name="product_stock" class="form-control"
+                                                    value="0">
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">อีเมล</label>
+                                            <label class="col-sm-3 col-form-label required">สถานะ</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="employee_email" class="form-control">
+                                                <div class="d-flex gap-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="is_active"
+                                                            id="is_active" value="1" checked>
+                                                        <label class="form-check-label mt-1" for="is_active">
+                                                            จำหน่าย
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="is_active"
+                                                            id="is_active_2" value="0">
+                                                        <label class="form-check-label mt-1" for="is_active_2">
+                                                            ยกเลิก
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ชื่อ-สกุล</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_name" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">ที่อยู่</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_address" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">เบอร์โทรศัพท์</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_phone" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label">Facebook</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_facebook" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label">Line ID</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="employee_lineid" class="form-control">
-                                            </div>
+                                        <div class="mb-3">
+                                            <label class="col-sm-3 col-form-label">ข้อมูลเพิ่มเติม</label>
+                                            <textarea name="product_detail" class="form-control" rows="3"></textarea>
                                         </div>
                                     </div>
                                     <!-- Section 2 Upload -->
@@ -92,7 +81,7 @@
                                                 </div>
                                                 <div class="btn-img-block">
                                                     <div class="btn btn-secondary position-relative w-100">
-                                                        <input type="file" id="file-upload" name="employee_img"
+                                                        <input type="file" id="file-upload" name="product_img"
                                                             accept="image/png, image/jpeg"
                                                             class="position-absolute opacity-0 w-100 h-100"
                                                             style="top: 0; left: 0; cursor: pointer;">
@@ -115,8 +104,8 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
-                            <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
+                            <button type="button" class="btn btn-info" onclick="handleUpdateProduct()">แก้ไข</button>
+                            <button type="button" class="btn btn-danger" onclick="handleDeleteProduct()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
                         </div>
                     </div>
@@ -126,8 +115,8 @@
             <div class="col-6">
                 <div class="">
                     <fieldset class="scroll">
-                        <legend>รายชื่อพนักงาน</legend>
-                        <div id="employee-list"></div>
+                        <legend>อุปกรณ์</legend>
+                        <div id="product-list"></div>
                     </fieldset>
                 </div>
             </div>
@@ -142,11 +131,10 @@
         }
         var storagePath = "{{ asset('storage') }}"
         var formData = null
-        var search = null
+
         // Initialize
         $(document).ready(function() {
-            handleGetAllEmployee()
-            callSearchFunc = handleGetAllEmployee;
+            handleGetAllProduct()
         })
 
         function resetForm() {
@@ -157,36 +145,37 @@
 
         function handleSubmit(event) {
             event.preventDefault()
-            handleAddEmployee()
+            handleAddProduct()
         }
 
-        function handleGetAllEmployee() {
+        function handleGetAllProduct() {
             utils.setLinearLoading('open')
 
             $.ajax({
-                url: `${prefixApi}/api/employee/list${window.location.search}`,
+                url: `${prefixApi}/api/product/list`,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
 
                     let html = ''
-                    response.data.forEach(function(employee, index) {
+                    response.data.forEach(function(product, index) {
                         html += `
-                        <div class="box-card-list" onclick="handleShowEmployee(${index} ,${utils.jsonString(employee)})">
+                        <div class="box-card-list" onclick="handleShowProduct(${index} ,${utils.jsonString(product)})">
                             <div>
-                                <p>รหัสพนักงาน ${employee.employee_id}</p>
-                                <p>ชื่อ-สกุล ${employee.employee_name}</p>
-                                <p>เบอร์โทรศัพท์ ${employee.employee_phone}</p>
+                                <p>รหัสอุปกรณ์ ${product.product_id}</p>
+                                <p>ชื่ออุปกรณ์ ${product.product_name}</p>
+                                <p>สต๊อกสินค้า ${product.product_stock}</p>
+                                <p>สถานะ ${product.is_active ? 'จำหน่าย' : 'ยกเลิก'}</p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
-                                src="{{ asset('storage/') }}/${employee.employee_img}"
+                                src="{{ asset('storage/') }}/${product.product_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
                             </div>
                         </div>`;
                     });
-                    $('#employee-list').empty().append(html);
+                    $('#product-list').empty().append(html);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     toastr.error('Failed');
@@ -196,24 +185,20 @@
             });
         }
 
-        function handleAddEmployee() {
+        function handleAddProduct() {
             formData = new FormData();
-            formData.append('employee_name', $('input[name="employee_name"]').val());
-            formData.append('employee_user', $('input[name="employee_user"]').val());
-            formData.append('employee_pass', $('input[name="employee_pass"]').val());
-            formData.append('employee_email', $('input[name="employee_email"]').val());
-            formData.append('employee_address', $('input[name="employee_address"]').val());
-            formData.append('employee_phone', $('input[name="employee_phone"]').val());
-            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
-            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('product_name', $('input[name="product_name"]').val());
+            formData.append('product_stock', $('input[name="product_stock"]').val());
+            formData.append('product_detail', $('textarea[name="product_detail"]').val());
+            formData.append('is_active', $("input[name='is_active']:checked").val());
 
             const file = files.getFileUpload()
             if (file) {
-                formData.append("employee_img", file);
+                formData.append("product_img", file);
             }
 
             $.ajax({
-                url: `${prefixApi}/api/employee`,
+                url: `${prefixApi}/api/product`,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -222,7 +207,7 @@
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
                     toastr.success();
-                    handleGetAllEmployee()
+                    handleGetAllProduct()
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -232,49 +217,45 @@
             });
         }
 
-        function handleShowEmployee(index, data) {
-            const employee = JSON.parse(data)
-            if (typeof employee !== 'object') return
-
-            selectedId = employee.employee_id
+        function handleShowProduct(index, data) {
+            const product = JSON.parse(data)
+            if (typeof product !== 'object') return
+            
+            selectedId = product.product_id
             selectedIndex = index
             $('.box-card-list').removeClass('active').eq(index).addClass('active');
 
-            $('input[name="employee_id"]').val(employee.employee_id || "");
-            $('input[name="employee_name"]').val(employee.employee_name || "");
-            $('input[name="employee_user"]').val(employee.employee_user || "");
-            $('input[name="employee_pass"]').val("");
-            $('input[name="employee_email"]').val(employee.employee_email || "");
-            $('input[name="employee_address"]').val(employee.employee_address || "");
-            $('input[name="employee_phone"]').val(employee.employee_phone || "");
-            $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
-            $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
+            $('input[name="product_name"]').val(product.product_name || "");
+            $('input[name="product_stock"]').val(product.product_stock || 0);
+            $('textarea[name="product_detail"]').val(product.product_detail || "");
 
-            if (employee.employee_img) {
-                $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
+            if (product.is_active == 1) {
+                $('input[name="is_active"][value="1"]').prop('checked', true);
+            } else {
+                $('input[name="is_active"][value="0"]').prop('checked', true);
+            }
+
+            if (product.product_img) {
+                $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(product.product_img || "")}`);
             } else {
                 $('#file-preview').css('opacity', 0).attr('src', '');
             }
         }
 
-        function handleUpdateEmployee() {
+        function handleUpdateProduct() {
             if (!selectedId) return
 
             formData = new FormData();
             formData.append('_method', 'PUT');
-            formData.append('employee_name', $('input[name="employee_name"]').val());
-            formData.append('employee_user', $('input[name="employee_user"]').val());
-            formData.append('employee_pass', $('input[name="employee_pass"]').val());
-            formData.append('employee_email', $('input[name="employee_email"]').val());
-            formData.append('employee_address', $('input[name="employee_address"]').val());
-            formData.append('employee_phone', $('input[name="employee_phone"]').val());
-            formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
-            formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('product_name', $('input[name="product_name"]').val());
+            formData.append('product_stock', $('input[name="product_stock"]').val());
+            formData.append('product_detail', $('textarea[name="product_detail"]').val());
+            formData.append('is_active', $("input[name='is_active']:checked").val());
 
-            const url = new URL(`${prefixApi}/api/employee/${selectedId}`);
+            const url = new URL(`${prefixApi}/api/product/${selectedId}`);
             const file = files.getFileUpload()
             if (file) {
-                formData.append("employee_img", file);
+                formData.append("product_img", file);
             } else if (!file && isRemovedFile) {
                 url.searchParams.set('set', 'file_null')
             }
@@ -288,7 +269,7 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     toastr.success();
-                    handleGetAllEmployee()
+                    handleGetAllProduct()
                     resetForm()
                     utils.clearAlert('#alert-message')
                 },
@@ -299,19 +280,19 @@
             });
         }
 
-        async function handleDeleteEmployee() {
+        async function handleDeleteProduct() {
             if (!selectedId) return
 
             const confirm = await utils.confirmAlert();
             if (confirm) {
                 $.ajax({
-                    url: `${prefixApi}/api/employee/${selectedId}`,
+                    url: `${prefixApi}/api/product/${selectedId}`,
                     type: "DELETE",
                     headers: headers,
                     success: function(data, textStatus, jqXHR) {
                         resetForm()
                         toastr.success('', '')
-                        handleGetAllEmployee()
+                        handleGetAllProduct()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         toastr.success('', '')
@@ -319,7 +300,6 @@
                 })
             }
         }
-
     </script>
 
 @endsection

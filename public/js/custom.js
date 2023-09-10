@@ -199,7 +199,7 @@ const utils = {
             });
         });
     },
-    loading(action, title = 'กำลังตรวจสอบข้อมูล') {
+    loading(action, title = "กำลังตรวจสอบข้อมูล") {
         if (action === "open") {
             let timerInterval;
             Swal.fire({

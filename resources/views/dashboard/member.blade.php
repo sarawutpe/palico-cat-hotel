@@ -272,6 +272,7 @@
             formData.append('member_facebook', $('input[name="member_facebook"]').val());
             formData.append('member_lineid', $('input[name="member_lineid"]').val());
 
+            const url = new URL(`${prefixApi}/api/member/${selectedId}`);
             const file = files.getFileUpload()
             if (file) {
                 formData.append("member_img", file);
@@ -280,7 +281,7 @@
             }
 
             $.ajax({
-                url: `${prefixApi}/api/member/${selectedId}`,
+                url: url,
                 type: "POST",
                 headers: headers,
                 data: formData,
@@ -290,7 +291,7 @@
                     resetForm()
                     toastr.success();
                     handleGetAllMember()
-                    handleShowMember(selectedIndex, JSON.stringify(response.data))
+                    resetForm()
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
