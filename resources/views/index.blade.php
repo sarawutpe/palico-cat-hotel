@@ -4,16 +4,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
     <style>
-        .swiper-container {
+        .swiper {
             width: 100%;
             height: 100%;
+            max-width: 1200px;
         }
 
         .swiper-slide {
             text-align: center;
             font-size: 18px;
             background: #fff;
-            /* Center slide text vertically */
             display: -webkit-box;
             display: -ms-flexbox;
             display: -webkit-flex;
@@ -27,7 +27,49 @@
             -webkit-align-items: center;
             align-items: center;
         }
+
+        .swiper-button-prev:active,
+        .swiper-button-next:active {
+            border-radius: 8px;
+        }
+
+        .swiper-button-prev::after,
+        .swiper-button-next:after {
+            font-size: 32px !important;
+        }
+
+        .swiper-button-prev,
+        .swiper-button-next {
+            transition-duration: .4s;
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 18px;
+        }
+
+        .swiper-button-prev {
+            margin-right: -1.25rem;
+        }
+
+        .swiper-button-next {
+            margin-left: -1.25rem;
+        }
+
+        .swiper-button-prev,
+        .swiper-button-next {
+            background-color: rgba(215, 227, 255, 0.4);
+        }
+
+        .swiper-button-prev:hover,
+        .swiper-button-next:hover {
+            background-color: #d7e3ff;
+        }
+
+        .swiper-pagination-bullet.swiper-pagination-bullet-active {
+            background-color: #fff;
+        }
     </style>
+
+
     <div class="container-lg">
         <h2>หน้าแรก</h2>
 
@@ -37,12 +79,11 @@
         <div class="d-flex justify-content-center">
             <h2 class="font-bold">PALICO CAT HOTEL</h2>
         </div>
-
         <br>
 
         <div class="container" style="position: relative; overflow: hidden;">
             <!-- Slider main container -->
-            <div class="swiper-container">
+            <div class="swiper">
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
@@ -85,12 +126,12 @@
                         <img src="{{ asset('assets/img/slide (13).jpg') }}" width="100%" height="100%" alt="">
                     </div>
                 </div>
-                <!-- If we need pagination -->
-                <div class="swiper-pagination"></div>
-                <!-- If we need navigation buttons -->
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
             </div>
+            <!-- If we need pagination -->
+            <div class="swiper-pagination"></div>
+            <!-- If we need navigation buttons -->
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
         </div>
 
     </div>
@@ -99,7 +140,7 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
         $(document).ready(function() {
-            new Swiper('.swiper-container', {
+            new Swiper('.swiper', {
                 pagination: {
                     el: '.swiper-pagination',
                     type: 'bullets',
@@ -109,7 +150,7 @@
                     prevEl: '.swiper-button-prev',
                 },
                 loop: true,
-                slidesPerView: 3,
+                slidesPerView: 5,
                 paginationClickable: true,
                 spaceBetween: 20,
             });

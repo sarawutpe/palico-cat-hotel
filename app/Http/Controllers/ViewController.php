@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Room;
 use App\Http\Helpers\Helper;
 
 class ViewController extends Controller
@@ -150,7 +148,9 @@ class ViewController extends Controller
 
     public function dashboardReport()
     {
-        return view('dashboard.report');
+        if (Helper::is_admin()) {
+            return view('dashboard.report');
+        }
     }
 
     public function dashboardProfile()

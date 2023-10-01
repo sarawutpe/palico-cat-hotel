@@ -112,10 +112,10 @@ form {
 section.content {
     width: 100%;
     height: 100%;
-    max-height: 90vh;
+    /* max-height: 90vh; */
     overflow-x: hidden;
     overflow-y: hidden;
-    padding-bottom: 4rem;
+    padding-bottom: 2rem;
 }
 
 fieldset.scroll {
@@ -316,5 +316,58 @@ hr.custom {
     user-select: none;
 }
 
-.input-core {
+#bar-progress {
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+#bar-progress .step {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#bar-progress .step .number-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid 1px #000;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+}
+
+#bar-progress .step.step-active .number-container {
+    background-color: #000;
+}
+
+#bar-progress .step .number-container .number {
+    font-weight: 700;
+    font-size: 0.8em;
+    line-height: 1.75em;
+    display: block;
+    text-align: center;
+}
+
+#bar-progress .step.step-active .number-container .number {
+    color: white;
+    line-height: 1;
+}
+
+#bar-progress .step h5 {
+    display: inline;
+    font-weight: 100;
+    font-size: 0.8em;
+    margin: 0 0 0 10px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+#bar-progress .seperator {
+    display: block;
+    width: 30px;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin: auto 20px;
 }

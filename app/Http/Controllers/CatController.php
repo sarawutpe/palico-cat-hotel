@@ -28,11 +28,14 @@ class CatController extends Controller
         }
     }
 
-    public function getCatByMember($id)
+    public function getCatByMember(Request $request, $id)
     {
         try {
+            $q = $request->input('q', '');
+
             $cats = Cat::with('member')
                 ->where('member_id', $id)
+                ->where('cat_name', 'like', '%' . $q . '%')
                 ->where('is_active', 1)
                 ->orderBy('updated_at', 'desc')
                 ->get();

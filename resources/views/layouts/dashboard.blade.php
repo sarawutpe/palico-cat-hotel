@@ -43,11 +43,8 @@
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{ asset('css/examples.css') }}" rel="stylesheet">
-    {{-- <link href="{{ asset('vendors/@coreui/chartjs/css/coreui-chartjs.css') }}" rel="stylesheet"> --}}
-
     {{-- <script src="{{ asset('vendors/sweetalert2/sweetalert2.css') }}"></script> --}}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
     <link href="{{ asset('vendors/datepicker/jquery-ui.css') }}" rel="stylesheet">
 
     {{-- Script --}}
@@ -57,17 +54,13 @@
     <script src="{{ asset('js/lodash.min.js') }}"></script>
     <script src="{{ asset('vendors/datepicker/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('vendors/toastr.js/toastr.min.js') }}"></script>
-
     <script src="{{ asset('vendors/dayjs/dayjs.min.js') }}"></script>
     <script src="{{ asset('vendors/dayjs/plugin/buddhistEra.min.js') }}"></script>
     <script src="{{ asset('vendors/dayjs/plugin/utc.min.js') }}"></script>
-
     <script src="{{ asset('vendors/pdfmake/pdfmake.min.js') }}"></script>
     <script src="{{ asset('vendors/pdfmake/vfs_fonts.js') }}"></script>
-
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script> --}}
-
-
+    <script src="{{ asset('vendors/fullcalendar/index.global.min.js') }}"></script>
+    <script src="{{ asset('vendors/fullcalendar/locales-all.global.min.js') }}"></script>
 </head>
 
 <body>
@@ -154,7 +147,7 @@
                         </h4>
                         <div class="">
                             @hasSection('is_search')
-                                <input type="text" name="search_input" class="form-control" placeholder="ค้นหา"
+                                <input type="text" name="search_input" class="form-control" placeholder="ค้นหา" value="{{ request('q') }}"
                                     style="border-radius: 50px;">
                             @endif
                         </div>
@@ -200,7 +193,7 @@
             </div>
         </div>
         <div class="body flex-grow-1 px-3">
-            <br>
+            <div class="mt-1"></div>
             @yield('content')
         </div>
         <footer class="footer">

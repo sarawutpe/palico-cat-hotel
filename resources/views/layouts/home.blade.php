@@ -33,14 +33,8 @@
     <link rel="preload" href="{{ asset('fonts/DBHeavent-Med.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ asset('fonts/DBHeavent-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-
     <!-- Font Awesome Icons -->
-    <!-- <link rel="stylesheet" href="{{ asset('vendors/font-awesome/all.min.css') }}"> -->
-
     <link rel="stylesheet" href="{{ asset('vendors/font-awesome/all.min.css') }}">
-
-
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"  /> -->
 
     <!-- Vendors styles-->
     <link rel="stylesheet" href="{{ asset('vendors/simplebar/css/simplebar.css') }}">
@@ -58,10 +52,6 @@
 </head>
 
 <body>
-    <style>
-
-    </style>
-
     <div class="w-100">
         <div class="container-lg">
             <nav class="navbar navbar-expand-lg">

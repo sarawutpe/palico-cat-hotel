@@ -151,16 +151,18 @@
             }
 
             if (key === 'REPORT_CAT' && Array.isArray(catList.data)) {
-                const tableHeader = ["รหัสประจำตัวแมว", "ชื่อแมว", "พันธุ์", "ข้อมูลเพิ่มเติม"];
+                const tableHeader = ["รหัสประจำตัวแมว", "ชื่อแมว", "พันธุ์", "ชื่อเจ้าของ", "เบอร์โทรศัพท์", "ข้อมูลเพิ่มเติม"];
                 const tableData = catList.data.map(item => [
                     item?.cat_id ?? '',
                     item?.cat_name ?? '',
                     item?.cat_gen ?? '',
+                    item?.member?.member_name ?? '',
+                    item?.member?.member_phone ?? '',
                     item?.cat_ref ?? ''
                 ]);
 
                 const table = {
-                    widths: ["auto", "*", "*", "*"],
+                    widths: ["auto", "*", "*", "*", "*", "*"],
                     body: [tableHeader, ...tableData]
                 };
                 printPdf('รายงานข้อมูลแมว', table);

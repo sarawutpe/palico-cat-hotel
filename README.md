@@ -18,7 +18,6 @@ MariaDB
 -   composer require mailjet/mailjet-apiv3-php
 
 ## Laravel Commands
-
 $ run
 php artisan serve
 
@@ -43,14 +42,17 @@ php artisan migrate
 R all cache
 php artisan cache:clear
 
-
 # Route cache cleared!
 
 php artisan route:clear
 
 # make middleware
-
 $ php artisan make:middleware [NAME_HERE]
+
+# Create symbolic link
+$ rm current symbolic link ./public/storage
+$ php artisan storage:link
+
 
 # Knowledge
 Rent Status:

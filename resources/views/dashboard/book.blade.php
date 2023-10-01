@@ -2,8 +2,76 @@
 @section('title', 'จัดการข้อมูลการจอง')
 @section('is_search', false)
 @section('content')
-
     <style>
+        :root {
+            --fc-bg-event-opacity: 0.80;
+        }
+
+        .calendar-container {
+            max-width: 750px;
+            background: #fff;
+            padding: 1rem;
+            margin: 0 auto;
+        }
+
+        #calendar {
+            width: 100%;
+            height: 100%;
+        }
+
+        #calendar.fc .fc-toolbar-title {
+            font-size: 1.5rem;
+        }
+
+        #calendar.fc .fc-button {
+            font-size: 1rem;
+        }
+
+        #calendar .fc-header-toolbar.fc-toolbar {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #calendar.fc .fc-event {
+            transition: all 200ms ease-in-out;
+        }
+
+        #calendar.fc .fc-event:hover {
+            opacity: 1;
+        }
+
+        #calendar.fc .fc-event-title {
+            font-style: normal;
+            font-size: 1.5em;
+            color: #fff;
+        }
+
+        #calendar .fc-event.is-open-event {
+            cursor: pointer;
+            background: rgb(51, 182, 121);
+        }
+
+        #calendar .fc-event.is-close-event {
+            cursor: default;
+            background: rgb(244, 81, 30);
+        }
+
+        #calendar .fc-icon-select {
+            color: #fff;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -70%);
+            opacity: 0;
+        }
+
+        #calendar [data-event="selected"] i.fc-icon-select {
+            opacity: 1 !important;
+        }
+
+        #calendar [data-event="in-range"] i.fc-icon-select {
+            opacity: 0.4 !important;
+        }
+
         #cat-list {
             display: flex;
             gap: 16px;
@@ -63,34 +131,90 @@
             background: rgba(255, 255, 255, 0.50);
             border-color: #eee;
         }
+
+        .c-container {
+            width: 100%;
+            max-width: 850px;
+        }
     </style>
 
     <section class="content">
         <div class="row">
             <div class="col">
                 <div class="col h-100">
-                    <fieldset class="scroll">
+                    <fieldset class="">
                         <legend>ข้อมูลห้องพัก</legend>
-
-                        <div class="mb-2">
-                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                <button class="nav-link active" data-coreui-toggle="tab" data-coreui-target="#tab1"
-                                    type="button" role="tab" aria-selected="true">เลือกขนาดห้องพัก</button>
-                                <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab2" type="button"
-                                    role="tab" aria-selected="false">ห้องพักทั้งหมด</button>
-                                <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab3" type="button"
-                                    role="tab" aria-selected="false" disabled
-                                    style="opacity: 0">รายละเอียดการจอง</button>
-                                <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab4" type="button"
-                                    role="tab" aria-selected="false" disabled style="opacity: 0">ชำระเงิน</button>
+                        {{-- Step --}}
+                        <div class="d-flex justify-content-center w-100">
+                            <div id="bar-progress" class="c-container mb-4">
+                                <div class="step step-active">
+                                    <span class="number-container">
+                                        <span class="number">1</span>
+                                    </span>
+                                    <h5>ตารางการจอง</h5>
+                                </div>
+                                <div class="seperator"></div>
+                                <div class="step">
+                                    <span class="number-container">
+                                        <span class="number">2</span>
+                                    </span>
+                                    <h5>เลือกขนาดห้องพัก</h5>
+                                </div>
+                                <div class="seperator"></div>
+                                <div class="step">
+                                    <span class="number-container">
+                                        <span class="number">3</span>
+                                    </span>
+                                    <h5>ห้องพักทั้งหมด</h5>
+                                </div>
+                                <div class="seperator"></div>
+                                <div class="step">
+                                    <span class="number-container">
+                                        <span class="number">4</span>
+                                    </span>
+                                    <h5>รายละเอียดการจอง</h5>
+                                </div>
+                                <div class="seperator"></div>
+                                <div class="step">
+                                    <span class="number-container">
+                                        <span class="number">5</span>
+                                    </span>
+                                    <h5>ชำระเงิน</h5>
+                                </div>
                             </div>
+                        </div>
+                        {{-- Message --}}
+                        <div id="alert-message"></div>
 
-                            <div id="alert-message"></div>
+                        {{-- Nav Content --}}
+                        <div class="nav nav-tabs" id="nav-tabx" role="tablist" style="opacity: 0">
+                            <button class="active" data-coreui-toggle="tab" data-coreui-target="#tab1" type="hidden"
+                                role="tab">
+                            </button>
+                            <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab2" type="hidden"
+                                role="tab">
+                            </button>
+                            <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab3" type="hidden"
+                                role="tab">
+                            </button>
+                            <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab4" type="hidden"
+                                role="tab">
+                            </button>
+                            <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab5" type="hidden"
+                                role="tab">
+                            </button>
                         </div>
 
+                        {{-- Content --}}
                         <div class="tab-content">
                             {{-- Step 1 --}}
-                            <div class="tab-pane fade show active" id="tab1" role="tabpanel" tabindex="0">
+                            <div class="tab-pane fade show active" id="tab1" role="tabpanel" tabindex="1">
+                                <div class="calendar-container">
+                                    <div id='calendar'></div>
+                                </div>
+                            </div>
+                            {{-- Step 2 --}}
+                            <div class="tab-pane fade" id="tab2" role="tabpanel" tabindex="2">
                                 <div class="d-flex flex-wrap gap-4">
                                     @php
                                         $room_types = collect([['id' => 1, 'name' => 'ห้องเล็ก', 'room_type' => 'S', 'img' => 'assets/img/hotel-1.jpg'], ['id' => 2, 'name' => 'ห้องกลาง', 'room_type' => 'M', 'img' => 'assets/img/hotel-2.jpg'], ['id' => 3, 'name' => 'ห้องใหญ่', 'room_type' => 'L', 'img' => 'assets/img/hotel-3.jpg']])->map(function ($item) {
@@ -116,12 +240,12 @@
                                     @endforeach
                                 </div>
                             </div>
-                            {{-- Step 2 --}}
-                            <div class="tab-pane fade" id="tab2" role="tabpanel" tabindex="0">
+                            {{-- Step 3 --}}
+                            <div class="tab-pane fade" id="tab3" role="tabpanel" tabindex="3">
                                 <div id="step-select-room" class="d-flex flex-wrap gap-4"></div>
                             </div>
-                            {{-- Step 3 --}}
-                            <div class="tab-pane fade" id="tab3" role="tabpanel" tabindex="0">
+                            {{-- Step 4 --}}
+                            <div class="tab-pane fade" id="tab4" role="tabpanel" tabindex="4">
                                 <div class="row">
                                     <div class="col">
                                         <div id="cat-list"></div>
@@ -130,8 +254,8 @@
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">รหัสสมาชิก</label>
                                             <div class="col-sm-9">
-                                                <input type="text" name="member_id" value="${id}" class="form-control"
-                                                    disabled>
+                                                <input type="text" name="member_id" value="${id}"
+                                                    class="form-control" disabled>
                                             </div>
                                         </div>
                                         <div class="mb-3 row">
@@ -156,18 +280,28 @@
                                                 <p id="date-diff" class="border rounded"></p>
                                             </div>
                                         </div>
-                                        <div class="d-flex gap-4" style="padding: 12px">
-                                            <button type="button" class="btn btn-secondary"
-                                                onclick="goTab(2)">ย้อนกลับ</button>
-                                            <button id="next-to-pay" type="submit" class="btn btn-primary"
-                                                onclick="handleStepPay()">ถัดไป</button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            {{-- Step 3 --}}
-                            <div class="tab-pane fade" id="tab4" role="tabpanel" tabindex="0">
+                            {{-- Step 5 --}}
+                            <div class="tab-pane fade" id="tab5" role="tabpanel" tabindex="5">
                                 <div id="step-pay"></div>
+                            </div>
+                        </div>
+
+                        {{-- Next Button --}}
+                        <div class="d-flex justify-content-center w-100">
+                            <div class="c-container d-flex justify-content-end w-100 my-4">
+                                <div class="d-flex gap-1">
+                                    <button id="prev-btn" type="button" class="btn btn-secondary opacity-0"
+                                        onclick="handleStepEvent('PREV')">
+                                        ก่อนหน้า
+                                    </button>
+                                    <button id="next-btn" type="button" class="btn btn-primary"
+                                        onclick="handleStepEvent('NEXT')">
+                                        ถัดไป
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -191,9 +325,10 @@
         var selectedRoom = ''
         var rents = []
         var selectedCatList = []
-
         var inDatePicker = null
         var outDatePicker = null
+        var selectedStartDate = null
+        var selectedEndDate = null
 
         // Initialize
         $(document).ready(async function() {
@@ -201,6 +336,149 @@
             await handleGetAllRoom()
             await handleGetAllCat()
 
+            handleShowCalendar()
+            initDatepicker()
+        })
+
+        function getCalendarInfo() {
+            const $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
+            const info = {
+                start: '',
+                end: ''
+            }
+
+            if ($tableEventSelected.length >= 2) {
+                info.start = dayjs($tableEventSelected.eq(0).attr('data-date'))
+                info.end = dayjs($tableEventSelected.eq(1).attr('data-date'))
+            }
+            return info
+        }
+
+        function getDaysEventOfYear() {
+            // Get date beteen now to end of yaer
+            // const currentDate = dayjs(); 
+            const currentDate = dayjs().startOf('year');
+            const endOfYear = currentDate.endOf('year');
+            const days = [];
+
+            let currentDay = currentDate;
+            while (currentDay.isBefore(endOfYear)) {
+                days.push(currentDay.format('YYYY-MM-DD'));
+                currentDay = currentDay.add(1, 'day');
+            }
+            return days
+        }
+
+        function handleShowCalendar() {
+            if (rents.length === 0) return
+
+            // All rents
+            const rentList = [...rents]
+            const daysEventOfYear = getDaysEventOfYear()
+
+            const events = daysEventOfYear.map(function(day) {
+                const event = {
+                    title: 'ว่าง',
+                    start: day,
+                    end: '',
+                    display: 'background',
+                    classNames: ['is-open-event']
+                }
+                let rent = rentList.find((item) => dayjs(item.rent_datetime).format('YYYY-MM-DD') === day)
+
+                if (rent) {
+                    event.title = 'เต็ม'
+                    event.start = dayjs(rent.rent_datetime).format('YYYY-MM-DD')
+                    event.end = dayjs(rent.out_datetime).format('YYYY-MM-DD')
+                    event.classNames = ['is-close-event']
+                }
+
+                return event
+            })
+
+            const $calendarHtml = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar($calendarHtml, {
+                locale: 'th',
+                timeZone: 'local',
+                initialView: 'dayGridMonth',
+                selectable: true,
+                showNonCurrentDates: false,
+                selectOverlap: function(event) {
+                    return event.rendering === 'background';
+                },
+                eventDidMount: function(info) {
+                    $(info.el).append(`<i class='fa-regular fa-circle-check fc-icon-select'></i>`);
+                },
+                eventClick: function(info) {
+                    const {
+                        id,
+                        title,
+                        start,
+                        end
+                    } = info.event
+                    if (title === 'เต็ม') return
+
+                    const $tableEvent = $(info.el).closest('td[role="gridcell"]')
+                    const $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
+
+                    if ($tableEventSelected.length === 1) {
+                        // Reset selected
+                        const $start = $tableEventSelected.eq(0).attr('data-date')
+                        const end = info.event.start
+                        if (dayjs(end) < dayjs($start)) {
+                            $('td[role="gridcell"]').attr('data-event', '');
+                        }
+                    }
+
+                    if ($tableEventSelected.length >= 2) {
+                        $('td[role="gridcell"]').attr('data-event', '');
+                    }
+
+                    $tableEvent.attr('data-event', 'selected');
+                },
+                eventMouseEnter: function(info) {
+                    const {
+                        id,
+                        title,
+                        start,
+                        end
+                    } = info.event
+                    const $tableEvent = $(info.el).closest('td[role="gridcell"]')
+                    const $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
+                    if ($tableEventSelected.length === 0 || $tableEventSelected.length >= 2) return
+
+                    let startAriaEvent = $tableEventSelected.eq(0).attr('aria-labelledby').split('-')
+                    let endAriaEvent = $(info.el).closest('td[role="gridcell"]').attr('aria-labelledby').split(
+                        '-')
+
+                    if (startAriaEvent.length >= 2 && endAriaEvent.length >= 2) {
+                        startAriaEvent = Number(startAriaEvent[2]) + 2
+                        endAriaEvent = Number(endAriaEvent[2])
+                    }
+
+                    const $tableEventInRange = $('td[role="gridcell"][data-event="in-range"]')
+                    $tableEventInRange.attr('data-event', '')
+
+                    if ($tableEventSelected.length > 0) {
+                        for (let i = startAriaEvent; i <= endAriaEvent; i += 2) {
+                            $(`td[aria-labelledby="fc-dom-${i}"]`).attr('data-event', 'in-range')
+                        }
+                    }
+                },
+                eventMouseLeave: function(info) {
+                    const $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
+                    const $tableEventInRange = $('td[role="gridcell"][data-event="in-range"]')
+                    if ($tableEventSelected.length === 1) {
+                        $tableEventInRange.attr('data-event', '')
+                    }
+                },
+                events: events
+            });
+
+            calendar.render();
+        }
+
+        function initDatepicker() {
             // Initialize the in_datetime datepicker
             inDatePicker = $('input[name="in_datetime"]').datepicker({
                 dateFormat: "dd/mm/yy",
@@ -220,7 +498,7 @@
                     calcDateDiff()
                 }
             });
-        })
+        }
 
         function getInDate() {
             return inDatePicker.datepicker('getDate')
@@ -253,23 +531,30 @@
             $('#date-diff').text(`จำนวน ${getDateDiff()} วัน`)
         }
 
-        $('#nav-tab button').click(function() {
-            event.preventDefault();
-            const targetTab = $(this).attr('data-coreui-target');
+        function handleStepEvent(action) {
+            console.log('called');
 
-            // prevent tab 4
-            if (targetTab === '#tab4') {
-                if (!selectedCatList.length || !$('input[name="in_datetime"]').val() || !$(
-                        'input[name="out_datetime"]').val()) {
-                    $('button[data-coreui-target="#tab3"]').tab('show');
-                    handleStepPay()
-                }
+            let $activeTabPane = $('.tab-pane.show.active');
+            let cuiTab = Number($('.tab-pane.show.active').attr('tabindex'));
+            let totalTabs = 5;
+
+            if (action === 'PREV' && cuiTab > 1) {
+                cuiTab = cuiTab - 1
+                $(`button[data-coreui-target="#tab${cuiTab}"]`).tab('show');
+            } else if (action === 'NEXT' && cuiTab < totalTabs) {
+                cuiTab = cuiTab + 1
+                $(`button[data-coreui-target="#tab${cuiTab}"]`).tab('show');
             }
-        });
+
+            $("#prev-btn").toggleClass('opacity-0', cuiTab === 1)
+            $('.step').each(function(index, element) {
+                $(element).toggleClass('step-active', index < cuiTab);
+            });
+        }
 
         function goTab(id) {
             if (!id) return
-            $(`button[data-coreui-target="#tab${id}"]`).prop('disabled', false).css('opacity', 1).tab('show');
+            // $(`button[data-coreui-target="#tab${id}"]`).prop('disabled', false).css('opacity', 1).tab('show');
         }
 
         function handleGetAllRent() {
@@ -318,15 +603,11 @@
                         if (newData.length > 0) {
                             newData.forEach(function(room, index) {
                                 // Check book out
-                                const isBookedOut = rents.find(function(rent) {
-                                    return rent.room_id === room.room_id && rent
-                                        .rent_status === 'RESERVED';
-                                });
-
-
-                                const buttonHtml = isBookedOut ?
-                                    `<div class="cursor-not-allowed"><button class="btn btn-outline-danger w-100" disabled>เต็ม</button></div>` :
-                                    `<button class="btn btn-outline-primary w-100" onclick="handleStepRoom(${utils.jsonString(room)})">จอง</button>`;
+                                // const isBookedOut = rents.find(function(rent) {
+                                //     return rent.room_id === room.room_id && rent
+                                //         .rent_status === 'RESERVED';
+                                // });
+                                const isBookedOut = true
 
                                 html += `
                                 <div class="d-flex flex-wrap gap-4">
@@ -341,7 +622,7 @@
                                                     <p class="card-text">จำกัดแมว ${room.room_limit} ตัว</p>
                                                     <p>${room.room_detail}</p>
                                                 </div>
-                                                ${buttonHtml}
+                                                <button class="btn btn-outline-primary w-100" onclick="handleStepRoom(${utils.jsonString(room)})">จอง</button>
                                             </div>
                                         </div>
                                 </div>`;
@@ -372,7 +653,6 @@
                     headers: headers,
                     success: function(response, textStatus, jqXHR) {
                         if (!Array.isArray(response.data)) return
-
                         cats = response.data
 
                         let html = ''

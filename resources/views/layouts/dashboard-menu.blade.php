@@ -95,14 +95,6 @@
                 </svg>อุปกรณ์
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link {{ $route_name === 'dashboard.report' ? ' active' : '' }}"
-                href="{{ route('dashboard.report') }}">
-                <svg class="nav-icon">
-                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
-                </svg>รายงาน
-            </a>
-        </li>
     @endif
 
     @if ($session_type === 'ADMIN')
@@ -167,6 +159,14 @@
                 <svg class="nav-icon">
                     <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
                 </svg>อุปกรณ์
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ $route_name === 'dashboard.report' ? ' active' : '' }}"
+                href="{{ route('dashboard.report') }}">
+                <svg class="nav-icon">
+                    <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-star') }}"></use>
+                </svg>รายงาน
             </a>
         </li>
     @endif

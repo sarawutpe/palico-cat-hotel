@@ -118,9 +118,6 @@
                             </div>
                         </fieldset>
                         <div class="d-flex gap-4" style="padding: 12px">
-                            <button type="button" class="btn btn-primary" onclick="handleReport()">
-                                <i class="fa-solid fa-print fa-xs align-middle"></i>
-                            </button>
                             <button type="button" class="btn btn-info" onclick="handleUpdateEmployee()">แก้ไข</button>
                             <button type="button" class="btn btn-danger" onclick="handleDeleteEmployee()">ลบ</button>
                             <button type="submit" class="btn btn-primary">บันทึก</button>
@@ -148,13 +145,14 @@
         }
         var storagePath = "{{ asset('storage') }}"
         var id = "{{ session('id') }}"
+        var type = "{{ session('type') }}"
         var formData = null
         var search = null
 
         // Initialize
         $(document).ready(function() {
-            handleGetAllCat()
-            callSearchFunc = handleGetAllCat;
+            handleGetCatByType()
+            callSearchFunc = handleGetCatByType;
         })
 
         function resetForm() {
@@ -164,11 +162,15 @@
             files.setFilePreview()
         }
 
-        function handleGetAllCat() {
+        function handleGetCatByType() {
             utils.setLinearLoading('open')
 
+            const url = type === 'MEMBER' ?
+                `${prefixApi}/api/cat/member/${id}${window.location.search}` :
+                `${prefixApi}/api/cat/list${window.location.search}`
+
             $.ajax({
-                url: `${prefixApi}/api/cat/list${window.location.search}`,
+                url: url,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
@@ -228,7 +230,7 @@
                 success: function(response, textStatus, jqXHR) {
                     resetForm()
                     toastr.success();
-                    handleGetAllCat()
+                    handleGetCatByType()
                     utils.clearAlert('#alert-message')
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -287,7 +289,7 @@
                 contentType: false,
                 success: function(response, textStatus, jqXHR) {
                     toastr.success();
-                    handleGetAllCat()
+                    handleGetCatByType()
                     resetForm()
                     utils.clearAlert('#alert-message')
                 },
@@ -310,7 +312,7 @@
                     success: function(data, textStatus, jqXHR) {
                         resetForm()
                         toastr.success()
-                        handleGetAllCat()
+                        handleGetCatByType()
                         utils.clearAlert('#alert-message')
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
@@ -319,7 +321,6 @@
                 })
             }
         }
-
     </script>
 
 @endsection
