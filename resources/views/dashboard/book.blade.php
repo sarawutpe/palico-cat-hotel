@@ -57,11 +57,13 @@
         }
 
         #calendar .fc-icon-select {
-            color: #fff;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, -70%);
+            color: rgb(51, 182, 121);
             opacity: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
 
         #calendar [data-event="selected"] i.fc-icon-select {
@@ -136,6 +138,33 @@
             width: 100%;
             max-width: 850px;
         }
+
+        .card-room-type-item {
+            cursor: pointer;
+            border: 1px solid transparent
+        }
+
+        .card-room-type-item.active {
+            border-color: #321fdb;
+        }
+
+        .card-room-item {
+            cursor: pointer;
+            border: 1px solid transparent;
+            opacity: 1;
+            border-radius: 5px;
+        }
+
+        .card-room-item.status-out {
+            cursor: not-allowed;
+            border-color: rgb(244, 81, 30);
+            opacity: 0.5;
+        }
+
+        .card-room-item.active {
+            cursor: pointer;
+            border-color: #321fdb;
+        }
     </style>
 
     <section class="content">
@@ -145,7 +174,7 @@
                     <fieldset class="">
                         <legend>ข้อมูลห้องพัก</legend>
                         {{-- Step --}}
-                        <div class="d-flex justify-content-center w-100">
+                        <div class="d-flex w-100">
                             <div id="bar-progress" class="c-container mb-4">
                                 <div class="step step-active">
                                     <span class="number-container">
@@ -172,14 +201,14 @@
                                     <span class="number-container">
                                         <span class="number">4</span>
                                     </span>
-                                    <h5>รายละเอียดการจอง</h5>
+                                    <h5>เลือกแมว</h5>
                                 </div>
                                 <div class="seperator"></div>
                                 <div class="step">
                                     <span class="number-container">
                                         <span class="number">5</span>
                                     </span>
-                                    <h5>ชำระเงิน</h5>
+                                    <h5>ตรวจสอบและชำระเงิน</h5>
                                 </div>
                             </div>
                         </div>
@@ -189,19 +218,19 @@
                         {{-- Nav Content --}}
                         <div class="nav nav-tabs" id="nav-tabx" role="tablist" style="opacity: 0">
                             <button class="active" data-coreui-toggle="tab" data-coreui-target="#tab1" type="hidden"
-                                role="tab">
+                                data-index="1" role="tab">
                             </button>
                             <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab2" type="hidden"
-                                role="tab">
+                                data-index="2" role="tab">
                             </button>
                             <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab3" type="hidden"
-                                role="tab">
+                                data-index="3" role="tab">
                             </button>
                             <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab4" type="hidden"
-                                role="tab">
+                                data-index="4" role="tab">
                             </button>
                             <button class="nav-link" data-coreui-toggle="tab" data-coreui-target="#tab5" type="hidden"
-                                role="tab">
+                                data-index="5" role="tab">
                             </button>
                         </div>
 
@@ -223,7 +252,8 @@
                                     @endphp
 
                                     @foreach ($room_types as $r)
-                                        <div class="card" style="width: 18rem;">
+                                        <div class="card card-room-type-item" style="width: 18rem;"
+                                            onclick="handleStepRoomType(event, '{{ json_encode($r) }}')">
                                             <div>
                                                 <img src="{{ asset($r->img) }}" class="card-img-top" width="100%"
                                                     height="180px">
@@ -233,8 +263,6 @@
                                                     <h5 class="card-title"></h5>
                                                     <p class="card-text">{{ $r->name }}</p>
                                                 </div>
-                                                <button onclick="handleStepRoomType('{{ json_encode($r) }}')"
-                                                    class="btn btn-outline-primary w-100">เลือก</button>
                                             </div>
                                         </div>
                                     @endforeach
@@ -246,40 +274,10 @@
                             </div>
                             {{-- Step 4 --}}
                             <div class="tab-pane fade" id="tab4" role="tabpanel" tabindex="4">
+                                <p id="selected-cat-count">-</p>
                                 <div class="row">
                                     <div class="col">
                                         <div id="cat-list"></div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">รหัสสมาชิก</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="member_id" value="${id}"
-                                                    class="form-control" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
-                                            <div class="col-sm-9">
-                                                <input id="in_datetime" type="text" name="in_datetime"
-                                                    class="form-control" autocomplete="off">
-                                                <div id="error-in-datetime" class="invalid-feedback"></div>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
-                                            <div class="col-sm-9">
-                                                <input id="out_datetime" type="text" name="out_datetime"
-                                                    class="form-control" autocomplete="off">
-                                                <div id="error-out-datetime" class="invalid-feedback"></div>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <div class="col-sm-3"></div>
-                                            <div class="col-sm-9">
-                                                <p id="date-diff" class="border rounded"></p>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -291,13 +289,13 @@
 
                         {{-- Next Button --}}
                         <div class="d-flex justify-content-center w-100">
-                            <div class="c-container d-flex justify-content-end w-100 my-4">
-                                <div class="d-flex gap-1">
+                            <div class="d-flex justify-content-center w-100 my-4">
+                                <div class="d-flex gap-2">
                                     <button id="prev-btn" type="button" class="btn btn-secondary opacity-0"
                                         onclick="handleStepEvent('PREV')">
                                         ก่อนหน้า
                                     </button>
-                                    <button id="next-btn" type="button" class="btn btn-primary"
+                                    <button id="next-btn" type="button" class="btn btn-primary" disabled
                                         onclick="handleStepEvent('NEXT')">
                                         ถัดไป
                                     </button>
@@ -315,30 +313,34 @@
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
         var storagePath = "{{ asset('storage') }}"
-
         var sessionId = "{{ session('id') }}"
         var sessionName = "{{ session('name') }}"
-
         var selectedId = null
         var selectedRoomType = ''
         var selectedRoomId = ''
         var selectedRoom = ''
         var rents = []
         var selectedCatList = []
-        var inDatePicker = null
-        var outDatePicker = null
         var selectedStartDate = null
         var selectedEndDate = null
+        var isSubmit = false
 
         // Initialize
         $(document).ready(async function() {
             await handleGetAllRent()
-            await handleGetAllRoom()
             await handleGetAllCat()
-
             handleShowCalendar()
-            initDatepicker()
         })
+
+        function setIsDisabledPrevBtn(val = false) {
+            if (!typeof val === 'boolean') return
+            $('#prev-btn').attr('disabled', val)
+        }
+
+        function setIsDisabledNextBtn(val = false) {
+            if (!typeof val === 'boolean') return
+            $('#next-btn').attr('disabled', val)
+        }
 
         function getCalendarInfo() {
             const $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
@@ -378,19 +380,11 @@
 
             const events = daysEventOfYear.map(function(day) {
                 const event = {
-                    title: 'ว่าง',
+                    title: '',
                     start: day,
                     end: '',
                     display: 'background',
-                    classNames: ['is-open-event']
-                }
-                let rent = rentList.find((item) => dayjs(item.rent_datetime).format('YYYY-MM-DD') === day)
-
-                if (rent) {
-                    event.title = 'เต็ม'
-                    event.start = dayjs(rent.rent_datetime).format('YYYY-MM-DD')
-                    event.end = dayjs(rent.out_datetime).format('YYYY-MM-DD')
-                    event.classNames = ['is-close-event']
+                    classNames: ['bg-white']
                 }
 
                 return event
@@ -416,10 +410,9 @@
                         start,
                         end
                     } = info.event
-                    if (title === 'เต็ม') return
 
-                    const $tableEvent = $(info.el).closest('td[role="gridcell"]')
-                    const $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
+                    let $tableEvent = $(info.el).closest('td[role="gridcell"]')
+                    let $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
 
                     if ($tableEventSelected.length === 1) {
                         // Reset selected
@@ -433,8 +426,17 @@
                     if ($tableEventSelected.length >= 2) {
                         $('td[role="gridcell"]').attr('data-event', '');
                     }
-
                     $tableEvent.attr('data-event', 'selected');
+
+                    // Save selected start, end
+                    $tableEventSelected = $('td[role="gridcell"][data-event="selected"]');
+                    selectedStartDate = $tableEventSelected.eq(0).attr('data-date')
+                    selectedEndDate = $tableEventSelected.eq(1).attr('data-date')
+                    if (selectedStartDate && selectedEndDate) {
+                        setIsDisabledNextBtn(false)
+                    } else {
+                        setIsDisabledNextBtn(true)
+                    }
                 },
                 eventMouseEnter: function(info) {
                     const {
@@ -478,70 +480,24 @@
             calendar.render();
         }
 
-        function initDatepicker() {
-            // Initialize the in_datetime datepicker
-            inDatePicker = $('input[name="in_datetime"]').datepicker({
-                dateFormat: "dd/mm/yy",
-                isBuddhist: true,
-                showButtonPanel: true,
-                onSelect: function(selectedDate) {
-                    calcDateDiff()
-                }
-            });
-
-            // Initialize the out_datetime datepicker
-            outDatePicker = $('input[name="out_datetime"]').datepicker({
-                dateFormat: "dd/mm/yy",
-                isBuddhist: true,
-                showButtonPanel: true,
-                onSelect: function(selectedDate) {
-                    calcDateDiff()
-                }
-            });
-        }
-
-        function getInDate() {
-            return inDatePicker.datepicker('getDate')
-        }
-
-        function getOutDate() {
-            return outDatePicker.datepicker('getDate')
-        }
-
         function getDateDiff() {
-            var inDateObject = getInDate();
-            var outDateObject = getOutDate();
-            var diff = dayjs(outDateObject).diff(inDateObject, 'day')
+            if (!selectedStartDate || !selectedEndDate) return
+
+            let s = dayjs(selectedStartDate)
+            let e = dayjs(selectedEndDate)
+            var diff = dayjs(e).diff(s, 'day')
             return diff > 0 ? diff : 0
         }
 
-        function calcDateDiff() {
-            var inDateObject = getInDate();
-            var outDateObject = getOutDate();
-
-            const minDate = dayjs(inDateObject).add('1', 'day').toDate();
-            outDatePicker.datepicker("option", "minDate", minDate);
-
-            if (!inDateObject || !outDateObject) return
-
-            if (dayjs(outDateObject).diff(inDateObject, 'day')) {
-                const minDate = dayjs(inDateObject).add('1', 'day').toDate();
-                outDatePicker.datepicker("option", "minDate", minDate);
-            }
-            $('#date-diff').text(`จำนวน ${getDateDiff()} วัน`)
-        }
-
         function handleStepEvent(action) {
-            console.log('called');
-
-            let $activeTabPane = $('.tab-pane.show.active');
             let cuiTab = Number($('.tab-pane.show.active').attr('tabindex'));
             let totalTabs = 5;
 
             if (action === 'PREV' && cuiTab > 1) {
                 cuiTab = cuiTab - 1
                 $(`button[data-coreui-target="#tab${cuiTab}"]`).tab('show');
-            } else if (action === 'NEXT' && cuiTab < totalTabs) {
+
+            } else if (action === 'NEXT' && cuiTab <= totalTabs) {
                 cuiTab = cuiTab + 1
                 $(`button[data-coreui-target="#tab${cuiTab}"]`).tab('show');
             }
@@ -550,11 +506,39 @@
             $('.step').each(function(index, element) {
                 $(element).toggleClass('step-active', index < cuiTab);
             });
+
+            handleStepChange()
         }
 
-        function goTab(id) {
-            if (!id) return
-            // $(`button[data-coreui-target="#tab${id}"]`).prop('disabled', false).css('opacity', 1).tab('show');
+        function handleStepChange() {
+            let isDisabled = true;
+            let cuiTab = Number($('button[aria-selected="true"]').attr('data-index'));
+            $('#next-btn').text('ถัดไป')
+
+            setTimeout(() => {
+                if (cuiTab === 1) {
+                    isSubmit = false
+                } else if (cuiTab === 2) {
+                    isDisabled = !selectedRoomType;
+                    isSubmit = false
+                    handleGetAllRoom()
+                } else if (cuiTab === 3) {
+                    isDisabled = !selectedRoom;
+                    isSubmit = false
+                } else if (cuiTab === 4) {
+                    isDisabled = !selectedCatList.length;
+                    isSubmit = false
+                } else if (cuiTab === 5) {
+                    $('#next-btn').text('ยืนยันการจอง')
+                    handleShowStepPay()
+                    if (isSubmit) {
+                        handleAddRent()
+                    }
+                    isDisabled = false
+                    isSubmit = true
+                }
+                setIsDisabledNextBtn(isDisabled);
+            }, 0);
         }
 
         function handleGetAllRent() {
@@ -579,38 +563,37 @@
         }
 
         function handleGetAllRoom() {
-            if (!Array.isArray(rents)) return
+            if (!selectedRoomType || !selectedStartDate || !selectedEndDate) return
+
+            let t = selectedRoomType.room_type
+            let s = selectedStartDate
+            let e = selectedEndDate
 
             return new Promise((resolve, reject) => {
                 utils.setLinearLoading('open')
+                const url = `${prefixApi}/api/room/list?room_type=${t}&start_date=${s}&end_date=${e}`
                 $.ajax({
-                    url: `${prefixApi}/api/room/list${window.location.search}`,
+                    url: url,
                     type: "GET",
                     headers: headers,
                     success: function(response, textStatus, jqXHR) {
                         if (!Array.isArray(response.data)) return
 
                         $('#step-select-room').empty()
-
                         let html = ''
-                        let newData = response.data
+                        let data = response.data
 
-                        newData = newData.filter(function(item) {
-                            return !selectedRoomType || item.room_type === selectedRoomType
-                                .room_type
-                        });
-
-                        if (newData.length > 0) {
-                            newData.forEach(function(room, index) {
-                                // Check book out
-                                // const isBookedOut = rents.find(function(rent) {
-                                //     return rent.room_id === room.room_id && rent
-                                //         .rent_status === 'RESERVED';
-                                // });
-                                const isBookedOut = true
+                        if (data.length > 0) {
+                            data.forEach(function(room, index) {
+                                const reservedList = ['RESERVED', 'CHECKED_IN', 'CHECKED_OUT',
+                                    'COMPLETED'
+                                ]
+                                const isReserved = reservedList.includes(room?.rent
+                                    ?.rent_status ?? '')
+                                const reservedClass = isReserved ? 'status-out' : ''
 
                                 html += `
-                                <div class="d-flex flex-wrap gap-4">
+                                <div onclick="handleStepRoom(event, ${isReserved}, ${utils.jsonString(room)})" class="d-flex flex-wrap gap-4 card-room-item ${reservedClass}">
                                         <div class="card" style="width: 18rem;">
                                             <div>
                                                 <img src="{{ asset('storage/${room.room_img}') }}" class="card-img-top" width="100%" height="180px">
@@ -622,13 +605,12 @@
                                                     <p class="card-text">จำกัดแมว ${room.room_limit} ตัว</p>
                                                     <p>${room.room_detail}</p>
                                                 </div>
-                                                <button class="btn btn-outline-primary w-100" onclick="handleStepRoom(${utils.jsonString(room)})">จอง</button>
                                             </div>
                                         </div>
                                 </div>`;
                             });
                         } else {
-                            html = `<p>ไม่พบห้องว่าง</p>`
+                            html = `<p>ไม่พบห้อง</p>`
                         }
 
                         $('#step-select-room').append(html);
@@ -658,7 +640,7 @@
                         let html = ''
                         response.data.forEach(function(cat, index) {
                             html += `
-                        <div class="box-cat-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
+                        <div class="box-cat-list" onclick="handleSelectCat(${index}, ${utils.jsonString(cat)})">
                             <img onerror="this.style.opacity = 0"
                                 src="${storagePath}/${cat.cat_img}"
                                 style="object-fit: cover;" width="100%" height="100%">
@@ -699,6 +681,9 @@
                 selectedCatList = selectedCatList.filter(item => item.cat_id !== catId);
                 targetDiv.removeClass('active');
             }
+
+            $('#selected-cat-count').text(`${selectedCatList.length}/${selectedRoom.room_limit}`)
+            handleStepChange()
         }
 
         function handleShowStepDetail() {
@@ -719,7 +704,6 @@
                 <!-- Details 1 -->
                 <div class="col">
                     <div class="mb-3 border border-secondary rounded p-4">
-
                         <div>
                             <h3 class="col-sm-3 col-form-label">รายการ</h3>
                             <div class="d-flex justify-content-between">
@@ -732,11 +716,9 @@
                                     <img src="{{ asset('storage/${room.room_img}') }}" width="100%" height="100px">
                                 </div>
                             </div>
-
-                            <p>วันที่เช็คเอาท์ <b>${dayjs(getInDate()).format('DD/MM/YYYY')}</b></p>
-                            <p>วันที่เช็คอิน <b>${dayjs(getOutDate()).format('DD/MM/YYYY')}</b></p>
+                            <p>วันที่เช็คเอาท์ <b>${dayjs(selectedStartDate).format('DD/MM/YYYY')}</b></p>
+                            <p>วันที่เช็คอิน <b>${dayjs(selectedEndDate).format('DD/MM/YYYY')}</b></p>
                             <p>ระยะเวลา <b>${getDateDiff()}</b> วัน</p>
-                            
                             <br>
                             <p>รหัสสมาชิก <b>${sessionId} ${sessionName}</b></p>
                             <p>รายชื่อแมว <b>${catNameHtml}</b></p>
@@ -786,10 +768,6 @@
                             </div>
                         </div>
                     </div>          
-                    <div class="d-flex gap-4" style="padding: 12px">
-                        <button type="button" class="btn btn-secondary" onclick="goTab(3)">ย้อนกลับ</button>
-                        <button id="next-to-pay" type="submit" class="btn btn-primary" onclick="handleAddRent()">ยืนยัน</button>
-                    </div>
                 </div>
             </div>`;
 
@@ -798,65 +776,40 @@
             });
         }
 
-        function handleStepRoomType(roomType) {
+        function handleStepRoomType(event, roomType) {
             const roomTypeObj = JSON.parse(roomType)
             if (typeof roomTypeObj !== 'object') return
 
+            $('.card-room-type-item').removeClass('active');
+            $(event.currentTarget).addClass('active');
+
             selectedRoomType = roomTypeObj;
-            goTab(2)
+            setIsDisabledNextBtn(false)
             handleGetAllRoom()
         }
 
-        function handleStepRoom(room) {
-            if (!room) return
+        function handleStepRoom(event, isReserved, room) {
+            if (isReserved || !room) return
+
+            $('.card-room-item').removeClass('active');
+            $(event.currentTarget).addClass('active');
 
             const roomObj = JSON.parse(room)
             if (typeof roomObj !== 'object') return
 
             selectedRoom = roomObj
-            goTab(3)
             handleShowStepDetail()
-        }
-
-        function handleStepPay() {
-            const inDatetime = $('input[name="in_datetime"]');
-            const outDatetime = $('input[name="out_datetime"]');
-            const errorInDatetime = $('#error-in-datetime');
-            const errorOutDatetime = $('#error-out-datetime');
-
-            if (!inDatetime.val()) {
-                errorInDatetime.text('กรุณากรอกวันที่เช็กอิน')
-                inDatetime.addClass('is-invalid');
-            } else {
-                inDatetime.removeClass('is-invalid');
-            }
-
-            if (!outDatetime.val()) {
-                errorOutDatetime.text('กรุณากรอกวันที่เช็คเอาท์')
-                outDatetime.text('กรุณากรอกวันที่เช็กอิน').addClass('is-invalid');
-            } else {
-                outDatetime.removeClass('is-invalid');
-            }
-
-            if (!selectedCatList.length) {
-                utils.showAlert('#alert-message', 'error', 'กรุณาเลือกแมว')
-            } else {
-                utils.clearAlert('#alert-message')
-            }
-
-            if (selectedCatList.length > 0 && inDatetime.val() && outDatetime.val()) {
-                goTab(4)
-                handleShowStepPay()
-            }
+            handleStepChange()
         }
 
         // Service add rent, checkin, checkin list
         async function handleAddRent() {
             try {
-                const room = selectedRoom
+                console.log('ok')
 
-                const inDatetime = dayjs(getInDate()).format();
-                const outDatetime = dayjs(outDatePicker.datepicker('getDate')).format();
+                const room = selectedRoom
+                const inDatetime = dayjs(selectedStartDate).format();
+                const outDatetime = dayjs(selectedEndDate).format();
                 const dateDiff = dayjs(outDatetime).diff(inDatetime, 'day')
                 const roomId = room.room_id
                 const rentPrice = room.room_price * dateDiff
@@ -864,6 +817,7 @@
 
                 if (!file) {
                     files.setMessage('error', 'กรุณาอัพโหลดสลิป')
+                    console.log('no')
                 }
 
                 if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice || !selectedCatList.length) return

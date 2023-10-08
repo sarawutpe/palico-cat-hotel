@@ -104,6 +104,27 @@ function formatPayStatus(type = "") {
     }
 }
 
+function getBookingTextColor(type) {
+    switch (type) {
+        case "PENDING":
+            return "#2196f3";
+        case "RESERVED":
+            return "#009688";
+        case "CHECKED_IN":
+            return "#9c27b0";
+        case "CHECKED_OUT":
+            return "#673ab7";
+        case "COMPLETED":
+            return "#4caf50";
+        case "PAYING":
+            return "#4caf50";
+        case "CANCELED":
+            return "#f44336";
+        default:
+            return "#000";
+    }
+}
+
 function formatRoomType(type = "") {
     switch (type) {
         case "S":
@@ -138,7 +159,7 @@ const files = {
         return fileUploadElement.prop("files")[0];
     },
     setMessage(type, message) {
-        fileMessageElement.addClass("text-danger").text(message);
+        $("#file-message").addClass("text-danger").text(message);
     },
 };
 

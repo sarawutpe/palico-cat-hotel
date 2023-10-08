@@ -250,9 +250,9 @@
                                 <p>รายชื่อแมว ${catNameHtml}</p>
                                 <p>ราคาการจอง ฿${rent.rent_price}</p>
                                 <br>
-                                <p class="${isCheckin ? 'text-success' : 'text-warning'}">${isCheckin ? 'เช็คอินสำเร็จ' : 'ยังไม่เช็คอิน'}</p>
-                                <p>สถานะการจ่ายเงิน ${formatPayStatus(rent.pay_status)}</p>
-                                <p>สถานะการจอง ${formatRentStatus(rent.rent_status)}</p>
+                                <p>สถานะเช็คอิน: <b style="color: ${getBookingTextColor(rent?.checkin?.checkin_status)}">${isCheckin ? 'เช็คอินสำเร็จ' : 'ยังไม่เช็คอิน'}</b></p>
+                                <p>สถานะการจ่ายเงิน: <b style="color: ${getBookingTextColor(rent?.pay_status)}">${formatPayStatus(rent.pay_status)}</b></p>
+                                <p>สถานะการจอง: <b style="color: ${getBookingTextColor(rent?.rent_status)}">${formatRentStatus(rent.rent_status)}</b></p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
@@ -328,8 +328,6 @@
                 selectedCatList = selectedCatList.filter(item => item.cat_id !== catId);
                 targetDiv.removeClass('active');
             }
-
-            console.log('final', selectedCatList)
         }
 
         async function handleShowRent(index, data) {
@@ -388,8 +386,6 @@
             utils.loading('close')
             utils.setLinearLoading('close')
         }
-
-
 
         async function handleUpdateCheckin() {
             if (!selectedRentId || selectedCatList.length === 0) return
