@@ -805,7 +805,6 @@
         // Service add rent, checkin, checkin list
         async function handleAddRent() {
             try {
-                console.log('ok')
 
                 const room = selectedRoom
                 const inDatetime = dayjs(selectedStartDate).format();
@@ -817,7 +816,6 @@
 
                 if (!file) {
                     files.setMessage('error', 'กรุณาอัพโหลดสลิป')
-                    console.log('no')
                 }
 
                 if (!inDatetime || !outDatetime || !roomId || !file || !rentPrice || !selectedCatList.length) return
