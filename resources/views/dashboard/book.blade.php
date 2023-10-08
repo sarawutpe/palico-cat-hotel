@@ -324,6 +324,7 @@
         var selectedStartDate = null
         var selectedEndDate = null
         var isSubmit = false
+        var calendar = null
 
         // Initialize
         $(document).ready(async function() {
@@ -374,6 +375,11 @@
         function handleShowCalendar() {
             if (rents.length === 0) return
 
+            // reset calendar
+            if (calendar) {
+                calendar.destroy();
+            }
+
             // All rents
             const rentList = [...rents]
             const daysEventOfYear = getDaysEventOfYear()
@@ -391,7 +397,7 @@
             })
 
             const $calendarHtml = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar($calendarHtml, {
+            calendar = new FullCalendar.Calendar($calendarHtml, {
                 locale: 'th',
                 timeZone: 'local',
                 initialView: 'dayGridMonth',
@@ -510,6 +516,22 @@
             handleStepChange()
         }
 
+        function clearTab(index) {
+            if (index === 1) {
+                handleShowCalendar()
+            } else if (index === 2) {
+                selectedRoomType = null
+                $('.card-room-type-item').removeClass('active');
+            } else if (index === 3) {
+                selectedRoom = null
+                $('.card-room-item').removeClass('active');
+            } else if (index === 4) {
+                selectedCatList = []
+                $('#selected-cat-count').text('-');
+                $('.box-cat-list').removeClass('active');
+            } else if (index === 5) {}
+        }
+
         function handleStepChange() {
             let isDisabled = true;
             let cuiTab = Number($('button[aria-selected="true"]').attr('data-index'));
@@ -517,17 +539,28 @@
 
             setTimeout(() => {
                 if (cuiTab === 1) {
+                    clearTab(1)
+                    clearTab(2)
+                    clearTab(3)
+                    clearTab(4)
+
                     isSubmit = false
+                    isDisabled = !selectedStartDate || !selectedEndDate
                 } else if (cuiTab === 2) {
-                    isDisabled = !selectedRoomType;
+                    clearTab(3)
+                    clearTab(4)
+
                     isSubmit = false
+                    isDisabled = !selectedRoomType;
                     handleGetAllRoom()
                 } else if (cuiTab === 3) {
+                    clearTab(4)
+
+                    isSubmit = false
                     isDisabled = !selectedRoom;
-                    isSubmit = false
                 } else if (cuiTab === 4) {
-                    isDisabled = !selectedCatList.length;
                     isSubmit = false
+                    isDisabled = !selectedCatList.length;
                 } else if (cuiTab === 5) {
                     $('#next-btn').text('ยืนยันการจอง')
                     handleShowStepPay()
@@ -540,6 +573,7 @@
                 setIsDisabledNextBtn(isDisabled);
             }, 0);
         }
+
 
         function handleGetAllRent() {
             return new Promise((resolve, reject) => {
@@ -585,15 +619,9 @@
 
                         if (data.length > 0) {
                             data.forEach(function(room, index) {
-                                const reservedList = ['RESERVED', 'CHECKED_IN', 'CHECKED_OUT',
-                                    'COMPLETED'
-                                ]
-                                const isReserved = reservedList.includes(room?.rent
-                                    ?.rent_status ?? '')
-                                const reservedClass = isReserved ? 'status-out' : ''
-
+                                const isReserved = room.rents.length > 0
                                 html += `
-                                <div onclick="handleStepRoom(event, ${isReserved}, ${utils.jsonString(room)})" class="d-flex flex-wrap gap-4 card-room-item ${reservedClass}">
+                                <div onclick="handleStepRoom(event, ${isReserved}, ${utils.jsonString(room)})" class="d-flex flex-wrap gap-4 card-room-item ${isReserved ? 'status-out' : ''}">
                                         <div class="card" style="width: 18rem;">
                                             <div>
                                                 <img src="{{ asset('storage/${room.room_img}') }}" class="card-img-top" width="100%" height="180px">
@@ -847,7 +875,7 @@
                 });
 
                 const rentId = rentResult?.data?.rent_id ?? ''
-                if (!rentResult.success || !rentId) throw new Error('error save rent!')
+                if (!rentResult.success || !rentId) throw new Error('')
 
                 // Add Checkin to db
                 formData = new FormData();
@@ -864,7 +892,7 @@
                     contentType: false,
                 });
 
-                if (!checkinResult.success) throw new Error('error save checkin!')
+                if (!checkinResult.success) throw new Error('')
 
                 // Add Checkin Cat to db
                 formData = new FormData();
@@ -882,16 +910,14 @@
                     contentType: false,
                 });
 
-                if (!checkinCatResult.success) throw new Error('error save checkin cat!')
-
                 // Set loading
                 utils.loading('close')
                 utils.setLinearLoading('close');
                 await utils.showDialog(`หมายเลขการจอง #${rentId}`, 'success')
                 location.reload();
             } catch (error) {
-                toastr.error();
-            } finally {
+                console.log(error)
+                await utils.showDialog(`${error.responseJSON.errors.toString()}`, 'error')
                 utils.loading('close')
                 utils.setLinearLoading('close');
             }

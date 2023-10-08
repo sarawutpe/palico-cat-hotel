@@ -185,7 +185,7 @@ const utils = {
             ? `'${JSON.stringify(jsonData).replace(/"/g, "&quot;")}'`
             : "invalid json";
     },
-    showDialog(message, icon = "") {
+    showDialog(message = "", icon = "") {
         return new Promise((resolve, reject) => {
             Swal.fire({
                 title: `<strong>${message}</strong>`,

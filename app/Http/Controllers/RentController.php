@@ -99,11 +99,12 @@ class RentController extends Controller
                 'slip_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
             ]);
 
-            // Check Rent
+            // Check Rent room, in date, out date, rent status
             $rent = Rent::where('room_id', $request->input('room_id'))
                 ->where('rent_status', Key::$RESERVED)
+                ->whereDate('in_datetime', $request->input('in_datetime'))
+                ->whereDate('out_datetime', $request->input('out_datetime'))
                 ->first();
-
             if ($rent) {
                 return response()->json(['success' => false, 'errors' => 'จองไม่สำเร็จเนื่องจากห้องพักไม่ว่าง'], 400);
             }

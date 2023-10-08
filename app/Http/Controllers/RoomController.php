@@ -6,7 +6,7 @@ use App\Models\Room;
 use App\Http\Helpers\Helper;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use App\Http\Helpers\Key;
 
 class RoomController extends Controller
 {
@@ -14,34 +14,26 @@ class RoomController extends Controller
     {
         try {
             $q = $request->input('q', '');
-
             $room_type = $request->input('room_type', '');
             $start_date = $request->input('start_date', '');
             $end_date = $request->input('end_date', '');
-            $query = Room::with('rent');
 
-            if ($start_date && $end_date) {
-                $in_datetime = Carbon::createFromFormat('Y-m-d', $start_date);
-                $out_datetime = Carbon::createFromFormat('Y-m-d', $end_date);
-
-                $query->orWhere(function ($subquery) use ($room_type, $in_datetime, $out_datetime) {
-                    $subquery->where('room_type', $room_type);
-                    $subquery->whereHas('rent', function ($rentQuery) use ($in_datetime, $out_datetime) {
-                        $rentQuery->whereDate('in_datetime', '>=', $in_datetime)
-                            ->whereDate('out_datetime', '<=', $out_datetime);
-                    });
-                });
-
-                $query->orWhereDoesntHave('rent');
-            }
+            $query = Room::where('room_name', 'like', '%' . $q . '%');
 
             if ($room_type) {
-                $query->where('room_type', '=', $room_type);
+                $query->where('room_type', $room_type);
             }
 
-            $query->where('room_name', 'like', '%' . $q . '%');
-            $query->orderBy('updated_at', 'desc');
-            $rooms  = $query->get();
+            $query->with(['rents' => function ($rentsQuery) use ($start_date, $end_date) {
+                if ($start_date && $end_date) {
+                    $rentsQuery->where('rent_status', Key::$RESERVED)
+                        ->whereDate('in_datetime', '>=', $start_date)
+                        ->whereDate('out_datetime', '<=', $end_date);
+                }
+            }]);
+
+            $query->orderBy('rooms.updated_at', 'desc');
+            $rooms = $query->get();
             return response()->json(['success' => true, 'data' => $rooms]);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);

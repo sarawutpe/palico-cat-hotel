@@ -21,9 +21,9 @@ class Room extends Model
         'room_limit',
     ];
 
-    public function rent()
+    public function rents()
     {
-        return $this->hasOne(Rent::class, 'room_id');
+        return $this->hasMany(Rent::class, 'room_id');
     }
     
 }
