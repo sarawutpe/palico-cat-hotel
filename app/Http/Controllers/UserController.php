@@ -102,8 +102,8 @@ class UserController extends Controller
 
                 // Remove file
                 if ($request->input('set') === 'file_null') {
-                    Helper::deleteFile($member->employee_img);
-                    $member->employee_img = "";
+                    Helper::deleteFile($member->member_img);
+                    $member->member_img = "";
                 }
 
                 Session::put('img', $member->member_img);

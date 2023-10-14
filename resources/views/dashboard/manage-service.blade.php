@@ -6,6 +6,57 @@
             background-color: rgba(255, 255, 255, 0.5);
             cursor: pointer;
         }
+
+        .zoom-img {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .zoom-img .icon {
+            border-radius: 6px;
+            z-index: 2;
+        }
+
+        .zoom-img:hover.zoom-img .icon {
+            opacity: 1;
+        }
+
+        .zoom-img .icon {
+            position: absolute;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0, 0, 0, 0.5);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 200ms ease-in-out;
+            opacity: 0;
+        }
+
+        .zoom-img .icon i {
+            font-size: 1rem;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .icon-img-action {
+            display: flex;
+        }
+
+        .icon-input-upload {
+            position: relative;
+        }
+
+        .preview-service-list-img {
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
     </style>
 
     <section class="content">
@@ -48,7 +99,7 @@
                                 </div>
                                 {{-- Tab 2 --}}
                                 <div class="tab-pane fade" id="tab2" role="tabpanel" tabindex="0">
-                                    <div style="max-width: 800px; margin: auto">
+                                    <div style="max-width: 900px; margin: auto">
                                         <div class="d-flex justify-content-between mb-2">
                                             <p class="font-bold">บันทึกการดูแลแมว</p>
                                             <div class="icon-button" onclick="handleCloseService()">
@@ -61,6 +112,7 @@
                                                     <th scope="col">#</th>
                                                     <th scope="col">สิ่งที่ต้องทำ</th>
                                                     <th scope="col">เวลา</th>
+                                                    <th scope="col">รูปภาพ</th>
                                                     <th scope="col" class="text-center">เช็คลิสต์</th>
                                                     <th scope="col"></th>
                                                 </tr>
@@ -84,15 +136,28 @@
         </div>
     </section>
 
+    <div class="modal fade" id="service-list-img-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img id="service-list-zoom-img" src="" alt="" width="100%" height="350px"
+                        style="object-fit: contain;">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         var headers = {
             'X-CSRF-Token': "{{ csrf_token() }}"
         }
         var storagePath = "{{ asset('storage') }}"
         var id = "{{ session('id') }}"
+        var type = "{{ session('type') }}"
         var selectedRentId = null
         var selectedServiceId = null
         var selectedServiceListId = null
+        var selectedServiceListIndex = null
         var serviceLists = []
 
         $(document).ready(async function() {
@@ -100,10 +165,11 @@
         })
 
         function handleGetAllRent() {
+            let url = `${prefixApi}/api/rent/list`
             return new Promise((resolve, reject) => {
                 utils.setLinearLoading('open')
                 $.ajax({
-                    url: `${prefixApi}/api/rent/list`,
+                    url: url,
                     type: "GET",
                     headers: headers,
                     success: function(response, textStatus, jqXHR) {
@@ -119,7 +185,8 @@
                             const countServiceLists = serviceLists.length;
                             const countDoneServiceLists = serviceLists.filter((item) => item
                                 .service_list_checked === 1).length;
-                            const countInProgressServiceLists = serviceLists.filter((item) => item
+                            const countInProgressServiceLists = serviceLists.filter((item) =>
+                                item
                                 .service_list_checked === 0).length;
 
                             html += `
@@ -229,6 +296,8 @@
         function handleDisplayServiceList() {
             var html = ''
             serviceLists.forEach(function(serviceList, index) {
+                const img = serviceList?.service_list_img ? `${storagePath}/${serviceList.service_list_img}` : ''
+
                 html += `
                 <tr>
                     <td>${index + 1}</td>
@@ -237,6 +306,25 @@
                     </td>
                     <td>
                         <input class="form-control p-1" type="time" name="service_list_datetime" value="${serviceList?.service_list_datetime ? dayjs(serviceList?.service_list_datetime).format('HH:mm') : ''}" oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <div class="zoom-img">
+                                <img class="preview-service-list-img" src="${img}" width="50px" height="38px" style="opacity: 1;" onerror="this.style.opacity = 0" />
+                                <div onclick="handleZoomImg(${index})" class="icon" style="border: 1px solid #ddd">
+                                    <i class="fa-solid fa-magnifying-glass fa-xs align-middle"></i>
+                                </div>
+                            </div>
+                            <div class="icon-img-action">
+                                <div class="icon-button" style="position: relative; overflow: hidden;">
+                                    <i class="fa-solid fa-upload fa-xs align-middle"></i>
+                                    <input type="file" name="service_list_img" accept="image/png, image/jpeg" oninput="formChange(${index}, ${serviceList.service_list_id}, event)" style="opacity: 0; position: absolute;" />
+                                </div>
+                                <div class="icon-button" onclick="handleRemoveServiceListImg(${index}, ${serviceList.service_list_id})">
+                                    <i class="fa-solid fa-trash fa-xs align-middle"></i>
+                                 </div>
+                            </div>
+                        </div>
                     </td>
                     <td class="text-center">
                         <input class="form-check-input m-0" type="checkbox" name="service_list_checked" value="" ${serviceList.service_list_checked ? 'checked' : ''} oninput="formChange(${index}, ${serviceList.service_list_id}, event)">
@@ -253,6 +341,7 @@
             const input = event.target;
             const name = input.name;
             selectedServiceListId = serviceListId
+            selectedServiceListIndex = index
 
             if (name === 'service_list_name') {
                 serviceLists[index].service_list_name = input.value || ''
@@ -265,6 +354,18 @@
                     .hour(newHours)
                     .minute(newMinutes)
                 serviceLists[index].service_list_datetime = newValue
+            }
+
+            if (name === 'service_list_img') {
+                const fileInput = event.target;
+                if (fileInput && fileInput.files) {
+                    const file = fileInput.files[0];
+                    const imageURL = URL.createObjectURL(file);
+                    // Set preview
+                    $('.preview-service-list-img').eq(index).attr("src", imageURL).css('opacity', 1);
+                    // Set file
+                    serviceLists[index].service_list_img = file
+                }
             }
 
             if (name === 'service_list_checked') {
@@ -312,6 +413,8 @@
 
         async function serviceUpdateServiceList() {
             if (!selectedServiceListId) return;
+
+            // Case normal
             const serviceList = serviceLists.find(function(serviceList) {
                 return serviceList.service_list_id === selectedServiceListId
             })
@@ -322,6 +425,11 @@
                 formData.append('_method', 'PUT');
                 formData.append('service_list_name', serviceList?.service_list_name ?? '');
                 formData.append('service_list_datetime', serviceList?.service_list_datetime ?? '');
+
+                // Update img
+                if (serviceList?.service_list_img) {
+                    formData.append('service_list_img', serviceList?.service_list_img ?? '');
+                }
                 formData.append('service_list_checked', serviceList.service_list_checked ? 1 : 0);
                 $.ajax({
                     url: `${prefixApi}/api/service-list/${selectedServiceListId}`,
@@ -332,6 +440,12 @@
                     contentType: false,
                     success: function(response, textStatus, jqXHR) {
                         resolve(jqXHR.responseJSON);
+
+                        const img = jqXHR.responseJSON.data.service_list_img
+                        if (!img) return
+                        $('.preview-service-list-img').eq(selectedServiceListIndex).attr("src",
+                            `${storagePath}/${img}`).css('opacity', 1);
+
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         reject(jqXHR.responseJSON);
@@ -355,6 +469,47 @@
                     },
                 }).always(function() {});
             })
+        }
+
+        function handleRemoveServiceListImg(index, id) {
+            const preview = $('.preview-service-list-img').eq(index).attr("src")
+            if (!preview) return
+
+            selectedServiceListId = id
+            $('.preview-service-list-img').eq(index).attr("src", '').css('opacity', 0);
+            serviceLists[index].service_list_img = ''
+
+            new Promise((resolve, reject) => {
+                formData = new FormData();
+                formData.append('_method', 'PUT');
+                $.ajax({
+                    url: `${prefixApi}/api/service-list/${selectedServiceListId}?set=file_null`,
+                    type: "POST",
+                    headers: headers,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response, textStatus, jqXHR) {
+                        resolve(jqXHR.responseJSON);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        reject(jqXHR.responseJSON);
+                    },
+                }).always(function() {
+
+                });
+            });
+        }
+
+        function handleZoomImg(index) {
+            let image = $('.preview-service-list-img').eq(index);
+            let src = image.attr('src');
+            if (src) {
+                $('#service-list-zoom-img').attr('src', src)
+                setTimeout(() => {
+                    $('#service-list-img-modal').modal('toggle')
+                }, 100);
+            }
         }
     </script>
 @endsection

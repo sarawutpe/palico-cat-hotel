@@ -100,6 +100,7 @@ Route::delete('/api/cat/{id}', [CatController::class, 'deleteCat']);
 
 // Rent Routes
 Route::get('/api/rent/list', [RentController::class, 'getAllRent']);
+Route::get('/api/rent/list/member/{id}', [RentController::class, 'getAllRentByMember']);
 Route::get('/api/rent/{id}', [RentController::class, 'getRentById']);
 Route::get('/api/rent/member/{id}', [RentController::class, 'getRentByMember']);
 Route::post('/api/rent', [RentController::class, 'addRent']);

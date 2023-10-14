@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\Helper;
 use Illuminate\Http\Request;
 use App\Models\ServiceList;
 use Illuminate\Validation\ValidationException;
@@ -33,7 +34,7 @@ class ServiceListController extends Controller
             ]);
 
             $service_list = new ServiceList();
-  
+
             $service_list->service_id = $request->input('service_id');
             if ($request->input('service_list_name')) {
                 $service_list->service_list_name = $request->input('service_list_name');
@@ -59,10 +60,24 @@ class ServiceListController extends Controller
             if ($request->input('service_list_name')) {
                 $service_list->service_list_name = $request->input('service_list_name');
             }
+
             if ($request->input('service_list_datetime')) {
                 $service_list->service_list_datetime =  Carbon::parse($request->input('service_list_datetime'));
             }
-            $service_list->service_list_checked = $request->input('service_list_checked');
+
+            // Upload and Save and Remove the service_list_img if provided
+            if ($request->hasFile('service_list_img')) {
+                $service_list->service_list_img = Helper::uploadFile($request, "service_list_img");
+            }
+            if ($request->input('set') === 'file_null') {
+                Helper::deleteFile($service_list->service_list_img);
+                $service_list->service_list_img = "";
+            }
+
+            if ($request->input('service_list_datetime')) {
+                $service_list->service_list_checked = $request->input('service_list_checked');
+            }
+
             $service_list->save();
             return response()->json(['success' => true, 'data' => $service_list]);
         } catch (ValidationException $exception) {

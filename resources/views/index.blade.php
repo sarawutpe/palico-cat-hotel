@@ -149,8 +149,11 @@
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev',
                 },
+                autoplay: {
+                    delay: 5000,
+                },
                 loop: true,
-                slidesPerView: 5,
+                slidesPerView: 4,
                 paginationClickable: true,
                 spaceBetween: 20,
             });

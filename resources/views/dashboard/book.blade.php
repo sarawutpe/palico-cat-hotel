@@ -157,8 +157,8 @@
 
         .card-room-item.status-out {
             cursor: not-allowed;
-            border-color: rgb(244, 81, 30);
-            opacity: 0.5;
+            border: 2px solid red;
+            opacity: 1;
         }
 
         .card-room-item.active {

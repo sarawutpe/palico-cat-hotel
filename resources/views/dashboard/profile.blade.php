@@ -225,8 +225,10 @@
                 formData.append("img", file);
             }
 
+            const isRemoved = isRemovedFile ? 'file_null' : ''
+
             $.ajax({
-                url: `${prefixApi}/api/user/profile/${type}/${id}`,
+                url: `${prefixApi}/api/user/profile/${type}/${id}?set=${isRemoved}`,
                 type: "POST",
                 headers: headers,
                 data: formData,

@@ -33,6 +33,27 @@ class RentController extends Controller
         }
     }
 
+    public function getAllRentByMember($id)
+    {
+        try {
+            $rents = Rent::with('member')
+                ->where('member_id', $id)
+                ->with('room')
+                ->with('service')
+                ->with('service.service_lists')
+                ->with('checkin')
+                ->with('checkin_cats')
+                ->with('checkin_cats.cat')
+                ->orderBy('updated_at', 'desc')
+                ->get();
+            return response()->json(['success' => true, 'data' => $rents]);
+        } catch (ValidationException $exception) {
+            return response()->json(['error' => $exception->errors()], 422);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
     public function getRentById($id)
     {
         try {
