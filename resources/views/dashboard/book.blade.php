@@ -373,17 +373,12 @@
         }
 
         function handleShowCalendar() {
-            if (rents.length === 0) return
-
             // reset calendar
             if (calendar) {
                 calendar.destroy();
             }
 
-            // All rents
-            const rentList = [...rents]
             const daysEventOfYear = getDaysEventOfYear()
-
             const events = daysEventOfYear.map(function(day) {
                 const event = {
                     title: '',
@@ -392,7 +387,6 @@
                     display: 'background',
                     classNames: ['bg-white']
                 }
-
                 return event
             })
 

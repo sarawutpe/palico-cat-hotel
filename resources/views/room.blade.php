@@ -15,7 +15,11 @@
         <h2>ห้องพักและการจอง</h2>
 
         @php
-            $room_types = collect([['id' => 1, 'name' => 'ห้องเล็ก', 'room_type' => 'S', 'img' => 'assets/img/hotel-1.jpg', 'route' => 'room-s'], ['id' => 2, 'name' => 'ห้องกลาง', 'room_type' => 'M', 'img' => 'assets/img/hotel-2.jpg', 'route' => 'room-m'], ['id' => 3, 'name' => 'ห้องใหญ่', 'room_type' => 'L', 'img' => 'assets/img/hotel-3.jpg', 'route' => 'room-l']])->map(function ($item) {
+            $room_types = collect([
+                ['id' => 1, 'name' => 'ห้องขนาดเล็ก', 'room_type' => 'S', 'img' => 'assets/img/hotel-1.jpg', 'route' => 'room-s'], 
+                ['id' => 2, 'name' => 'ห้องขนาดกลาง', 'room_type' => 'M', 'img' => 'assets/img/hotel-2.jpg', 'route' => 'room-m'], 
+                ['id' => 3, 'name' => 'ห้องขนาดใหญ่', 'room_type' => 'L', 'img' => 'assets/img/hotel-3.jpg', 'route' => 'room-l']
+            ])->map(function ($item) {
                 return (object) $item;
             });
         @endphp

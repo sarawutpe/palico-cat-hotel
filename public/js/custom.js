@@ -128,11 +128,11 @@ function getBookingTextColor(type) {
 function formatRoomType(type = "") {
     switch (type) {
         case "S":
-            return "ห้องเล็ก";
+            return "ห้องขนาดเล็ก";
         case "M":
-            return "ห้องกลาง";
+            return "ห้องขนาดกลาง";
         case "L":
-            return "ห้องใหญ่";
+            return "ห้องขนาดใหญ่";
         default:
             return "ประเภทไม่ถูกต้อง";
     }

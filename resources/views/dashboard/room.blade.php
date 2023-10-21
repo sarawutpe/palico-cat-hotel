@@ -43,9 +43,9 @@
                                             <div class="col-sm-9">
                                                 <select class="form-select" name="room_type">
                                                     <option selected value="">เลือกขนาดห้อง</option>
-                                                    <option value="S">ห้องเล็ก</option>
-                                                    <option value="M">ห้องเล็ก</option>
-                                                    <option value="L">ห้องใหญ่</option>
+                                                    <option value="S">ห้องขนาดเล็ก</option>
+                                                    <option value="M">ห้องขนาดกลาง</option>
+                                                    <option value="L">ห้องขนาดใหญ่</option>
                                                 </select>
                                             </div>
                                         </div>
