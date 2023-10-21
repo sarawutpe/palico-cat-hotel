@@ -115,7 +115,7 @@ section.content {
     /* max-height: 90vh; */
     overflow-x: hidden;
     overflow-y: hidden;
-    padding-bottom: 2rem;
+    padding-bottom: 10rem;
 }
 
 fieldset.scroll {

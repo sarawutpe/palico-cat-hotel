@@ -177,22 +177,16 @@
                 success: function(response, textStatus, jqXHR) {
                     const value = response.data
 
-                    $('input[name="name"]').val(value.member_name || value.employee_name || value.admin_name);
-                    $('input[name="user"]').val(value.member_user || value.employee_user || value.admin_user);
-                    $('input[name="email"]').val(value.member_email || value.employee_email || value
-                        .admin_email);
-
+                    $('input[name="name"]').val(value.member_name || value.employee_name);
+                    $('input[name="user"]').val(value.member_user || value.employee_user);
+                    $('input[name="email"]').val(value.member_email || value.employee_email);
                     $('input[name="pass"]').val("");
-                    $('input[name="address"]').val(value.member_address || value.employee_address || value
-                        .admin_address);
-                    $('input[name="phone"]').val(value.member_phone || value.employee_phone || value
-                        .admin_phone);
-                    $('input[name="facebook"]').val(value.member_facebook || value.employee_facebook || value
-                        .admin_facebook);
-                    $('input[name="lineid"]').val(value.member_lineid || value.employee_lineid || value
-                        .admin_lineid);
+                    $('input[name="address"]').val(value.member_address || value.employee_address);
+                    $('input[name="phone"]').val(value.member_phone || value.employee_phone);
+                    $('input[name="facebook"]').val(value.member_facebook || value.employee_facebook);
+                    $('input[name="lineid"]').val(value.member_lineid || value.employee_lineid);
 
-                    const img = value.member_img || value.employee_img || value.admin_img
+                    const img = value.member_img || value.employee_img
                     const imgSrc = `${storagePath}/${img}`
 
                     files.setFilePreview(imgSrc)

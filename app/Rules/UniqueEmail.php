@@ -26,9 +26,7 @@ class UniqueEmail implements Rule
         // Check if the 'value' value exists in any of the three tables
         $member_count = DB::table('members')->where('member_email', $value)->where('member_email', '!=', $this->email)->count();
         $employee_count = DB::table('employees')->where('employee_email', $value)->where('employee_email', '!=', $this->email)->count();
-        $admin_count = DB::table('admins')->where('admin_email', $value)->where('admin_email', '!=', $this->email)->count();
-
-        return $member_count === 0 && $employee_count === 0 && $admin_count === 0;
+        return $member_count === 0 && $employee_count === 0;
     }
 
     /**

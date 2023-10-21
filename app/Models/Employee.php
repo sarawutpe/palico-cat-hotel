@@ -22,5 +22,6 @@ class Employee extends Model
         'employee_facebook',
         'employee_lineid',
         'employee_img',
+        'employee_level',
     ];
 }

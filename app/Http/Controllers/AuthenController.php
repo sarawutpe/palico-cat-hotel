@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Models\Employee;
-use App\Models\Admin;
 use App\Models\Token;
 
 use App\Http\Helpers\Helper;
@@ -100,20 +99,23 @@ class AuthenController extends Controller
                 ->where('employee_pass', md5($password))
                 ->first();
 
-            $admin = Admin::where('admin_user', $user)
-                ->where('admin_pass', md5($password))
-                ->first();
-
-            $id = $member->member_id ?? $employee->employee_id ?? $admin->admin_id ?? null;
-            $name = $member->member_name ?? $employee->employee_name ?? $admin->admin_name ?? null;
-            $img = $member->member_img ?? $employee->employee_img ?? $admin->admin_img ?? null;
-
+            $id = $member->member_id ?? $employee->employee_id ?? null;
+            $name = $member->member_name ?? $employee->employee_name ?? null;
+            $img = $member->member_img ?? $employee->employee_img ?? null;
             $type = "";
+
+            // user is member
             if ($member) {
                 $type = Key::$member;
-            } else if ($employee) {
+            }
+
+            // user is employee
+            if ($employee && $employee->employee_level === KEY::$employee) {
                 $type = Key::$employee;
-            } else if ($admin) {
+            }
+
+            // user is admin
+            if ($employee && $employee->employee_level === KEY::$admin) {
                 $type = Key::$admin;
             }
 
@@ -172,13 +174,9 @@ class AuthenController extends Controller
                 ->where('employee_user', $user)
                 ->first();
 
-            $admin = Admin::where('admin_user', $user)
-                ->where('admin_user', $user)
-                ->first();
-
-            $id = $member->member_id ?? $employee->employee_id ?? $admin->admin_id ?? null;
-            $user = $member->member_user ?? $employee->employee_user ?? $admin->admin_user ?? null;
-            $email_to = $member->member_email ?? $employee->employee_email ?? $admin->admin_email ?? null;
+            $id = $member->member_id ?? $employee->employee_id ?? null;
+            $user = $member->member_user ?? $employee->employee_user ?? null;
+            $email_to = $member->member_email ?? $employee->employee_email ?? null;
 
             if (!$email_to) {
                 return redirect()->back()->with('error', 'ไม่พบอีเมลผู้ใช้');
@@ -187,9 +185,11 @@ class AuthenController extends Controller
             $type = "";
             if ($member) {
                 $type = Key::$member;
-            } else if ($employee) {
+            } else if ($employee && $employee->employee_level === KEY::$employee) {
+                // user is employee
                 $type = Key::$employee;
-            } else if ($admin) {
+            } else if ($employee && $employee->employee_level === KEY::$admin) {
+                // user is admin
                 $type = Key::$admin;
             } else {
                 return redirect()->back()->with('error', 'ไม่พบผู้ใช้');
@@ -251,14 +251,10 @@ class AuthenController extends Controller
                 $member = Member::find($id);
                 $member->member_pass = md5($password);
                 $member->save();
-            } else if ($type === Key::$employee) {
+            } else if ($type === Key::$employee || $type === Key::$admin) {
                 $employee = Employee::find($id);
                 $employee->employee_pass = md5($password);
                 $employee->save();
-            } else if ($type === Key::$admin) {
-                $admin = Admin::find($id);
-                $admin->admin_pass = md5($password);
-                $admin->save();
             }
 
             return redirect()->route('login')->with('success', 'เปลี่ยนรหัสผ่านสำเร็จ');

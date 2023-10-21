@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Employee;
-use App\Models\Admin;
 use App\Http\Helpers\Helper;
 use App\Http\Helpers\Key;
 use Illuminate\Validation\ValidationException;
@@ -23,14 +22,9 @@ class UserController extends Controller
                 return response()->json(['success' => true, 'data' => $member]);
             }
 
-            if ($type === Key::$employee) {
+            if ($type === Key::$employee || $type === Key::$admin) {
                 $employee = Employee::findOrFail($id);
                 return response()->json(['success' => true, 'data' => $employee]);
-            }
-
-            if ($type === Key::$admin) {
-                $admin = Admin::findOrFail($id);
-                return response()->json(['success' => true, 'data' => $admin]);
             }
 
             return response()->json(['success' => false, 'message' => "ประเภทบัญชีไม่ถูกต้อง"], 404);
@@ -112,7 +106,7 @@ class UserController extends Controller
                 return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
             }
 
-            if ($type === Key::$employee) {
+            if ($type === Key::$employee || $type === Key::$admin) {
                 $employee = Employee::findOrFail($id);
                 $request->validate([
                     'user' => ['required', new UniqueUser($employee->employee_user)],
@@ -150,47 +144,6 @@ class UserController extends Controller
                 Session::put('img', $employee->employee_img);
 
                 $employee->save();
-                return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
-            }
-
-            if ($type === Key::$admin) {
-                $admin = Admin::findOrFail($id);
-                $request->validate([
-                    'user' => ['required', new UniqueUser($admin->admin_user)],
-                    'email' => ['required', new UniqueEmail($admin->admin_email)],
-                ], [
-                    'user.unique' => 'ชื่อผู้ใช้งานนี้มีอยู่แล้ว',
-                    'email.unique' => 'อีเมลผู้ใช้งานนี้มีอยู่แล้ว',
-                ]);
-
-                $admin->admin_name = $request->input('name');
-                $admin->admin_user = $request->input('user');
-                $admin->admin_email = $request->input('email');
-
-                if ($request->input('pass')) {
-                    $admin->admin_pass = md5($request->input('pass'));
-                }
-
-                $admin->admin_address = $request->input('address');
-                $admin->admin_phone = $request->input('phone');
-                $admin->admin_facebook = $request->input('facebook');
-                $admin->admin_lineid = $request->input('lineid');
-
-                // Upload file
-                if ($request->hasFile('img')) {
-                    Helper::deleteFile($admin->admin_img);
-                    $admin->admin_img = Helper::uploadFile($request, $file_formdata);
-                }
-
-                // Remove file
-                if ($request->input('set') === 'file_null') {
-                    Helper::deleteFile($admin->admin_img);
-                    $admin->admin_img = "";
-                }
-
-                Session::put('img', $admin->admin_img);
-
-                $admin->save();
                 return response()->json(['success' => true, 'data' => 'อับเดตโปรไฟล์สำเร็จ']);
             }
 

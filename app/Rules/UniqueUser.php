@@ -26,9 +26,8 @@ class UniqueUser implements Rule
         // Check if the 'value' value exists in any of the three tables
         $member_count = DB::table('members')->where('member_user', $value)->where('member_user', '!=', $this->user)->count();
         $employee_count = DB::table('employees')->where('employee_user', $value)->where('employee_user', '!=', $this->user)->count();
-        $admin_count = DB::table('admins')->where('admin_user', $value)->where('admin_user', '!=', $this->user)->count();
 
-        return $member_count === 0 && $employee_count === 0 && $admin_count === 0;
+        return $member_count === 0 && $employee_count === 0;
     }
 
     /**

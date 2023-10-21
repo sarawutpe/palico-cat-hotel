@@ -172,12 +172,21 @@
 
                     let html = ''
                     response.data.forEach(function(employee, index) {
+
+                        let textLevel = ''
+                        if (employee.employee_level === 'EMPLOYEE') {
+                            textLevel = 'พนักงาน'
+                        } else if (employee.employee_level === 'ADMIN') {
+                            textLevel = 'แอดมิน'
+                        }
+
                         html += `
                         <div class="box-card-list" onclick="handleShowEmployee(${index} ,${utils.jsonString(employee)})">
                             <div>
                                 <p>รหัสพนักงาน ${employee.employee_id}</p>
                                 <p>ชื่อ-สกุล ${employee.employee_name}</p>
                                 <p>เบอร์โทรศัพท์ ${employee.employee_phone}</p>
+                                <p>สถานะ ${textLevel}</p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
                                 <img id="file-preview" onerror="this.style.opacity = 0"
@@ -319,7 +328,6 @@
                 })
             }
         }
-
     </script>
 
 @endsection
