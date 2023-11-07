@@ -72,21 +72,6 @@
                                     <a class="nav-link active" href="{{ route('home') }}">หน้าแรก</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="{{ route('room') }}">ห้องพักและการจอง</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="{{ route('service') }}">บริการ</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="{{ route('price') }}">อัตราค่าบริการ</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="{{ route('rule') }}">กติกา</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="{{ route('guide') }}">วิธีการจอง</a>
-                                </li>
-                                <li class="nav-item">
                                     <a class="nav-link active" href="{{ route('contact') }}">ติดต่อเรา</a>
                                 </li>
                             </div>

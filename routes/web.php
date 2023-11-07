@@ -34,14 +34,6 @@ Route::middleware([PublicRoute::class])->group(function () {
   Route::get('/register', [ViewController::class, 'register'])->name('register');
   Route::get('/recovery', [ViewController::class, 'recovery'])->name('recovery');
   Route::get('/recovery/reset/{token}', [ViewController::class, 'recoveryReset'])->name('recovery.reset');
-  Route::get('/room', [ViewController::class, 'room'])->name('room');
-  Route::get('/room/room-s', [ViewController::class, 'roomS'])->name('room-s');
-  Route::get('/room/room-m', [ViewController::class, 'roomM'])->name('room-m');
-  Route::get('/room/room-l', [ViewController::class, 'roomL'])->name('room-l');
-  Route::get('/guide', [ViewController::class, 'guide'])->name('guide');
-  Route::get('/price', [ViewController::class, 'price'])->name('price');
-  Route::get('/service', [ViewController::class, 'service'])->name('service');
-  Route::get('/rule', [ViewController::class, 'rule'])->name('rule');
   Route::get('/contact', [ViewController::class, 'contact'])->name('contact');
 });
 

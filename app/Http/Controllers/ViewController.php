@@ -31,24 +31,11 @@ class ViewController extends Controller
         return view('room-l');
     }
 
-    public function service()
-    {
-        return view('service');
-    }
 
-    public function price()
-    {
-        return view('price');
-    }
 
     public function rule()
     {
         return view('rule');
-    }
-
-    public function guide()
-    {
-        return view('guide');
     }
 
     public function contact()

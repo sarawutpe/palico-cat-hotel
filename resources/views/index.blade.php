@@ -70,7 +70,7 @@
     </style>
 
 
-    <div class="container-lg">
+    <div class="container-lg pb-4">
         <h2>หน้าแรก</h2>
 
         <div class="d-flex justify-content-center">
@@ -81,7 +81,7 @@
         </div>
         <br>
 
-        <div class="container" style="position: relative; overflow: hidden;">
+        <div class="container mb-4" style="position: relative; overflow: hidden;">
             <!-- Slider main container -->
             <div class="swiper">
                 <!-- Additional required wrapper -->
@@ -133,9 +133,36 @@
             <div class="swiper-button-prev"></div>
             <div class="swiper-button-next"></div>
         </div>
-
+        <br>
+        <div class="container mb-4">
+            <div class="d-flex justify-content-start">
+                <h2 class="font-bold">อัตราค่าบริการ</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/standard-room.jpg') }}" width="100%" alt=""></div>
+                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/superior-room.jpg') }}" width="100%" alt=""></div>
+                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/deluxe-room.jpg') }}" width="100%" alt=""></div>
+            </div>
+        </div>
+        <br>
+        <div class="container mb-4">
+            <div class="d-flex justify-content-start">
+                <h2 class="font-bold">บริการ</h2>
+            </div>
+            <div class="row">
+                <img src="{{ asset('assets/img/service.jpg') }}" width="500px" alt="">
+            </div>
+        </div>
+        <br>
+        <div class="container mb-4">
+            <div class="d-flex justify-content-start">
+                <h2 class="font-bold">เงื่อนไขการจอง</h2>
+            </div>
+            <div class="row">
+                <img src="{{ asset('assets/img/rule.jpg') }}" width="500px" alt="">
+            </div>
+        </div>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
