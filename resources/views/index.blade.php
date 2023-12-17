@@ -139,27 +139,36 @@
                 <h2 class="font-bold">อัตราค่าบริการ</h2>
             </div>
             <div class="row">
-                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/standard-room.jpg') }}" width="100%" alt=""></div>
-                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/superior-room.jpg') }}" width="100%" alt=""></div>
-                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/deluxe-room.jpg') }}" width="100%" alt=""></div>
+                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/standard-room.jpg') }}" width="100%"
+                        alt=""></div>
+                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/superior-room.jpg') }}" width="100%"
+                        alt=""></div>
+                <div class="col-md-4 col-sm-12"><img src="{{ asset('assets/img/deluxe-room.jpg') }}" width="100%"
+                        alt=""></div>
             </div>
         </div>
         <br>
+
         <div class="container mb-4">
-            <div class="d-flex justify-content-start">
-                <h2 class="font-bold">บริการ</h2>
-            </div>
             <div class="row">
-                <img src="{{ asset('assets/img/service.jpg') }}" width="500px" alt="">
-            </div>
-        </div>
-        <br>
-        <div class="container mb-4">
-            <div class="d-flex justify-content-start">
-                <h2 class="font-bold">เงื่อนไขการจอง</h2>
-            </div>
-            <div class="row">
-                <img src="{{ asset('assets/img/rule.jpg') }}" width="500px" alt="">
+                <div class="col-12 col-md-6">
+                    <div>
+                        <div class="d-flex justify-content-start">
+                            <h2 class="font-bold">บริการ</h2>
+                        </div>
+                        <div class="row">
+                            <img src="{{ asset('assets/img/service.jpg') }}" width="500px" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="d-flex justify-content-start">
+                        <h2 class="font-bold">เงื่อนไขการจอง</h2>
+                    </div>
+                    <div class="row">
+                        <img src="{{ asset('assets/img/rule.jpg') }}" width="500px" alt="">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
