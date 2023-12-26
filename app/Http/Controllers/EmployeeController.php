@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use App\Rules\UniqueUser;
 use App\Rules\UniqueEmail;
+use App\Http\Helpers\Key;
 
 class EmployeeController extends Controller
 {
@@ -64,6 +65,7 @@ class EmployeeController extends Controller
             $employee->employee_phone = $request->input('employee_phone');
             $employee->employee_facebook = $request->input('employee_facebook');
             $employee->employee_lineid = $request->input('employee_lineid');
+            $employee->employee_level = KEY::$employee;
 
             // Upload and save the employee_img if provided
             if ($request->hasFile('employee_img')) {
