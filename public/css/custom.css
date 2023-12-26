@@ -34,12 +34,14 @@ html {
     height: -webkit-fill-available;
 }
 
-body {
+body, .body {
     color: #232729;
     overflow-x: hidden;
     font-family: "DB Heavent", sans-serif;
     font-weight: normal;
     line-height: normal;
+    background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url(../assets/img/app-bg.jpg);
+    background-size: cover;
 }
 
 a,
