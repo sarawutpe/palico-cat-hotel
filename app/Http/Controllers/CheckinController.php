@@ -14,7 +14,6 @@ class CheckinController extends Controller
             // Validate the input
             $request->validate([
                 'rent_id' => 'required|string',
-                'checkin_detail' => 'nullable|string',
                 'checkin_status' => 'required|string',
             ], [
                 'rent_id.required' => 'กรุณากรอกรหัสการจอง',
@@ -23,7 +22,6 @@ class CheckinController extends Controller
 
             $checkin = new Checkin();
             $checkin->rent_id = $request->input('rent_id');
-            $checkin->checkin_detail = $request->input('checkin_detail');
             $checkin->checkin_status = $request->input('checkin_status');
             $checkin->save();
 
@@ -42,7 +40,6 @@ class CheckinController extends Controller
             // Validate the input
             $request->validate([
                 'rent_id' => 'required|string',
-                'checkin_detail' => 'nullable|string',
                 'checkin_status' => 'required|string',
             ], [
                 'rent_id.required' => 'กรุณากรอกรหัสการจอง',
@@ -51,7 +48,6 @@ class CheckinController extends Controller
 
             $checkin = Checkin::findOrFail($id);
             $checkin->rent_id = $request->input('rent_id');
-            $checkin->checkin_detail = $request->input('checkin_detail');
             $checkin->checkin_status = $request->input('checkin_status');
             $checkin->save();
 

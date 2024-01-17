@@ -41,6 +41,7 @@ class EmployeeController extends Controller
                 'employee_facebook' => 'nullable|string',
                 'employee_lineid' => 'nullable|string',
                 'employee_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'employee_level' => 'required|string',
             ], [
                 'employee_name.required' => 'กรุณากรอกชื่อ',
                 'employee_user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
@@ -54,6 +55,7 @@ class EmployeeController extends Controller
                 'employee_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
                 'employee_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
                 'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
+                'employee_level.required' => 'กรุณากรอกสิทธิ์ใช้งาน',
             ]);
 
             $employee = new Employee();
@@ -65,7 +67,7 @@ class EmployeeController extends Controller
             $employee->employee_phone = $request->input('employee_phone');
             $employee->employee_facebook = $request->input('employee_facebook');
             $employee->employee_lineid = $request->input('employee_lineid');
-            $employee->employee_level = KEY::$employee;
+            $employee->employee_level = $request->input('employee_level');
 
             // Upload and save the employee_img if provided
             if ($request->hasFile('employee_img')) {
@@ -97,6 +99,7 @@ class EmployeeController extends Controller
                 'employee_facebook' => 'nullable|string',
                 'employee_lineid' => 'nullable|string',
                 'employee_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'employee_level' => 'required|string',
             ], [
                 'employee_name.required' => 'กรุณากรอกชื่อ',
                 'employee_user.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
@@ -110,6 +113,7 @@ class EmployeeController extends Controller
                 'employee_img.image' => 'รูปภาพต้องเป็นไฟล์รูปภาพ (jpeg, png, jpg)',
                 'employee_img.mimes' => 'รูปภาพต้องเป็นไฟล์ประเภท: jpeg, png, jpg',
                 'employee_img.max' => 'ขนาดรูปภาพต้องไม่เกิน 2048 กิโลไบต์',
+                'employee_level.required' => 'required|string',
             ]);
 
             $employee->employee_name = $request->input('employee_name');
@@ -124,6 +128,7 @@ class EmployeeController extends Controller
             $employee->employee_phone = $request->input('employee_phone');
             $employee->employee_facebook = $request->input('employee_facebook');
             $employee->employee_lineid = $request->input('employee_lineid');
+            $employee->employee_level = $request->input('employee_level');
 
             // Upload and save the employee_img if provided
             if ($request->hasFile('employee_img')) {

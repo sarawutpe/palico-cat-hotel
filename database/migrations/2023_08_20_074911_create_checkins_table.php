@@ -17,7 +17,6 @@ class CreateCheckinsTable extends Migration
             $table->id('checkin_id');
             $table->unsignedBigInteger('rent_id');
             $table->unsignedBigInteger('cat_id');
-            $table->string('checkin_detail');
             $table->boolean('checkin_status');
             $table->timestamps();
         });

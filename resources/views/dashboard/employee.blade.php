@@ -35,6 +35,15 @@
                                     <!-- Section 1 -->
                                     <div class="col-8">
                                         <div class="mb-3 row">
+                                            <label class="col-sm-3 col-form-label required">สิทธิ์ใช้งาน</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-select" name="employee_level">
+                                                    <option value="EMPLOYEE" selected>พนักงาน</option>
+                                                    <option value="ADMIN">แอดมิน</option>
+                                                  </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">ชื่อผู้ใช้</label>
                                             <div class="col-sm-9">
                                                 <input type="text" name="employee_user" class="form-control">
@@ -183,9 +192,9 @@
                         html += `
                         <div class="box-card-list" onclick="handleShowEmployee(${index} ,${utils.jsonString(employee)})">
                             <div>
-                                <p>รหัสพนักงาน ${employee.employee_id}</p>
-                                <p>ชื่อ-สกุล ${employee.employee_name}</p>
-                                <p>เบอร์โทรศัพท์ ${employee.employee_phone}</p>
+                                <p>รหัสพนักงาน ${employee?.employee_id ?? '-'}</p>
+                                <p>ชื่อ-สกุล ${employee?.employee_name ?? '-'}</p>
+                                <p>เบอร์โทรศัพท์ ${employee?.employee_phone ?? '-'}</p>
                                 <p>สถานะ ${textLevel}</p>
                             </div>
                             <div class="border rounded bg-white" style="overflow: hidden; width: 100px; height: 100px">
@@ -215,6 +224,7 @@
             formData.append('employee_phone', $('input[name="employee_phone"]').val());
             formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
             formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('employee_level', $('select[name="employee_level"]').val());
 
             const file = files.getFileUpload()
             if (file) {
@@ -258,6 +268,7 @@
             $('input[name="employee_phone"]').val(employee.employee_phone || "");
             $('input[name="employee_facebook"]').val(employee.employee_facebook || "");
             $('input[name="employee_lineid"]').val(employee.employee_lineid || "");
+            $('select[name="employee_level"]').val(employee.employee_level || "");
 
             if (employee.employee_img) {
                 $('#file-preview').css('opacity', 1).attr('src', `${storagePath}/${(employee.employee_img || "")}`);
@@ -279,6 +290,7 @@
             formData.append('employee_phone', $('input[name="employee_phone"]').val());
             formData.append('employee_facebook', $('input[name="employee_facebook"]').val());
             formData.append('employee_lineid', $('input[name="employee_lineid"]').val());
+            formData.append('employee_level', $('select[name="employee_level"]').val());
 
             const url = new URL(`${prefixApi}/api/employee/${selectedId}`);
             const file = files.getFileUpload()

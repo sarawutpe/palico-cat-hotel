@@ -88,16 +88,16 @@
     <script>
         function example(id) {
             if (id === 'MEMBER') {
-                $('input[name="member_user"]').val('m');
-                $('input[name="member_pass"]').val('8472EA$vlb');
+                $('input[name="member_user"]').val('member');
+                $('input[name="member_pass"]').val('1234');
             }
             if (id === 'EMPLOYEE') {
-                $('input[name="member_user"]').val('emp1');
-                $('input[name="member_pass"]').val('8472EA$vlb');
+                $('input[name="member_user"]').val('employee');
+                $('input[name="member_pass"]').val('1234');
             }
             if (id === 'ADMIN') {
                 $('input[name="member_user"]').val('admin');
-                $('input[name="member_pass"]').val('8472EA$vlb');
+                $('input[name="member_pass"]').val('1234');
             }
             $('form').submit();
         }

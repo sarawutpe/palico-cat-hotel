@@ -9,13 +9,16 @@
             cursor: pointer;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem
+            margin-bottom: 0.5rem;
+            padding: 6px;
         }
 
         .box-card-list:hover,
         .box-card-list.active {
             background: rgba(255, 255, 255, 0.50);
             border-color: #eee;
+            border: 1px solid #ddd;
+            padding: 6px;
         }
 
         #cat-list {
@@ -94,8 +97,15 @@
                                     <!-- Section 1 -->
                                     <div class="col-12">
                                         <div class="pb-1">
-                                            <label class="col-sm-3 col-form-label required">เลือกแมว</label>
-                                            <div id="cat-list" class="custom-scroll d-flex gap-1" style="overflow: auto;">
+                                            <div class="d-flex align-items-baseline justify-content-between">
+                                                <label class="col-sm-3 col-form-label required">เลือกแมว</label>
+                                                <div class="input-group input-group-sm mb-3 me-3" style="max-width: 300px">
+                                                    <input type="text" class="form-control" placeholder="ค้นหา"
+                                                        oninput="handleDebouncedSearchCat(event)">
+                                                </div>
+                                            </div>
+                                            <div id="cat-list" class="custom-scroll d-flex justify-content-start gap-1"
+                                                style="overflow: auto;">
                                             </div>
                                         </div>
                                         <br>
@@ -108,16 +118,9 @@
                                         </div>
 
                                         <div class="mb-3 row">
-                                            <label class="col-sm-3 col-form-label required">รายละเอียดเช็คอิน</label>
-                                            <div class="col-sm-9">
-                                                <textarea class="form-control" name="checkin_detail" rows="2"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">วันที่เช็คอิน</label>
                                             <div class="col-sm-9">
-                                                <input type="datetime-local" name="in_datetime" class="form-control">
+                                                <input type="date" name="in_datetime" class="form-control">
                                                 <div id="error-in-datetime" class="invalid-feedback"></div>
                                             </div>
                                         </div>
@@ -125,7 +128,7 @@
                                         <div class="mb-3 row">
                                             <label class="col-sm-3 col-form-label required">วันที่เช็คเอาท์</label>
                                             <div class="col-sm-9">
-                                                <input type="datetime-local" name="out_datetime" class="form-control">
+                                                <input type="date" name="out_datetime" class="form-control">
                                                 <div id="error-in-datetime" class="invalid-feedback"></div>
                                             </div>
                                         </div>
@@ -182,6 +185,12 @@
                 <div class="">
                     <fieldset class="scroll">
                         <legend>รายการจอง</legend>
+                        <div class="d-flex align-items-baseline justify-content-end">
+                            <div class="input-group input-group-sm mb-3 me-3" style="max-width: 300px">
+                                <input type="text" class="form-control" placeholder="ค้นหาชื่อเจ้าของแมว, แมว"
+                                    oninput="handleDebouncedSearchRent(event)">
+                            </div>
+                        </div>
                         <div id="rent-list"></div>
                     </fieldset>
                 </div>
@@ -200,6 +209,7 @@
         var formData = null
         var search = null
         var selectedRent = null
+        var catMemberList = []
         var selectedCatList = []
         var selectedRoom = null
 
@@ -214,7 +224,7 @@
             files.setFilePreview()
         }
 
-        function handleGetAllRent() {
+        function handleGetAllRent(q) {
             utils.setLinearLoading('open')
 
             $.ajax({
@@ -240,6 +250,7 @@
                         html += `
                         <div class="box-card-list" onclick="handleShowRent(${index}, ${utils.jsonString(rent)})">
                             <div>
+                                <p>#${index+1}</p>
                                 <p>รหัสการจอง ${rent.rent_id}</p>
                                 <p>รหัสสมาชิก ${rent.member_id}</p>
                                 <p>ชื่อสมาชิก ${rent.member.member_name}</p>
@@ -271,35 +282,18 @@
             });
         }
 
-        async function handleGetCatByMember($id) {
+        async function handleGetCatByMember(member_id) {
             utils.setLinearLoading('open')
 
             await $.ajax({
-                url: `${prefixApi}/api/cat/member/${id}`,
+                url: `${prefixApi}/api/cat/member/${member_id}`,
                 type: "GET",
                 headers: headers,
                 success: function(response, textStatus, jqXHR) {
                     if (!Array.isArray(response.data)) return
-
+                    catMemberList = response.data
                     selectedCatList = response.data
-
-                    let html = ''
-                    response.data.forEach(function(cat, index) {
-                        html += `
-                        <div id="${cat.cat_id}" class="box-cat-list" onclick="handleSelectCat(${index} ,${utils.jsonString(cat)})">
-                            <img onerror="this.style.opacity = 0"
-                                src="${storagePath}/${cat.cat_img}"
-                                style="object-fit: cover;" width="100%" height="100%">
-                            <div class="box-cat-content">
-                                <p>รหัสประจำตัวแมว ${cat.cat_id}</p>
-                                <p>ชื่อแมว ${cat.cat_name}</p>
-                            </div>
-                            <div class="box-cat-icon">
-                                <i class="fa-regular fa-circle-check fa-lg"></i>
-                            </div>
-                        </div>`;
-                    });
-                    $('#cat-list').empty().append(html);
+                    renderCatList(response.data)
 
                     utils.clearAlert('#alert-message')
                 },
@@ -309,6 +303,43 @@
             }).always(async function() {
                 utils.setLinearLoading('close')
             });
+        }
+
+        function renderCatList(catList, searchTerm) {
+            if (!Array.isArray(catList)) return
+            let html = ''
+            let clonedCats = [...catList]
+
+            if (searchTerm) {
+                clonedCats = clonedCats.filter(function(cat) {
+                    return (
+                        (Number(cat.cat_id) === Number(searchTerm)) ||
+                        (cat.cat_name && cat.cat_name.toLowerCase().includes(searchTerm.toLowerCase()))
+                    );
+                });
+            }
+
+            if (clonedCats.length > 0) {
+                clonedCats.forEach(function(cat, index) {
+                    let activeSelectedCatClass = selectedCatList.find((item) => item.cat_id === cat.cat_id) ?
+                        'active' : ''
+                    html += `
+                <div id="${cat.cat_id}" class="box-cat-list ${activeSelectedCatClass}" onclick="handleSelectCat(${index}, ${utils.jsonString(cat)})">
+                    <img onerror="this.style.opacity = 0"
+                        src="${storagePath}/${cat.cat_img}"
+                        style="object-fit: cover;" width="100%" height="100%">
+                    <div class="box-cat-content">
+                        <p>รหัสประจำตัวแมว ${cat.cat_id}</p>
+                        <p>ชื่อแมว ${cat.cat_name}</p>
+                    </div>
+                    <div class="box-cat-icon">
+                        <i class="fa-regular fa-circle-check fa-lg"></i>
+                    </div>
+                </div>`;
+                });
+            }
+
+            $('#cat-list').empty().append(html);
         }
 
         function handleSelectCat(index, cat) {
@@ -321,7 +352,6 @@
 
             // Check limit room
             if (!isSelected && selectedCatList.length < selectedRoom.room_limit) {
-                console.log('case 1')
                 selectedCatList.push(catObj);
                 targetDiv.addClass('active');
             } else {
@@ -363,8 +393,6 @@
             }
 
             $('input[name="checkin_status"]').prop('checked', rent?.checkin?.checkin_status ?? false);
-            $('textarea[name="checkin_detail"]').val(rent?.checkin?.checkin_detail ?? "");
-
             $('select[name="rent_status"]').val(rent.rent_status);
             $('input[name="in_datetime"]').val(dayjs.utc(rent.in_datetime).format('YYYY-MM-DDTHH:mm'));
             $('input[name="out_datetime"]').val(dayjs.utc(rent.out_datetime).format('YYYY-MM-DDTHH:mm'));
@@ -393,7 +421,6 @@
             formData = new FormData();
             formData.append('_method', 'PUT');
             formData.append('rent_id', selectedRentId);
-            formData.append('checkin_detail', $('textarea[name="checkin_detail"]').val());
             formData.append('checkin_status', $('input[name="checkin_status"]').prop('checked') ? 1 : 0);
 
             const checkinId = selectedRent?.checkin?.checkin_id ?? ''
@@ -487,6 +514,22 @@
                 })
             }
         }
+
+        const handleDebouncedSearchCat = debounce(function(event) {
+            let q = event.target.value
+            renderCatList(catMemberList, q)
+        }, 250);
+
+        const handleDebouncedSearchRent = debounce(function(event) {
+            resetForm()
+            catMemberList = []
+            selectedCatList = []
+            $('#cat-list').empty()
+
+            let q = event.target.value
+            setQueryParameter("q", q);
+            handleGetAllRent()
+        }, 250);
     </script>
 
 @endsection

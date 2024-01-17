@@ -16,15 +16,20 @@ class RentController extends Controller
     public function getAllRent(Request $request)
     {
         try {
-            $rents = Rent::with('member')
-                ->with('room')
-                ->with('service')
-                ->with('service.service_lists')
-                ->with('checkin')
-                ->with('checkin_cats')
-                ->with('checkin_cats.cat')
+            $q = $request->input('q', '');
+            $rents = Rent::with('member', 'room', 'service', 'service.service_lists', 'checkin', 'checkin_cats.cat')
+                ->whereNotNull('member_id')
+                ->where(function ($query) use ($q) {
+                    $query->whereHas('member', function ($subQuery) use ($q) {
+                        $subQuery->where('member_name', 'like', '%' . $q . '%');
+                    })
+                        ->orWhereHas('checkin_cats.cat', function ($subQuery) use ($q) {
+                            $subQuery->where('cat_name', 'like', '%' . $q . '%');
+                        });
+                })
                 ->orderBy('updated_at', 'desc')
                 ->get();
+
             return response()->json(['success' => true, 'data' => $rents]);
         } catch (ValidationException $exception) {
             return response()->json(['error' => $exception->errors()], 422);

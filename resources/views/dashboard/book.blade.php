@@ -875,7 +875,6 @@
                 formData = new FormData();
                 formData.append('rent_id', rentId);
                 formData.append('checkin_status', 0);
-                formData.append('checkin_detail', '');
 
                 const checkinResult = await $.ajax({
                     url: `${prefixApi}/api/checkin`,
